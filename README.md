@@ -1,5 +1,5 @@
 # mob_and_training
-leaning prout tdd with some kata
+Bonjour
 hello
 yay
 La digue du cul
