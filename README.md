@@ -1,5 +1,5 @@
 # mob_and_training
-Bonjour
+Salut
 hello
 yay
 La git du cul
