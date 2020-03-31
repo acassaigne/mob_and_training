@@ -1,14 +1,10 @@
 import unittest
 
 def _create_list(input_string):
+    input_string = input_string.replace("\n",",")
     if input_string == "":
         return []
-    result = [number for number in input_string.split(",")]
-    for 
-    return
-
-def _split_string_by_newline(input_string):
-    return [int(number) for number in input_string.split("\n")]
+    return [int(number) for number in input_string.split(",")]
 
 def calculator(input_string):
     result = _create_list(input_string)
@@ -27,3 +23,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_calculator_string_with_1_comma_2_newline_3_return_6(self):
         self.assertEqual("6", calculator("1,2\n3"))
+
+    def test_delimiter_detector_string_semicolon(self):
+        self.assertEqual((";","1,2"),delimiter_detector("//;\n1;2"))
+
