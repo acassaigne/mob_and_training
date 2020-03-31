@@ -1,10 +1,14 @@
 import unittest
 
+def _delimiter_detector(input_string):
+    return (",", input_string)
+
 def _create_list(input_string):
-    input_string = input_string.replace("\n",",")
-    if input_string == "":
+    separator, number_string = _delimiter_detector(input_string)
+    number_string = number_string.replace("\n",separator)
+    if number_string == "":
         return []
-    return [int(number) for number in input_string.split(",")]
+    return [int(number) for number in number_string.split(separator)]
 
 def calculator(input_string):
     result = _create_list(input_string)
@@ -25,5 +29,5 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual("6", calculator("1,2\n3"))
 
     def test_delimiter_detector_string_semicolon(self):
-        self.assertEqual((";","1,2"),delimiter_detector("//;\n1;2"))
+        self.assertEqual((",","1,2"), _delimiter_detector("1,2"))
 
