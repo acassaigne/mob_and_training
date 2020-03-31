@@ -21,6 +21,10 @@ def compute_fizz_buzz(number):
         response = FIZZ + BUZZ
     return response
 
+def sequence_fizzbuzz(max):
+    numbers_to_compute = list(range(1, max+1))
+    computed_numbers =
+    return numbers_to_compute
 
 class TestStringMethods(unittest.TestCase):
 
@@ -38,3 +42,10 @@ class TestStringMethods(unittest.TestCase):
 
     def test_fizz_buzz_of_15_should_return_fizzbuzz(self):
         self.assertEqual("fizzbuzz", compute_fizz_buzz(15))
+
+    def test_length_is_100(self):
+        self.assertEqual(100, len(sequence_fizzbuzz(100)))
+
+    def test_first_3_elements_of_list_are_correct(self):
+        self.assertEqual(["1", "2", "fizz"], sequence_fizzbuzz(3))
+
