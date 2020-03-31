@@ -23,8 +23,8 @@ def compute_fizz_buzz(number):
 
 def sequence_fizzbuzz(max):
     numbers_to_compute = list(range(1, max+1))
-    computed_numbers =
-    return numbers_to_compute
+    computed_numbers = [compute_fizz_buzz(number) for number in numbers_to_compute]
+    return computed_numbers
 
 class TestStringMethods(unittest.TestCase):
 
