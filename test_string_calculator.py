@@ -3,11 +3,10 @@ import unittest
 def _delimiter_detector(input_string):
     separator = ","
     string_numbers = input_string
-    if input_string[0:1] == "//":
+    if input_string[0:2] == "//":
         separator = input_string[2]
-        string_numbers = input_string[5:]
+        string_numbers = input_string[4:]
     return (separator, string_numbers)
-
 
 def _create_list(input_string):
     separator, number_string = _delimiter_detector(input_string)
@@ -37,5 +36,8 @@ class TestStringMethods(unittest.TestCase):
     def test_delimiter_detector_string_semicolon(self):
         self.assertEqual((",", "1,2"), _delimiter_detector("1,2"))
 
-    def test_calculator_string_semicolon_1_2_should_return_3(self):
+    def test_delimiter_detector_string_semicolon_more_complex(self):
+        self.assertEqual((';',"1;2"), _delimiter_detector("//;\n1;2"))
+
+    def test_delimiter_detector_string_semicolon_1_2_should_return_3(self):
         self.assertEqual("3", calculator("//;\n1;2"))
