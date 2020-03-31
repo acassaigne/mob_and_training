@@ -11,12 +11,14 @@ def is_fizzbuzz(number):
 
 def compute_fizz_buzz(number):
     response = str(number)
+    FIZZ = "fizz"
+    BUZZ = "buzz"
     if is_fizz(number):
-        response = "fizz"
+        response = FIZZ
     if is_buzz(number):
-        response = "buzz"
+        response = BUZZ
     if is_fizzbuzz(number):
-        response = "fizzbuzz"
+        response = FIZZ + BUZZ
     return response
 
 
