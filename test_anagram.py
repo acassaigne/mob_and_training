@@ -5,16 +5,24 @@ class Anagram:
         if len(input_string) == 1:
             return [input_string]
         elif len(input_string) == 2:
-            return [input_string, input_string[-1]+input_string[0]]
+            return [input_string, self.swap(input_string)]
         else:
-            result = []
             result_temp = self.compute(input_string[0:2])
             rest_character = input_string[2]
-            for word in result_temp:
-                result.append(rest_character + word)
-                result.append(word + rest_character)
-                result.append(word[0] + rest_character + word[1])
+            result = self.fill_new_letter(result_temp,rest_character)
             return sorted(result)
+
+    def swap(self, input_string):
+        return input_string[-1]+input_string[0]
+
+    def fill_new_letter(self, input_string, letter):
+        result = []
+        for word in input_string:
+            result.append(letter + word)
+            result.append(word + letter)
+            result.append(word[0] + letter + word[1])
+        return result
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -28,7 +36,9 @@ class TestStringMethods(unittest.TestCase):
         result = anagram.compute("ab")
         self.assertEqual(["ab","ba"], result)
 
-    def test_ouzoief(self):
+    def test_from_string_abc_should_return_sorted_all_anagrams(self):
         anagram = Anagram()
         result = anagram.compute("abc")
         self.assertEqual(sorted(["abc","acb","bac","bca","cab","cba"]), result)
+
+    def test_from_string_abcd_should_return_sorted_all_anagrams(self):
