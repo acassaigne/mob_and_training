@@ -1,12 +1,20 @@
 import unittest
 
 def _delimiter_detector(input_string):
-    separator = ","
+    delimiter = ","
     string_numbers = input_string
-    if input_string[0:2] == "//":
-        separator = input_string[2]
-        string_numbers = input_string[4:]
-    return (separator, string_numbers)
+    if _has_define_delimiter(input_string):
+        delimiter = input_string[2]
+        string_numbers = _remove_delimiter_definition(input_string)
+    return (delimiter, string_numbers)
+
+def _has_define_delimiter(input_string):
+    return input_string[0:2] == "//"
+
+def _remove_delimiter_definition(input_string):
+    return input_string[4:]
+
+def _get_delimiter()
 
 def _create_list(input_string):
     separator, number_string = _delimiter_detector(input_string)
@@ -60,4 +68,3 @@ class TestStringMethods(unittest.TestCase):
         except InvalidNegativeNumberException as e:
             self.assertEqual(e.message, "Negative numbers: -1")
 
-            
