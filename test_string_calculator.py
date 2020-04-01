@@ -34,9 +34,7 @@ def _create_list(input_string):
 def calculator(input_string):
     result = _create_list(input_string)
     negative_numbers = _extract_negative_numbers(result)
-    if negative_numbers:
-        message = _generate_complementary_error_message_list(negative_numbers)
-        raise InvalidNegativeNumberException("Negative numbers: {0}".format(message))
+    _raise_error_when_has_negative_numbers(negative_numbers)
     if not result:
         return "0"
     return str(sum(result))
