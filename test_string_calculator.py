@@ -18,8 +18,8 @@ def _create_list(input_string):
 def calculator(input_string):
     result = _create_list(input_string)
     if any([number < 0 for number in result]):
-        negative_number_list = [number for number in result if number < 0]
-        raise InvalidNegativeNumberException("Negative numbers: {0}")
+        negative_number_list = [str(number) for number in result if number < 0]
+        raise InvalidNegativeNumberException("Negative numbers: {0}".format(",".join(negative_number_list)))
     if not result:
         return "0"
     return str(sum(result))
@@ -59,3 +59,5 @@ class TestStringMethods(unittest.TestCase):
             calculator("-1,2")
         except InvalidNegativeNumberException as e:
             self.assertEqual(e.message, "Negative numbers: -1")
+
+            
