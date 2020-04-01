@@ -17,28 +17,44 @@ def _remove_delimiter_definition(input_string):
 def _get_delimiter(input_string):
     return input_string[2]
 
-def format_float_if_is_int(number):
-    number = float(number)
-    if int(number) == number:
-        return int(number)
-    return number
+def format_string_into_float_or_int(string_number):
+    float_number = float(string_number)
+    int_number = int(float_number)
+    if int_number == float_number:
+        return int_number
+    return float_number
 
 def _create_list(input_string):
     separator, number_string = _delimiter_detector(input_string)
     number_string = number_string.replace("\n", separator)
     if number_string == "":
         return []
-    return [format_float_if_is_int(number) for number in number_string.split(separator)]
+    return [format_string_into_float_or_int(number) for number in number_string.split(separator)]
 
 def calculator(input_string):
     result = _create_list(input_string)
-    if any([number < 0 for number in result]):
-        negative_number_list = [str(number) for number in result if number < 0]
-        raise InvalidNegativeNumberException("Negative numbers: {0}".format(",".join(negative_number_list)))
+    negative_numbers = _extract_negative_numbers(result)
+    if negative_numbers:
+        message = _generate_complementary_error_message_list(negative_numbers)
+        raise InvalidNegativeNumberException("Negative numbers: {0}".format(message))
     if not result:
         return "0"
     return str(sum(result))
 
+def _raise_error_when_has_negative_numbers(negative_numbers):
+    if negative_numbers:
+        message = _generate_complementary_error_message_list(negative_numbers)
+        raise InvalidNegativeNumberException("Negative numbers: {0}".format(message))
+
+def _generate_complementary_error_message_list(negative_numbers):
+    negative_number_list = [str(number) for number in negative_numbers]
+    return ",".join(negative_number_list)
+
+def _extract_negative_numbers(numbers):
+    return [number for number in numbers if number < 0]
+
+def _has_a_negative_number(number_list):
+    return any([number < 0 for number in number_list])
 
 class InvalidNegativeNumberException(Exception):
     def __init__(self, message):
