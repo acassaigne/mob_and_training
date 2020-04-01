@@ -22,6 +22,10 @@ def calculator(input_string):
     return str(sum(result))
 
 
+class InvalidNegativeNumberException(Exception):
+    pass
+
+
 class TestStringMethods(unittest.TestCase):
 
     def test_calculator_empty_string_should_return_0(self):
@@ -41,3 +45,6 @@ class TestStringMethods(unittest.TestCase):
 
     def test_delimiter_detector_string_semicolon_1_2_should_return_3(self):
         self.assertEqual("3", calculator("//;\n1;2"))
+
+    def test_calculator_negative_number_should_raise_exception(self):
+        self.assertRaises(InvalidNegativeNumberException, calculator("-1"))
