@@ -4,7 +4,7 @@ def _delimiter_detector(input_string):
     delimiter = ","
     string_numbers = input_string
     if _has_define_delimiter(input_string):
-        delimiter = input_string[2]
+        delimiter = _get_delimiter(input_string)
         string_numbers = _remove_delimiter_definition(input_string)
     return (delimiter, string_numbers)
 
@@ -14,14 +14,21 @@ def _has_define_delimiter(input_string):
 def _remove_delimiter_definition(input_string):
     return input_string[4:]
 
-def _get_delimiter()
+def _get_delimiter(input_string):
+    return input_string[2]
+
+def format_float_if_is_int(number):
+    number = float(number)
+    if int(number) == number:
+        return int(number)
+    return number
 
 def _create_list(input_string):
     separator, number_string = _delimiter_detector(input_string)
-    number_string = number_string.replace("\n",separator)
+    number_string = number_string.replace("\n", separator)
     if number_string == "":
         return []
-    return [int(number) for number in number_string.split(separator)]
+    return [format_float_if_is_int(number) for number in number_string.split(separator)]
 
 def calculator(input_string):
     result = _create_list(input_string)
@@ -34,8 +41,8 @@ def calculator(input_string):
 
 
 class InvalidNegativeNumberException(Exception):
-    def __init__(self,message):
-        self.message=message
+    def __init__(self, message):
+        self.message = message
 
 
 class TestStringMethods(unittest.TestCase):
@@ -64,7 +71,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_calculator_negative_input_should_return_negative_numbers(self):
         try:
-            calculator("-1,2")
+            calculator("-1.1,2")
         except InvalidNegativeNumberException as e:
-            self.assertEqual(e.message, "Negative numbers: -1")
+            self.assertEqual(e.message, "Negative numbers: -1.1")
 
