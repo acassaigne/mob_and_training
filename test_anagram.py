@@ -42,18 +42,38 @@ class AnagramRufin:
     def place_letter_at_all_positions_in_word_list(self, letter, words):
         result = []
         for word in words:
-            new_word = self.generate_words(letter, word)
-            result = result + new_word
+            generator = WordsGenerators(letter, word)
+            new_words = generator.generate_words()
+            result = result + new_words
         return result
 
-    def generate_words(self, letter, word):
+
+class WordsGenerators:
+
+    def __init__(self, letter, word):
+        self.word = word
+        self.letter = letter
+
+    def generate_words(self):
         result = []
-        for i in range(len(word)+1):
-             result.append(self.generate_new_word(i, letter, word))
+        for i in range(len(self.word)+1):
+            result.append(self.generate_new_word(i))
         return result
 
-    def generate_new_word(self, position_number, letter, word):
-        return word[0:position_number] + letter + word[position_number:len(word)]
+    def generate_new_word(self, position_number):
+        return self.word[0:position_number] + self.letter + self.word[position_number:len(self.word)]
+
+class AnagramMax:
+
+    def compute(self, input_string):
+        if len(input_string) == 1:
+            return [input_string]
+        else:
+            for letter in input_string:
+                s
+    def other_compute(self, left, rest_of_word):
+        for letter
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -94,3 +114,13 @@ class TestStringMethods(unittest.TestCase):
         anagram = AnagramRufin()
         result = anagram.compute("aa")
         self.assertEqual(["aa"], result)
+
+    def test_max_one_letter(self):
+        anagram = AnagramMax()
+        result = anagram.compute("a")
+        self.assertEqual(["a"], result)
+
+    def test_max_two_letters(self):
+        anagram = AnagramMax()
+        result = anagram.compute("ab")
+        self.assertEqual(["ab", "ba"], result)
