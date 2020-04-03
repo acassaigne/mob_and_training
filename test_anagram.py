@@ -69,10 +69,10 @@ class AnagramMax:
         if len(input_string) == 1:
             return [input_string]
         else:
-            for letter in input_string:
-                s
+            pass
+
     def other_compute(self, left, rest_of_word):
-        for letter
+        return [(rest_of_word,"")]
 
 
 class TestStringMethods(unittest.TestCase):
@@ -120,7 +120,18 @@ class TestStringMethods(unittest.TestCase):
         result = anagram.compute("a")
         self.assertEqual(["a"], result)
 
+    @unittest.skip("Wait test other compute")
     def test_max_two_letters(self):
         anagram = AnagramMax()
         result = anagram.compute("ab")
         self.assertEqual(["ab", "ba"], result)
+
+    def test_max_other_compute_empty_a(self):
+        anagram = AnagramMax()
+        result = anagram.other_compute("","a")
+        self.assertEqual([("a","")], result)
+
+    def test_max_other_compute_a_b(self):
+        anagram = AnagramMax()
+        result = anagram.other_compute("","ab")
+        self.assertEqual([("a","b"),("b","a")], result)
