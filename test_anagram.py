@@ -31,14 +31,22 @@ class AnagramRufin:
             return [input_string]
         else:
             first_letter = input_string[0]
-            other_anagrams = self.compute(input_string[1:])
-            result = []
-            for anagram in other_anagrams:
-                new_anagram = self.mixt(first_letter, anagram)
-                result = result + new_anagram
-            return sorted(list(set(result)))
+            rest_of_string = input_string[1:]
+            anagrams_for_rest_of_string = self.compute(rest_of_string)
+            result = self.place_letter_at_all_positions_in_word_list(first_letter, anagrams_for_rest_of_string)
+            return sorted(self.remove_duplicate_words(result))
 
-    def mixt(self, letter, word):
+    def remove_duplicate_words(self, word_list):
+        return list(set(word_list))
+
+    def place_letter_at_all_positions_in_word_list(self, letter, words):
+        result = []
+        for word in words:
+            new_word = self.generate_words(letter, word)
+            result = result + new_word
+        return result
+
+    def generate_words(self, letter, word):
         result = []
         for i in range(len(word)+1):
              result.append(self.generate_new_word(i, letter, word))
