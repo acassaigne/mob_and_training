@@ -74,12 +74,14 @@ class AnagramMax:
     def other_compute(self, left, rest_of_word):
         if len(rest_of_word) == 1:
             return [(left + rest_of_word,"")]
-        for i in len(rest_of_word):
-            self.other_compute(left+rest_of_word[i], self.remove_ith_letter(i, rest_of_word))
-        return [(rest_of_word,"")]
+        result = []
+        for i in range(len(rest_of_word)):
+            other_tuples = self.other_compute(left+rest_of_word[i], self.remove_ith_letter(i, rest_of_word))
+            result = result + other_tuples
+        return result
 
-    def remove_ith_letter(self, i, rest_of_word):
-        return rest_of_word
+    def remove_ith_letter(self, i, word):
+        return word[0:i] + word[i + 1:]
 
 class TestStringMethods(unittest.TestCase):
 
@@ -126,7 +128,6 @@ class TestStringMethods(unittest.TestCase):
         result = anagram.compute("a")
         self.assertEqual(["a"], result)
 
-    @unittest.skip("Wait test other compute")
     def test_max_two_letters(self):
         anagram = AnagramMax()
         result = anagram.compute("ab")
@@ -137,7 +138,6 @@ class TestStringMethods(unittest.TestCase):
         result = anagram.other_compute("","a")
         self.assertEqual([("a","")], result)
 
-    @unittest.skip("Wait test ith letter")
     def test_max_other_compute_a_b(self):
         anagram = AnagramMax()
         result = anagram.other_compute("","ab")
@@ -145,5 +145,5 @@ class TestStringMethods(unittest.TestCase):
 
     def test_max_ith_letter(self):
         anagram = AnagramMax()
-        result = anagram.remove_ith_letter(0,"ab")
+        result = anagram.remove_ith_letter(0, "ab")
         self.assertEqual("b", result)
