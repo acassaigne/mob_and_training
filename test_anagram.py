@@ -45,7 +45,7 @@ class AnagramRufin:
         return result
 
     def generate_new_word(self, position_number, letter, word):
-        return word[0:position_number] + letter + word[position_number, -1]
+        return word[0:position_number+1] + letter + word[position_number+1:-1]
 
 class TestStringMethods(unittest.TestCase):
 
@@ -76,3 +76,6 @@ class TestStringMethods(unittest.TestCase):
         anagram = AnagramRufin()
         result = anagram.compute("ab")
         self.assertEqual(["ab", "ba"], result)
+
+    def test_g(self):
+        self.assertEqual("ab")
