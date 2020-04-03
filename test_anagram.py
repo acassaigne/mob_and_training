@@ -24,21 +24,44 @@ class Anagram:
         return result
 
 
+class AnagramRufin:
+
+    def compute(self, input_string):
+        if len(input_string) == 1:
+            return [input_string]
+        else:
+            first_letter = input_string[0]
+            for i in range(len(input_string[1:])):
+
+    def mixt(self, letter, other_anagram):
+        for 
+
 class TestStringMethods(unittest.TestCase):
 
+    @unittest.skip("first")
     def test_from_string_a_should_return_list_with_a(self):
         anagram = Anagram()
         result = anagram.compute("a")
         self.assertEqual(["a"], result)
 
+    @unittest.skip("wait 2 letters")
     def test_from_string_ab_should_return_list_with_ab_and_ba(self):
         anagram = Anagram()
         result = anagram.compute("ab")
         self.assertEqual(["ab","ba"], result)
 
+    @unittest.skip("wait 3")
     def test_from_string_abc_should_return_sorted_all_anagrams(self):
         anagram = Anagram()
         result = anagram.compute("abc")
         self.assertEqual(sorted(["abc","acb","bac","bca","cab","cba"]), result)
 
-    def test_from_string_abcd_should_return_sorted_all_anagrams(self):
+    def test_r(self):
+        anagram = AnagramRufin()
+        result = anagram.compute("a")
+        self.assertEqual(["a"], result)
+
+    def test_r(self):
+        anagram = AnagramRufin()
+        result = anagram.compute("ab")
+        self.assertEqual(["ab", "ba"], result)
