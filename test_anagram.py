@@ -31,13 +31,18 @@ class AnagramRufin:
             return [input_string]
         else:
             first_letter = input_string[0]
-            for i in range(len(input_string[1:])):
-                self.compute(first_letter,)
+            other_anagrams = self.compute(input_string[1:])
+            result = []
+            for anagram in other_anagrams:
+                new_anagram = self.mixt(first_letter, anagram)
+                result = result + new_anagram
+            return result
 
-    def mixt(self, letter, other_anagrams):
-        for word in other_anagrams:
-            for i in range(len(word)+1):
-                self.generate_new_word(i, letter, word)
+    def mixt(self, letter, word):
+        result = []
+        for i in range(len(word)+1):
+             result.append(self.generate_new_word(i, letter, word))
+        return result
 
     def generate_new_word(self, position_number, letter, word):
         return word[0:position_number] + letter + word[position_number, -1]
