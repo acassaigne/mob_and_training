@@ -70,7 +70,7 @@ class AnagramMax:
         result = self.generate_sub_tuples("", input_string)
         return self.remove_duplicate_words(result)
 
-    #TODO : Rename this function
+    # TODO : Rename this function
     def generate_sub_tuples(self, left, rest_of_word):
         if len(rest_of_word) == 1:
             return [left + rest_of_word]
