@@ -32,9 +32,15 @@ class AnagramRufin:
         else:
             first_letter = input_string[0]
             for i in range(len(input_string[1:])):
+                self.compute(first_letter,)
 
-    def mixt(self, letter, other_anagram):
-        for 
+    def mixt(self, letter, other_anagrams):
+        for word in other_anagrams:
+            for i in range(len(word)+1):
+                self.generate_new_word(i, letter, word)
+
+    def generate_new_word(self, position_number, letter, word):
+        return word[0:position_number] + letter + word[position_number, -1]
 
 class TestStringMethods(unittest.TestCase):
 
