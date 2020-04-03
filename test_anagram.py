@@ -63,25 +63,28 @@ class WordsGenerators:
     def generate_new_word(self, position_number):
         return self.word[0:position_number] + self.letter + self.word[position_number:len(self.word)]
 
+
 class AnagramMax:
 
     def compute(self, input_string):
-        if len(input_string) == 1:
-            return [input_string]
-        else:
-            pass
+        result = self.generate_sub_tuples("", input_string)
+        return self.remove_duplicate_words(result)
 
-    def other_compute(self, left, rest_of_word):
+    #TODO : Rename this function
+    def generate_sub_tuples(self, left, rest_of_word):
         if len(rest_of_word) == 1:
-            return [(left + rest_of_word,"")]
+            return [left + rest_of_word]
         result = []
         for i in range(len(rest_of_word)):
-            other_tuples = self.other_compute(left+rest_of_word[i], self.remove_ith_letter(i, rest_of_word))
+            other_tuples = self.generate_sub_tuples(left + rest_of_word[i], self.remove_ith_letter(i, rest_of_word))
             result = result + other_tuples
         return result
 
     def remove_ith_letter(self, i, word):
         return word[0:i] + word[i + 1:]
+
+    def remove_duplicate_words(self, word_list):
+        return list(set(word_list))
 
 class TestStringMethods(unittest.TestCase):
 
@@ -131,19 +134,14 @@ class TestStringMethods(unittest.TestCase):
     def test_max_two_letters(self):
         anagram = AnagramMax()
         result = anagram.compute("ab")
-        self.assertEqual(["ab", "ba"], result)
-
-    def test_max_other_compute_empty_a(self):
-        anagram = AnagramMax()
-        result = anagram.other_compute("","a")
-        self.assertEqual([("a","")], result)
-
-    def test_max_other_compute_a_b(self):
-        anagram = AnagramMax()
-        result = anagram.other_compute("","ab")
-        self.assertEqual([("ab",""),("ba","")], result)
+        self.assertEqual(sorted(["ab", "ba"]), sorted(result))
 
     def test_max_ith_letter(self):
         anagram = AnagramMax()
         result = anagram.remove_ith_letter(0, "ab")
         self.assertEqual("b", result)
+
+    def test_max_three_letters(self):
+        anagram = AnagramMax()
+        result = anagram.compute("bca")
+        self.assertEqual(sorted(["abc", "acb","bac","bca","cab","cba"]), sorted(result))
