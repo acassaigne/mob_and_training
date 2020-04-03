@@ -36,7 +36,7 @@ class AnagramRufin:
             for anagram in other_anagrams:
                 new_anagram = self.mixt(first_letter, anagram)
                 result = result + new_anagram
-            return result
+            return sorted(list(set(result)))
 
     def mixt(self, letter, word):
         result = []
@@ -45,7 +45,7 @@ class AnagramRufin:
         return result
 
     def generate_new_word(self, position_number, letter, word):
-        return word[0:position_number+1] + letter + word[position_number+1:-1]
+        return word[0:position_number] + letter + word[position_number:len(word)]
 
 class TestStringMethods(unittest.TestCase):
 
@@ -67,15 +67,22 @@ class TestStringMethods(unittest.TestCase):
         result = anagram.compute("abc")
         self.assertEqual(sorted(["abc","acb","bac","bca","cab","cba"]), result)
 
-    def test_r(self):
+    def test_rufin_one_letter(self):
         anagram = AnagramRufin()
         result = anagram.compute("a")
         self.assertEqual(["a"], result)
 
-    def test_r(self):
+    def test_rufin_two_letters(self):
         anagram = AnagramRufin()
         result = anagram.compute("ab")
         self.assertEqual(["ab", "ba"], result)
 
-    def test_g(self):
-        self.assertEqual("ab")
+    def test_rufin_three_letters(self):
+        anagram = AnagramRufin()
+        result = anagram.compute("abc")
+        self.assertEqual(["abc", "acb","bac","bca","cab","cba"], result)
+
+    def test_rufin_with_duplicate_letters(self):
+        anagram = AnagramRufin()
+        result = anagram.compute("aa")
+        self.assertEqual(["aa"], result)
