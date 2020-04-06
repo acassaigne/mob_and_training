@@ -1,26 +1,32 @@
 import unittest
 
 def convert_to_power_of_ten(number):
-    numbers_in_char = list(str(number))
+    numbers_in_char = list(str(number))[::-1]
     return [int(char) for char in numbers_in_char]
 
+def generate_roman_number_for_power_of_ten(number, start_segment, half_segment, next_segment)
+
 def convert_to_roman(number):
-    dictionary_ten_of_power_to_roman = { 1 : ('I', 'V', 'X') }
-    start_segment = "I"
-    half_segment = "V"
-    next_segment = 'X'
+    dictionary_start_segment = { 1 : 'I', 2 : 'X', 3 : 'C'}
+    dictionary_half_segment = { 1 : 'V', 2 : 'L', 3 : 'D'}
     all_digits = convert_to_power_of_ten(number)
-    number = all_digits[-1]
-    if number == 0:
-        return next_segment
-    if number < 4:
-       return number * start_segment
-    if number == 4:
-        return start_segment + half_segment
-    if 5 <= number <= 8:
-        return half_segment + (number % 5) * start_segment
-    if number == 9:
-        return start_segment + next_segment
+    result = ''
+    for i in range(len(all_digits)):
+        start_segment = dictionary_start_segment[i+1]
+        half_segment = dictionary_half_segment[i+1]
+        next_segment = dictionary_start_segment[i+2]
+        number = all_digits[i]
+        if number == 0:
+            result += ''
+        if number < 4:
+           result += number * start_segment
+        if number == 4:
+            result += start_segment + half_segment
+        if 5 <= number <= 8:
+            result += half_segment + (number % 5) * start_segment
+        if number == 9:
+            result += start_segment + next_segment
+    return result
 
 
 class TestRomanNumber(unittest.TestCase):
