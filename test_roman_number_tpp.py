@@ -6,7 +6,7 @@ def convert_to_roman(number):
     if digit < 4:
         return result + digit * 'I'
     if digit == 4:
-        return result + 'I'+'V'
+        return result + 'I' + 'V'
     if digit == 9:
         return result + 'I' + 'X'
     if digit >= 5:
