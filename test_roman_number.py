@@ -4,7 +4,12 @@ import unittest
 def convert_to_roman(number):
     if number < 4:
        return number * "I"
-    return "IV"
+    if number == 4:
+        return "IV"
+    if number >= 5 and number <=8:
+        return "V" + (number % 5) * "I"
+    return 'IX'
+
 
 class TestRomanNumber(unittest.TestCase):
 
@@ -22,3 +27,9 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_5_to_V(self):
         self.assertEqual("V", convert_to_roman(5))
+
+    def test_convert_6_to_VI(self):
+        self.assertEqual("VI", convert_to_roman(6))
+
+    def test_convert_9_to_IX(self):
+        self.assertEqual("IX", convert_to_roman(9))
