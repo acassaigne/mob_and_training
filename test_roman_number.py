@@ -5,19 +5,19 @@ def convert_to_power_of_ten(number):
     return [int(char) for char in numbers_in_char]
 
 def generate_roman_number_for_power_of_ten(digit, power_of_ten):
-    start_segment = get_roman_symbol_for_start_segment(power_of_ten)
-    half_segment = get_roman_symbol_for_half_segment(power_of_ten)
-    next_segment = get_roman_symbol_for_start_segment(power_of_ten + 1)
+    symbol_unit = get_roman_symbol_for_start_segment(power_of_ten)
+    symbol_half_segment = get_roman_symbol_for_half_segment(power_of_ten)
+    symbol_next_segment = get_roman_symbol_for_start_segment(power_of_ten + 1)
     if digit == 0:
         result = ''
     if digit < 4:
-        result = digit * start_segment
+        result = digit * symbol_unit
     if digit == 4:
-        result = start_segment + half_segment
+        result = symbol_unit + symbol_half_segment
     if 5 <= digit <= 8:
-        result = half_segment + (digit % 5) * start_segment
+        result = symbol_half_segment + (digit % 5) * symbol_unit
     if digit == 9:
-        result = start_segment + next_segment
+        result = symbol_unit + symbol_next_segment
     return result
 
 def get_roman_symbol_for_start_segment(power_of_ten):
