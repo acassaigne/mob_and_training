@@ -2,7 +2,7 @@ import unittest
 
 def convert_to_roman(number):
     digit = number % 10
-    result = number // 10* 'X'
+    result = number // 10 * 'X'
     if digit < 4:
         return result + digit * 'I'
     if digit == 4:
@@ -10,7 +10,7 @@ def convert_to_roman(number):
     if digit == 9:
         return result + 'I' + 'X'
     if digit == 10:
-        return result + number//10 * 'X'
+        return result + number // 10 * 'X'
     if digit >= 5:
         return result + 'V' + (digit - 5) * 'I'
 
