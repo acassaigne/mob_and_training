@@ -4,28 +4,36 @@ def convert_to_power_of_ten(number):
     numbers_in_char = list(str(number))[::-1]
     return [int(char) for char in numbers_in_char]
 
-def generate_roman_number_for_power_of_ten(number, start_segment, half_segment, next_segment)
+def generate_roman_number_for_power_of_ten(digit, power_of_ten):
+    start_segment = get_roman_symbol_for_start_segment(power_of_ten)
+    half_segment = get_roman_symbol_for_half_segment(power_of_ten)
+    next_segment = get_roman_symbol_for_start_segment(power_of_ten + 1)
+    if digit == 0:
+        result = ''
+    if digit < 4:
+        result = digit * start_segment
+    if digit == 4:
+        result = start_segment + half_segment
+    if 5 <= digit <= 8:
+        result = half_segment + (digit % 5) * start_segment
+    if digit == 9:
+        result = start_segment + next_segment
+    return result
+
+def get_roman_symbol_for_start_segment(power_of_ten):
+    dictionary_start_segment = {0: 'I', 1: 'X', 2: 'C', 3 : 'M'}
+    return dictionary_start_segment[power_of_ten]
+
+def get_roman_symbol_for_half_segment(power_of_ten):
+    dictionary_half_segment = { 0 : 'V', 1 : 'L', 2 : 'D'}
+    return dictionary_half_segment[power_of_ten]
 
 def convert_to_roman(number):
-    dictionary_start_segment = { 1 : 'I', 2 : 'X', 3 : 'C'}
-    dictionary_half_segment = { 1 : 'V', 2 : 'L', 3 : 'D'}
     all_digits = convert_to_power_of_ten(number)
     result = ''
-    for i in range(len(all_digits)):
-        start_segment = dictionary_start_segment[i+1]
-        half_segment = dictionary_half_segment[i+1]
-        next_segment = dictionary_start_segment[i+2]
-        number = all_digits[i]
-        if number == 0:
-            result += ''
-        if number < 4:
-           result += number * start_segment
-        if number == 4:
-            result += start_segment + half_segment
-        if 5 <= number <= 8:
-            result += half_segment + (number % 5) * start_segment
-        if number == 9:
-            result += start_segment + next_segment
+    for power_of_ten in range(len(all_digits)):
+        digit = all_digits[power_of_ten]
+        result += generate_roman_number_for_power_of_ten(digit,power_of_ten)
     return result
 
 
