@@ -21,11 +21,11 @@ def generate_roman_number_for_power_of_ten(digit, power_of_ten):
     return result
 
 def get_roman_symbol_for_start_segment(power_of_ten):
-    dictionary_start_segment = {0: 'I', 1: 'X', 2: 'C', 3 : 'M'}
+    dictionary_start_segment = {0: 'I', 1: 'X', 2: 'C', 3: 'M', 4: 'undefined'}
     return dictionary_start_segment[power_of_ten]
 
 def get_roman_symbol_for_half_segment(power_of_ten):
-    dictionary_half_segment = { 0 : 'V', 1 : 'L', 2 : 'D'}
+    dictionary_half_segment = { 0: 'V', 1: 'L', 2: 'D', 3: 'undefined'}
     return dictionary_half_segment[power_of_ten]
 
 def convert_to_roman(number):
@@ -33,7 +33,7 @@ def convert_to_roman(number):
     result = ''
     for power_of_ten in range(len(all_digits)):
         digit = all_digits[power_of_ten]
-        result += generate_roman_number_for_power_of_ten(digit,power_of_ten)
+        result = generate_roman_number_for_power_of_ten(digit, power_of_ten) + result
     return result
 
 
@@ -62,3 +62,12 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_10_to_X(self):
         self.assertEqual("X", convert_to_roman(10))
+
+    def test_convert_3000_to_C(self):
+        self.assertEqual("MMM", convert_to_roman(3000))
+
+    def test_convert_1999_to_MCMXCIX(self):
+        self.assertEqual("MCMXCIX", convert_to_roman(1999))
+
+    def test_convert_19_to_MCMXCIX(self):
+        self.assertEqual("XIX", convert_to_roman(19))
