@@ -1,11 +1,18 @@
 import unittest
 
-
+def convert_to_power_of_ten(number):
+    numbers_in_char = list(str(number))
+    return [int(char) for char in numbers_in_char]
 
 def convert_to_roman(number):
+    dictionary_ten_of_power_to_roman = { 1 : ('I', 'V', 'X') }
     start_segment = "I"
     half_segment = "V"
     next_segment = 'X'
+    all_digits = convert_to_power_of_ten(number)
+    number = all_digits[-1]
+    if number == 0:
+        return next_segment
     if number < 4:
        return number * start_segment
     if number == 4:
@@ -14,7 +21,6 @@ def convert_to_roman(number):
         return half_segment + (number % 5) * start_segment
     if number == 9:
         return start_segment + next_segment
-    return next_segment
 
 
 class TestRomanNumber(unittest.TestCase):
