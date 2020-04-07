@@ -3,13 +3,14 @@ import unittest
 def convert_to_roman(number):
     power_of_ten = len(str(number)) - 1
     digit = number % 10
-    rest = number % pow(10, power_of_ten)
+    #rest = number % pow(10, power_of_ten)
     unit_list = ['I', 'X', 'C']
     five_list = ['V', 'L']
     unit = unit_list[0]
     five = five_list[0]
     ten = unit_list[1]
     fifty = five_list[1]
+    hundred = unit_list[2]
     if number <= 39:
         result = number // 10 * ten
         if digit < 4:
@@ -25,6 +26,8 @@ def convert_to_roman(number):
         return result
     if number < 90:
         return fifty + convert_to_roman(number - 50)
+    if number < 100:
+        return ten + hundred + convert_to_roman(number - 90)
     else:
         return "X" + "C"
 
@@ -72,3 +75,6 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_90_to_XC(self):
         self.assertEqual("XC", convert_to_roman(90))
+
+    def test_convert_92_to_XCII(self):
+        self.assertEqual("XCII", convert_to_roman(92))
