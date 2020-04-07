@@ -1,16 +1,24 @@
 import unittest
 
 def convert_to_roman(number):
+    unit = 'I'
+    five = 'V'
+    ten = 'X'
+    fifty = 'L'
     digit = number % 10
-    result = number // 10 * 'X'
-    if digit < 4:
-        return result + digit * 'I'
-    if digit == 4:
-        return result + 'I' + 'V'
-    if digit == 9:
-        return result + 'I' + 'X'
-    if digit >= 5:
-        return result + 'V' + (digit - 5) * 'I'
+
+    if number <= 39:
+        result = number // 10 * ten
+        if digit < 4:
+            return result + digit * unit
+        if digit == 4:
+            return result + unit + five
+        if digit == 9:
+            return result + unit + ten
+        if digit >= 5:
+            return result + five + (digit - 5) * unit
+    else:
+        return ten + fifty +
 
 class TestRomanNumber(unittest.TestCase):
 
@@ -40,3 +48,9 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_39_to_XXXIX(self):
         self.assertEqual("XXXIX", convert_to_roman(39))
+
+    def test_convert_40_to_XL(self):
+        self.assertEqual("XL", convert_to_roman(40))
+
+    def test_convert_41_to_XLI(self):
+        self.assertEqual("XLI", convert_to_roman(41))
