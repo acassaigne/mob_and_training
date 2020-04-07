@@ -32,16 +32,20 @@ def convert_to_roman(number):
         return "X" + "C"
 
 
-def compute_power_hundred(number, power_of_hundred):
+def compute_power_hundred(number):
+    power_of_hundred = len(str(number)) -1 // 2
     list_of_units = ['I', 'X', 'C', 'M', 'undefined']
     list_of_fives = ['V', 'L', 'D', 'undefined']
     unit = list_of_units[2 * power_of_hundred]
     five = list_of_fives[2 * power_of_hundred]
     ten = list_of_units[2 * power_of_hundred + 1]
     fifty = list_of_fives[2 * power_of_hundred + 1]
+    hundred = list_of_units[2 * power_of_hundred + 2]
+    part_of_number = number // pow(100, power_of_hundred)
+    digit = part_of_number % 10
 
-    if number <= 39:
-        result = number // 10 * ten
+    if part_of_number <= 39:
+        result = part_of_number // 10 * ten
         if digit < 4:
             return result + digit * unit
         if digit == 4:
@@ -50,13 +54,13 @@ def compute_power_hundred(number, power_of_hundred):
             return result + unit + ten
         if digit >= 5:
             return result + five + (digit - 5) * unit
-    if number < 50:
-        result = ten + fifty + convert_to_roman(number - 40)
+    if part_of_number < 50:
+        result = ten + fifty + convert_to_roman(part_of_number - 40)
         return result
-    if number < 90:
-        return fifty + convert_to_roman(number - 50)
-    if number < 100:
-        return ten + hundred + convert_to_roman(number - 90)
+    if part_of_number < 90:
+        return fifty + convert_to_roman(part_of_number - 50)
+    if part_of_number < 100:
+        return ten + hundred + convert_to_roman(part_of_number - 90)
     else:
         return "X" + "C"
 
