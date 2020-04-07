@@ -6,7 +6,6 @@ def convert_to_roman(number):
     ten = 'X'
     fifty = 'L'
     digit = number % 10
-
     if number <= 39:
         result = number // 10 * ten
         if digit < 4:
@@ -17,11 +16,14 @@ def convert_to_roman(number):
             return result + unit + ten
         if digit >= 5:
             return result + five + (digit - 5) * unit
-    if number < 50 :
+    if number < 50:
         result = ten + fifty + convert_to_roman(number - 40)
         return result
-    else :
-        return fifty
+    if number < 90:
+        return fifty + convert_to_roman(number - 50)
+    else:
+        return "X" + "C"
+
 
 class TestRomanNumber(unittest.TestCase):
 
@@ -64,3 +66,5 @@ class TestRomanNumber(unittest.TestCase):
     def test_convert_50_to_L(self):
         self.assertEqual("L", convert_to_roman(50))
 
+    def test_convert_90_to_XC(self):
+        self.assertEqual("XC", convert_to_roman(90))
