@@ -11,27 +11,12 @@ def convert_to_roman(number):
     ten = unit_list[1]
     fifty = five_list[1]
     hundred = unit_list[2]
-    power_of_hundred = (len(str(number)) - 1 )// 2
-    return compute_power_hundred(number, power_of_hundred)
-    if number <= 39:
-        result = number // 10 * ten
-        if digit < 4:
-            return result + digit * unit
-        if digit == 4:
-            return result + unit + five
-        if digit == 9:
-            return result + unit + ten
-        if digit >= 5:
-            return result + five + (digit - 5) * unit
-    if number < 50:
-        result = ten + fifty + convert_to_roman(number - 40)
-        return result
-    if number < 90:
-        return fifty + convert_to_roman(number - 50)
-    if number < 100:
-        return ten + hundred + convert_to_roman(number - 90)
-    else:
-        return "X" + "C"
+    power_of_hundred = (len(str(number)) - 1) // 2
+    result = ""
+    for power in range(power_of_hundred + 1, 0, -1):
+        part_of_number = number // pow(100, power)
+        result += compute_power_hundred(part_of_number, power)
+    return result
 
 
 def compute_power_hundred(part_of_number, power_of_hundred):
@@ -111,3 +96,6 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_92_to_XCII(self):
         self.assertEqual("XCII", convert_to_roman(92))
+
+    def test_convert_100_to_C(self):
+        self.assertEqual("C", convert_to_roman(100))
