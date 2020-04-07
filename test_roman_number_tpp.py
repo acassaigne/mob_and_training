@@ -1,4 +1,4 @@
-import unittest
+ import unittest
 
 def convert_to_roman(number):
     power_of_ten = len(str(number)) - 1
@@ -11,6 +11,35 @@ def convert_to_roman(number):
     ten = unit_list[1]
     fifty = five_list[1]
     hundred = unit_list[2]
+    if number <= 39:
+        result = number // 10 * ten
+        if digit < 4:
+            return result + digit * unit
+        if digit == 4:
+            return result + unit + five
+        if digit == 9:
+            return result + unit + ten
+        if digit >= 5:
+            return result + five + (digit - 5) * unit
+    if number < 50:
+        result = ten + fifty + convert_to_roman(number - 40)
+        return result
+    if number < 90:
+        return fifty + convert_to_roman(number - 50)
+    if number < 100:
+        return ten + hundred + convert_to_roman(number - 90)
+    else:
+        return "X" + "C"
+
+
+def compute_power_hundred(number, power_of_hundred):
+    list_of_units = ['I', 'X', 'C', 'M', 'undefined']
+    list_of_fives = ['V', 'L', 'D', 'undefined']
+    unit = list_of_units[2 * power_of_hundred]
+    five = list_of_fives[2 * power_of_hundred]
+    ten = list_of_units[2 * power_of_hundred + 1]
+    fifty = list_of_fives[2 * power_of_hundred + 1]
+
     if number <= 39:
         result = number // 10 * ten
         if digit < 4:
