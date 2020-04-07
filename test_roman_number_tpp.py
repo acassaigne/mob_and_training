@@ -17,8 +17,11 @@ def convert_to_roman(number):
             return result + unit + ten
         if digit >= 5:
             return result + five + (digit - 5) * unit
-    else:
-        return ten + fifty +
+    if number < 50 :
+        result = ten + fifty + convert_to_roman(number - 40)
+        return result
+    else :
+        return fifty
 
 class TestRomanNumber(unittest.TestCase):
 
@@ -54,3 +57,10 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_41_to_XLI(self):
         self.assertEqual("XLI", convert_to_roman(41))
+
+    def test_convert_44_to_XLI(self):
+        self.assertEqual("XLIV", convert_to_roman(44))
+
+    def test_convert_50_to_L(self):
+        self.assertEqual("L", convert_to_roman(50))
+
