@@ -1,11 +1,15 @@
 import unittest
 
 def convert_to_roman(number):
-    unit = 'I'
-    five = 'V'
-    ten = 'X'
-    fifty = 'L'
+    power_of_ten = len(str(number)) - 1
     digit = number % 10
+    rest = number % pow(10, power_of_ten)
+    unit_list = ['I', 'X', 'C']
+    five_list = ['V', 'L']
+    unit = unit_list[0]
+    five = five_list[0]
+    ten = unit_list[1]
+    fifty = five_list[1]
     if number <= 39:
         result = number // 10 * ten
         if digit < 4:
