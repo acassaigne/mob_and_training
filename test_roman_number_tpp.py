@@ -13,9 +13,9 @@ def convert_to_roman(number):
     hundred = unit_list[2]
     power_of_hundred = (len(str(number)) - 1) // 2
     result = ""
-    for power in range(power_of_hundred + 1, 0, -1):
-        part_of_number = number // pow(100, power)
-        result += compute_power_hundred(part_of_number, power)
+    for power in range(power_of_hundred + 1):
+        part_of_number = int(str(number)[2*power:2*(power+1):-1])
+        result = compute_power_hundred(part_of_number, power) + result
     return result
 
 
@@ -47,7 +47,7 @@ def compute_power_hundred(part_of_number, power_of_hundred):
     if part_of_number < 100:
         return ten + hundred + convert_to_roman(part_of_number - 90)
     else:
-        return "X" + "C"
+        return ""
 
 
 class TestRomanNumber(unittest.TestCase):
