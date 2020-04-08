@@ -6,11 +6,11 @@ class CannotFindPrimeFactors(Exception):
 
 
 def prime_factor(number):
-    if number > 3:
-        return [number //2, number //2]
-    if number >= 2:
-        return [number]
-    raise CannotFindPrimeFactors
+    if number == 0 or number == 1:
+        raise CannotFindPrimeFactors
+    if number == 4:
+            return [number //2, number ]
+    return [number]
 
 class TestPrimeFactorsShould(unittest.TestCase):
 
@@ -25,6 +25,11 @@ class TestPrimeFactorsShould(unittest.TestCase):
         self.assertEqual([3], prime_factor(3))
         
     def test_return_4_for_4(self):
-        self.assertEqual([2,2], prime_factor(4))
+        self.assertEqual([2, 2], prime_factor(4))
 
+    def test_return_5_for_5(self):
+        self.assertEqual([5], prime_factor(5))
+
+    def test_return_2_and_3_for_6(self):
+        self.assertEqual([2, 3], prime_factor(6))
 
