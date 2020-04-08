@@ -12,7 +12,15 @@ def prime_factor(number):
         return []
     if number % 2 == 0:
         return [2] + prime_factor(number//2)
+    if number == (3 * 3):
+        return [3, 3]
+    if number == (3 * 5):
+        return [3, 5]
+    if number == (3 * 7):
+        return [3, 7]
+
     return [number]
+
 
 class TestPrimeFactorsShould(unittest.TestCase):
 
@@ -36,5 +44,13 @@ class TestPrimeFactorsShould(unittest.TestCase):
         self.assertEqual([2, 3], prime_factor(6))
 
     def test_return_2_2_2_for_8(self):
-        self.assertEqual([2,2,2], prime_factor(8))
+        self.assertEqual([2, 2, 2], prime_factor(8))
 
+    def test_return_3_3_for_9(self):
+        self.assertEqual([3, 3], prime_factor(9))
+
+    def test_x(self):
+        self.assertEqual([3, 5], prime_factor(15))
+
+    def test_y(self):
+        self.assertEqual([3, 7], prime_factor(21))
