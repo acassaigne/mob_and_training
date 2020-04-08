@@ -1,5 +1,5 @@
 import unittest
-
+import math
 
 class CannotFindPrimeFactors(Exception):
     pass
@@ -10,15 +10,9 @@ def prime_factor(number):
         raise CannotFindPrimeFactors
     if number == 1:
         return []
-    if number % 2 == 0:
-        return [2] + prime_factor(number//2)
-    if number == (3 * 3):
-        return [3, 3]
-    if number == (3 * 5):
-        return [3, 5]
-    if number == (3 * 7):
-        return [3, 7]
-
+    for i in range(2, int(math.sqrt(number))+1):
+        if number % i == 0:
+            return [i] + prime_factor(number // i)
     return [number]
 
 
@@ -49,8 +43,11 @@ class TestPrimeFactorsShould(unittest.TestCase):
     def test_return_3_3_for_9(self):
         self.assertEqual([3, 3], prime_factor(9))
 
-    def test_x(self):
+    def test_return_3_5_for_15(self):
         self.assertEqual([3, 5], prime_factor(15))
 
-    def test_y(self):
+    def test_return_3_7_for_21(self):
         self.assertEqual([3, 7], prime_factor(21))
+
+    def test_return_5_7_for_35(self):
+        self.assertEqual([5, 7], prime_factor(35))

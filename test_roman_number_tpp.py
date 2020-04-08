@@ -1,21 +1,15 @@
 import unittest
 
 def convert_to_roman(number):
-    power_of_ten = len(str(number)) - 1
-    digit = number % 10
-    #rest = number % pow(10, power_of_ten)
-    unit_list = ['I', 'X', 'C']
-    five_list = ['V', 'L']
-    unit = unit_list[0]
-    five = five_list[0]
-    ten = unit_list[1]
-    fifty = five_list[1]
-    hundred = unit_list[2]
     power_of_hundred = (len(str(number)) - 1) // 2
     result = ""
     for power in range(power_of_hundred + 1):
-        part_of_number = int(str(number)[2*power:2*(power+1):-1])
-        result = compute_power_hundred(part_of_number, power) + result
+        if len(str(number)) % 2 == 1 and power == 0:
+            part_of_number = int(str(number)[0])
+            result += compute_power_hundred(part_of_number, power_of_hundred - power)
+        else:
+            part_of_number = int(str(number)[2 * power:2 * (power + 1)])
+            result += compute_power_hundred(part_of_number, power_of_hundred - power)
     return result
 
 
@@ -27,6 +21,7 @@ def compute_power_hundred(part_of_number, power_of_hundred):
     ten = list_of_units[2 * power_of_hundred + 1]
     fifty = list_of_fives[2 * power_of_hundred + 1]
     hundred = list_of_units[2 * power_of_hundred + 2]
+
     digit = part_of_number % 10
 
     if part_of_number <= 39:
@@ -99,3 +94,6 @@ class TestRomanNumber(unittest.TestCase):
 
     def test_convert_100_to_C(self):
         self.assertEqual("C", convert_to_roman(100))
+
+    def test_convert_1987_to_MCMLXXXVII(self):
+        self.assertEqual("MCMLXXXVII", convert_to_roman(1987))
