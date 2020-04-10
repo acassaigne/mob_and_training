@@ -1,13 +1,18 @@
 import unittest
 
+def word_position(word_list, word):
+    for i in range(len(word_list)):
+        if word_list[i] == word:
+            return i
+    return None
+
 def boolean_calculator(boolean_expression):
     list_of_words = boolean_expression.split(" ")
-    if boolean_expression == "NOT TRUE AND FALSE":
-        return False
-    if boolean_expression == "NOT TRUE AND FALSE AND FALSE":
-        return False
-    if boolean_expression == "NOT TRUE AND FALSE AND FALSE AND FALSE":
-        return False
+    position_and = word_position(list_of_words, "AND")
+    if position_and:
+        start_string = " ".join(list_of_words[0:position_and])
+        end_string = " ".join(list_of_words[position_and+1:])
+        return boolean_calculator(start_string) and boolean_calculator(end_string)
     if len(list_of_words) > 1:
         if list_of_words[1] == "AND":
             return boolean_calculator(list_of_words[0]) and boolean_calculator(" ".join(list_of_words[2:]))
