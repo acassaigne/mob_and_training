@@ -1,16 +1,18 @@
 import unittest
 
 def boolean_calculator(boolean_expression):
-    list_of_words = boolean_expression.split(' ')
     if boolean_expression == "TRUE":
         return True
-    if boolean_expression[0:4] == "NOT ":
-        return not boolean_calculator(boolean_expression[4:])
-    if boolean_expression[5:8] == "AND":
-        return True and boolean_calculator(boolean_expression[9:])
+    if boolean_expression[0:3] == "NOT":
+        return not boolean_calculator(boolean_expression[3+1:])
+    if boolean_expression[len("TRUE" + " "):8] == "AND":
+        return True and boolean_calculator(boolean_expression[8+1:])
     if boolean_expression[5:7] == "OR":
-        return True or boolean_calculator(boolean_expression[8:])
+        return True or boolean_calculator(boolean_expression[7+1:])
+    if boolean_expression[6:8] == "OR":
+        return False or boolean_calculator(boolean_expression[8+1:])
     return False
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -49,5 +51,9 @@ class TestStringMethods(unittest.TestCase):
 
     def test_true_or_true_or_true_should_return_true(self):
         self.assertEqual(True, boolean_calculator("TRUE OR TRUE OR TRUE"))
+
+    def test_x(self):
+        self.assertEqual(True, boolean_calculator("FALSE OR TRUE"))
+
 
     #TODO: continuer à explorer l'axe and/not
