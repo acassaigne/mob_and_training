@@ -13,6 +13,8 @@ def boolean_calculator(boolean_expression):
         rest_boolean_expression = " ".join(list_of_terms[2:])
         if first_word == "TRUE" and second_word == "AND":
             return True and boolean_calculator(rest_boolean_expression)
+        if first_word == "FALSE" and second_word == "AND":
+            return False and boolean_calculator(rest_boolean_expression)
         if first_word == "TRUE" and second_word == "OR":
             return True or boolean_calculator(rest_boolean_expression)
         if first_word == "FALSE" and second_word == "OR":
@@ -58,8 +60,12 @@ class TestStringMethods(unittest.TestCase):
     def test_true_or_true_or_true_should_return_true(self):
         self.assertEqual(True, boolean_calculator("TRUE OR TRUE OR TRUE"))
 
-    def test_x(self):
+    def test_false_or_true_should_return_true(self):
         self.assertEqual(True, boolean_calculator("FALSE OR TRUE"))
+
+    def test_x(self):
+        self.assertEqual(True, boolean_calculator("FALSE AND TRUE OR TRUE"))
+
 
 
     #TODO: continuer à explorer l'axe and/not
