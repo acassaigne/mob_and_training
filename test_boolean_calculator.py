@@ -5,9 +5,9 @@ def boolean_calculator(boolean_expression):
     len_first_word = len(list_of_terms[0])
     if boolean_expression == "TRUE":
         return True
-    if boolean_expression[0:len("NOT")] == "NOT":
+    if list_of_terms[0] == "NOT":
         return not boolean_calculator(boolean_expression[len("NOT" + " "):])
-    if boolean_expression[len("TRUE" + " "):len("TRUE" + " " + "AND")] == "AND":
+    if list_of_terms[1] == "AND" and list_of_terms[0] == "TRUE":
         return True and boolean_calculator(boolean_expression[len("TRUE" + " " + "AND" + " "):])
     if boolean_expression[len("TRUE" + " "):len("TRUE" + " " + "OR")] == "OR":
         return True or boolean_calculator(boolean_expression[len("TRUE" + " " + "OR" + " "):])
