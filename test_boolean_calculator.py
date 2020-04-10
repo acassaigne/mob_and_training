@@ -3,16 +3,20 @@ import unittest
 def boolean_calculator(boolean_expression):
     list_of_terms = boolean_expression.split(" ")
     len_first_word = len(list_of_terms[0])
+    first_word = list_of_terms[0]
     if boolean_expression == "TRUE":
         return True
-    if list_of_terms[0] == "NOT":
-        return not boolean_calculator(boolean_expression[len("NOT" + " "):])
-    if list_of_terms[1] == "AND" and list_of_terms[0] == "TRUE":
-        return True and boolean_calculator(boolean_expression[len("TRUE" + " " + "AND" + " "):])
-    if boolean_expression[len("TRUE" + " "):len("TRUE" + " " + "OR")] == "OR":
-        return True or boolean_calculator(boolean_expression[len("TRUE" + " " + "OR" + " "):])
-    if boolean_expression[len("FALSE" + " "):len("FALSE" + " " + "OR")] == "OR":
-        return False or boolean_calculator(boolean_expression[len("FALSE" + " " + "OR" + " "):])
+    if len(list_of_terms) > 1:
+        second_word = list_of_terms[1]
+        if first_word == "NOT":
+            return not boolean_calculator(" ".join(list_of_terms[1:]))
+        rest_boolean_expression = " ".join(list_of_terms[2:])
+        if first_word == "TRUE" and second_word == "AND":
+            return True and boolean_calculator(rest_boolean_expression)
+        if first_word == "TRUE" and second_word == "OR":
+            return True or boolean_calculator(rest_boolean_expression)
+        if first_word == "FALSE" and second_word == "OR":
+            return False or boolean_calculator(rest_boolean_expression)
     return False
 
 
@@ -59,3 +63,4 @@ class TestStringMethods(unittest.TestCase):
 
 
     #TODO: continuer à explorer l'axe and/not
+    #TODO: AND > OR
