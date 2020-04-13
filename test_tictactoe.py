@@ -9,7 +9,7 @@ class WrongPlayerException(Exception):
 class Board():
     def __init__(self, size):
         self.size = size
-        self.board = size * [ size * ['.']]
+        self.board = size * [size * ['.']]
         self.next_player = 'X'
 
     def has_winner(self):
@@ -25,21 +25,26 @@ class Board():
     def _is_taken_position(self, row, column):
         return not self.board[row][column] == '.'
 
+    def _is_wrong_player(self, player):
+        return player != self.next_player
+
+    def _affect_position(self, player, row, column):
+        self.board[row][column] = player
+
+    def _switch_player(self):
+        self.next_player = 'O' if self.next_player == 'X' else 'X'
 
     def play(self, player, row, column):
-        if player != self.next_player:
+        if self._is_wrong_player(player):
             raise WrongPlayerException
         if self._is_out_of_board(row) or self._is_out_of_board(column):
             raise InvalidPlayPositionException
         if self._is_taken_position(row, column):
             raise InvalidPlayPositionException
-        self.board[row][column] = player
-        self.next_player = self.other_player()
+        self._affect_position(player, row, column)
+        self._switch_player()
 
-    def other_player(self):
-        if self.next_player == 'X':
-            return 'O'
-        return 'X'
+
 
 class TestTicTacToe(unittest.TestCase):
 
