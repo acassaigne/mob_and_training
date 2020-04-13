@@ -9,13 +9,17 @@ class WrongPlayerException(Exception):
 class Board():
     def __init__(self, size):
         self.size = size
-        self.board = size * [size * ['.']]
+        self.board = [self.generate_row() for i in range(self.size)]
         self.next_player = 'X'
+
+    def generate_row(self):
+        return self.size*['.']
 
     def has_winner(self):
         if not self.size:
             return "Nobody"
-        if len([x for x in self.board if x != '.']) == self.size:
+        empty_row = self.size * ['.']
+        if self.count_character("X") == self.size:
             return "X"
         return "Nobody"
 
@@ -44,17 +48,23 @@ class Board():
         self._affect_position(player, row, column)
         self._switch_player()
 
+    def count_character(self, character):
+        counter = 0
+        for row in range(self.size):
+            for column in range(self.size):
+                if self.board[row][column] == character:
+                    counter += 1
+        return counter
+
 
 
 class TestTicTacToe(unittest.TestCase):
 
-    @unittest.skip("a")
     def test_board_size_0_should_have_no_winner(self):
         a_board = Board(0)
         winner = a_board.has_winner()
         self.assertEqual("Nobody", winner)
 
-    @unittest.skip("a")
     def test_board_size_1_should_have_X_winner(self):
         a_board = Board(1) # Arrange
         a_board.play("X", 0, 0) # arrange
@@ -63,7 +73,14 @@ class TestTicTacToe(unittest.TestCase):
 
         self.assertEqual("X", winner) # assert
 
-    @unittest.skip("a")
+    def test_counter_should_return_1(self):
+        a_board = Board(2) # Arrange
+        a_board.play("X", 0, 0) # arrange
+
+        number = a_board.count_character('X') # act
+
+        self.assertEqual(1, number) # assert
+
     def test_board_size_2_should_have_no_winner(self):
         a_board = Board(2) # Arrange
         a_board.play("X", 0, 0) # arrange
