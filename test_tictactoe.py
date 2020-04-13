@@ -22,11 +22,17 @@ class Board():
     def play(self, player, row, column):
         if player != self.next_player:
             raise WrongPlayerException
-        if row >= self.size or column >= self.size:
+        if row < 0 or row >= self.size or column < 0 or column >= self.size:
             raise InvalidPlayPositionException
         if self.board[row][column] != '.':
             raise InvalidPlayPositionException
         self.board[row][column] = player
+        self.next_player = self.other_player()
+
+    def other_player(self):
+        if self.next_player == 'X':
+            return 'O'
+        return 'X'
 
 class TestTicTacToe(unittest.TestCase):
 
@@ -58,19 +64,30 @@ class TestTicTacToe(unittest.TestCase):
         a_board = Board(2)  # Arrange
         a_board.play("X", 0, 0)  # arrange
         with self.assertRaises(InvalidPlayPositionException): # assert
-            a_board.play("X", 0, 0)  # act/assert
+            a_board.play("O", 0, 0)  # act/assert
 
     def test_playing_on_empty_board_should_raise(self):
-        a_board = Board(0)  # Arrange
-        with self.assertRaises(InvalidPlayPositionException): # assert
-            a_board.play("X", 0, 0)  # act/assert
+        a_board = Board(0)
+        with self.assertRaises(InvalidPlayPositionException):
+            a_board.play("X", 0, 0)
 
     def test_playing_out_of_board_should_raise(self):
         a_board = Board(1)
         with self.assertRaises(InvalidPlayPositionException):
             a_board.play("X", 1, 0)
 
-    def test_should_fail_if_O_starts(self):
+    def test_should_raise_if_player_O_starts(self):
         a_board = Board(1)
         with self.assertRaises(WrongPlayerException):
             a_board.play("O", 0, 0)
+
+    def test_should_raise_when_X_play_twice(self):
+        a_board = Board(2)
+        a_board.play("X", 0, 0)
+        with self.assertRaises(WrongPlayerException):
+            a_board.play("X", 1, 0)
+
+    def test_x(self):
+        a_board = Board(1)
+        with self.assertRaises(InvalidPlayPositionException):
+            a_board.play("X", -1, 0)
