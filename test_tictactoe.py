@@ -1,9 +1,12 @@
 import unittest
 
+class InvalidPlayPositionException(Exception):
+    pass
+
 class Board():
     def __init__(self, size):
         self.size = size
-        self.board = []
+        self.board = [size*[]]
 
     def has_winner(self):
         if not self.size:
@@ -37,3 +40,9 @@ class TestTicTacToe(unittest.TestCase):
         winner = a_board.has_winner() # act
 
         self.assertEqual("Nobody", winner) # assert
+
+    def test_board_y(self):
+        a_board = Board(2)  # Arrange
+        a_board.play("X", 0, 0)  # arrange
+        with self.assertRaises(InvalidPlayPositionException): # assert
+            a_board.play("X", 0, 0)  # act/assert
