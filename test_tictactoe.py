@@ -19,12 +19,19 @@ class Board():
             return "X"
         return "Nobody"
 
+    def _is_out_of_board(self, position):
+        return position < 0 or position >= self.size
+
+    def _is_taken_position(self, row, column):
+        return not self.board[row][column] == '.'
+
+
     def play(self, player, row, column):
         if player != self.next_player:
             raise WrongPlayerException
-        if row < 0 or row >= self.size or column < 0 or column >= self.size:
+        if self._is_out_of_board(row) or self._is_out_of_board(column):
             raise InvalidPlayPositionException
-        if self.board[row][column] != '.':
+        if self._is_taken_position(row, column):
             raise InvalidPlayPositionException
         self.board[row][column] = player
         self.next_player = self.other_player()
@@ -87,7 +94,7 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(WrongPlayerException):
             a_board.play("X", 1, 0)
 
-    def test_x(self):
+    def test_should_raise_if_playing_in_negative_position(self):
         a_board = Board(1)
         with self.assertRaises(InvalidPlayPositionException):
             a_board.play("X", -1, 0)
