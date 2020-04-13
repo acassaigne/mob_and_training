@@ -18,7 +18,6 @@ class Board():
     def has_winner(self):
         if not self.size:
             return "Nobody"
-        empty_row = self.size * ['.']
         if self.count_character("X") == self.size:
             return "X"
         return "Nobody"
