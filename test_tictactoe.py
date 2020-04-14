@@ -29,11 +29,14 @@ class Board():
 
     def player_has_full_column(self):
         player = self.other_player()
-        count = 0
-        for row in self.board:
-            if row[1] == player:
-                count += 1
-        return count == self.size
+        for column in range(self.size):
+            count = 0
+            for row in self.board:
+                if row[column] == player:
+                    count += 1
+            if count == self.size:
+                return True
+        return False
 
     def _is_out_of_board(self, position):
         return position < 0 or position >= self.size
@@ -143,6 +146,7 @@ class TestTicTacToe(unittest.TestCase):
         a_board.play("O", 0, 1)
         a_board.play("X", 2, 2)
         a_board.play("O", 2, 1)
+
         result = a_board.has_winner()
 
         self.assertEqual("O", result)
@@ -154,6 +158,19 @@ class TestTicTacToe(unittest.TestCase):
         a_board.play("X", 1, 1)
         a_board.play("O", 1, 0)
         a_board.play("X", 2, 1)
+
+        result = a_board.has_winner()
+
+        self.assertEqual("X", result)
+
+    def test_X_should_win_if_column_0_full(self):
+        a_board = Board(3)
+        a_board.play("X", 0, 0)
+        a_board.play("O", 0, 1)
+        a_board.play("X", 1, 0)
+        a_board.play("O", 1, 1)
+        a_board.play("X", 2, 0)
+
         result = a_board.has_winner()
 
         self.assertEqual("X", result)
