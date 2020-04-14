@@ -59,6 +59,7 @@ class Board():
 
 class TestTicTacToe(unittest.TestCase):
 
+
     def test_board_size_0_should_have_no_winner(self):
         a_board = Board(0)
         winner = a_board.has_winner()
@@ -119,3 +120,16 @@ class TestTicTacToe(unittest.TestCase):
         a_board = Board(1)
         with self.assertRaises(InvalidPlayPositionException):
             a_board.play("X", -1, 0)
+
+    def test_x(self):
+        a_board = Board(3)
+        a_board.play("X", 0, 0)
+        a_board.play("O", 1, 1)
+        a_board.play("X", 0, 2)
+        a_board.play("O", 0, 1)
+        a_board.play("X", 2, 2)
+
+        result = a_board.has_winner()
+
+        self.assertEqual("Nobody", result)
+
