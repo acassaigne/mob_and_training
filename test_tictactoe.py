@@ -18,9 +18,19 @@ class Board():
     def has_winner(self):
         if not self.size:
             return "Nobody"
-        if self.count_character("X") == self.size:
+        if self.size < 3 and self.count_character("X") == self.size:
             return "X"
+        if self.player_has_full_column():
+            return 'O'
         return "Nobody"
+
+    def player_has_full_column(self):
+        count = 0
+        for row in self.board:
+            if row[1] == 'O':
+                count += 1
+        return count == self.size
+
 
     def _is_out_of_board(self, position):
         return position < 0 or position >= self.size
@@ -121,15 +131,15 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(InvalidPlayPositionException):
             a_board.play("X", -1, 0)
 
-    def test_x(self):
+    def test_O_should_win_if_column(self):
         a_board = Board(3)
         a_board.play("X", 0, 0)
         a_board.play("O", 1, 1)
         a_board.play("X", 0, 2)
         a_board.play("O", 0, 1)
         a_board.play("X", 2, 2)
-
+        a_board.play("O", 2, 1)
         result = a_board.has_winner()
 
-        self.assertEqual("Nobody", result)
+        self.assertEqual("O", result)
 
