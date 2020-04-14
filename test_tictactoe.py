@@ -21,17 +21,28 @@ class Board():
     def has_winner(self):
         if not self.size:
             return "Nobody"
-        if self.size < 3 and self.count_character("X") == self.size:
-            return "X"
         if self.player_has_full_column():
             return self.other_player()
         if self.player_has_full_row():
+            return self.other_player()
+        if self.player_has_full_diagonal():
             return self.other_player()
         return "Nobody"
 
     def player_has_full_row(self):
         player = self.other_player()
-        return self.board[0] == [player, player, player]
+        for i in range(self.size):
+            if self.board[i] == [player, player, player]:
+                return True
+        return False
+
+    def player_has_full_diagonal(self):
+        player = self.other_player()
+        count = 0
+        for i in range(self.size):
+            if self.board[i][i] == player:
+                count += 1
+        return count == self.size
 
     def player_has_full_column(self):
         player = self.other_player()
@@ -72,13 +83,6 @@ class Board():
         self._affect_position(player, row, column)
         self._switch_player()
 
-    def count_character(self, character):
-        counter = 0
-        for row in range(self.size):
-            for column in range(self.size):
-                if self.board[row][column] == character:
-                    counter += 1
-        return counter
 
 
 class TestTicTacToe(unittest.TestCase):
@@ -96,13 +100,6 @@ class TestTicTacToe(unittest.TestCase):
 
         self.assertEqual("X", winner)  # assert
 
-    def test_counter_should_return_1(self):
-        a_board = Board(2)  # Arrange
-        a_board.play("X", 0, 0)  # arrange
-
-        number = a_board.count_character('X')  # act
-
-        self.assertEqual(1, number)  # assert
 
     def test_board_size_2_should_have_no_winner(self):
         a_board = Board(2)  # Arrange
@@ -181,13 +178,35 @@ class TestTicTacToe(unittest.TestCase):
 
         self.assertEqual("X", result)
 
-    def test_y(self):
+    def test_X_should_win_if_row_0_full(self):
         a_board = Board(3)
         a_board.play("X", 0, 0)
         a_board.play("O", 1, 1)
         a_board.play("X", 0, 1)
         a_board.play("O", 1, 2)
         a_board.play("X", 0, 2)
+
+        result = a_board.has_winner()
+
+    def test_X_should_win_if_row_1_full(self):
+        a_board = Board(3)
+        a_board.play("X", 1, 0)
+        a_board.play("O", 0, 1)
+        a_board.play("X", 1, 1)
+        a_board.play("O", 0, 2)
+        a_board.play("X", 1, 2)
+
+        result = a_board.has_winner()
+
+        self.assertEqual("X", result)
+
+    def test_X_should_win_if_positive_diagonal_full(self):
+        a_board = Board(3)
+        a_board.play("X", 0, 0)
+        a_board.play("O", 0, 1)
+        a_board.play("X", 1, 1)
+        a_board.play("O", 0, 2)
+        a_board.play("X", 2, 2)
 
         result = a_board.has_winner()
 
