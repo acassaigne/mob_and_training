@@ -25,7 +25,13 @@ class Board():
             return "X"
         if self.player_has_full_column():
             return self.other_player()
+        if self.player_has_full_row():
+            return self.other_player()
         return "Nobody"
+
+    def player_has_full_row(self):
+        player = self.other_player()
+        return self.board[0] == [player, player, player]
 
     def player_has_full_column(self):
         player = self.other_player()
@@ -170,6 +176,18 @@ class TestTicTacToe(unittest.TestCase):
         a_board.play("X", 1, 0)
         a_board.play("O", 1, 1)
         a_board.play("X", 2, 0)
+
+        result = a_board.has_winner()
+
+        self.assertEqual("X", result)
+
+    def test_y(self):
+        a_board = Board(3)
+        a_board.play("X", 0, 0)
+        a_board.play("O", 1, 1)
+        a_board.play("X", 0, 1)
+        a_board.play("O", 1, 2)
+        a_board.play("X", 0, 2)
 
         result = a_board.has_winner()
 
