@@ -2,8 +2,8 @@ import unittest
 
 class Row:
 
-    def __init__(self, list):
-        self.values = list
+    def __init__(self, list_of_values):
+        self.values = list_of_values
 
     def __eq__(self, other):
         return self.values == other.values
