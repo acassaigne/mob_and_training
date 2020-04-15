@@ -14,6 +14,25 @@ class Row:
         self.values[position] = character
 
 
+class Board:
+
+    def __init__(self, length):
+        self.rows = length * [Row(length)]
+
+    def update(self, position, mark):
+        self.rows[position.row].update(position.column, mark)
+
+    def __eq__(self, other):
+        return self.rows == other.rows
+
+
+class Position:
+
+    def __init__(self, row, column):
+        self.row = row
+        self.column = column
+
+
 class InvalidUpdateRow(Exception):
     pass
 
@@ -47,7 +66,11 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(InvalidUpdateRow):
             a_row.update(1, MarkX())
 
-    def test_w(self):
+    def test_x(self):
         a_board = Board(2)
         a_board.update(Position(1,0), MarkX())
         self.assertNotEqual(Board(2), a_board)
+
+    def test_y(self):
+        a_board = Board(2)
+        self.assertEqual(Board(2), a_board)
