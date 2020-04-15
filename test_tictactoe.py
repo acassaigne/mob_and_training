@@ -14,6 +14,7 @@ class Board:
         self.size = size
         self.board = [self.generate_row() for i in range(self.size)]
         self.next_player = 'X'
+        self.count_plays = 0
 
     def generate_row(self):
         return self.size * ['.']
@@ -23,6 +24,8 @@ class Board:
             return "Nobody"
         if max(self.player_has_full_column(), self.player_has_full_row(), self.player_has_full_diagonal()):
             return self.other_player()
+        if self.count_plays == self.size * self.size:
+            return "Draw"
         return "Nobody"
 
     def player_has_full_row(self):
@@ -85,6 +88,7 @@ class Board:
             raise InvalidPlayPositionException
         self._affect_position(player, row, column)
         self._switch_player()
+        self.count_plays += 1
 
 
 
@@ -226,3 +230,19 @@ class TestTicTacToe(unittest.TestCase):
         result = a_board.has_winner()
 
         self.assertEqual("X", result)
+
+    def test_x(self):
+        a_board = Board(3)
+        a_board.play("X", 0, 0)
+        a_board.play("O", 0, 2)
+        a_board.play("X", 0, 1)
+        a_board.play("O", 1, 1)
+        a_board.play("X", 1, 0)
+        a_board.play("O", 2, 0)
+        a_board.play("X", 1, 2)
+        a_board.play("O", 2, 1)
+        a_board.play("X", 2, 2)
+
+        result = a_board.has_winner()
+
+        self.assertEqual("Draw", result)
