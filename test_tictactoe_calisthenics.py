@@ -2,8 +2,8 @@ import unittest
 
 class Row:
 
-    def __init__(self, list_of_values):
-        self.values = list_of_values
+    def __init__(self, length):
+        self.values = length*[MarkEmpty()]
 
     def __eq__(self, other):
         return self.values == other.values
@@ -37,23 +37,17 @@ class MarkO(Mark):
 
 class TestTicTacToe(unittest.TestCase):
 
-    def test_empty_list_should_not_equal_X(self):
-        a_row = Row([MarkX()])
-        a_empty_row = Row([MarkEmpty()])
-        self.assertNotEqual(a_empty_row, a_row)
-
-    def test_empty_should_equal_empty(self):
-        a_row = Row(['.'])
-        a_empty_row = Row(['.'])
-        self.assertEqual(a_empty_row, a_row)
-
     def test_update_row_with_X_should_equal_created_row(self):
-        mark_empty = MarkEmpty()
-        a_row = Row(['.', '.'])
-        a_row.update(1, 'X')
-        self.assertEqual(Row(['.', 'X']), a_row)
+        a_row = Row(2)
+        a_row.update(1, MarkX())
+        self.assertNotEqual(Row(2), a_row)
 
-    def test_x(self):
-        a_row = Row(['.'])
+    def test_should_raise_if_out_of_bounds(self):
+        a_row = Row(1)
         with self.assertRaises(InvalidUpdateRow):
-            a_row.update(1, 'X')
+            a_row.update(1, MarkX())
+
+    def test_w(self):
+        a_board = Board(2)
+        a_board.update(Position(1,0), MarkX())
+        self.assertNotEqual(Board(2), a_board)
