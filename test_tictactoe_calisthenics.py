@@ -19,9 +19,6 @@ class Row:
             return False
         return all([mark == self.values[0] for mark in self.values])
 
-    def count_mark_of(self, mark):
-        return len([a_mark for a_mark in self.values if a_mark == mark])
-
 class Board:
 
     def __init__(self, length):
