@@ -19,6 +19,10 @@ class Row:
             return False
         return all([mark == self.values[0] for mark in self.values])
 
+    def get_ith_mark(self, index):
+        return self.values[index]
+
+
 class Board:
 
     def __init__(self, board_size):
@@ -39,10 +43,14 @@ class Board:
         return any(list_of_flags)
 
     def has_full_column(self):
-        return any([self.is_column_full(column_index) for column_index in range(self.board_size)])
+        return any([self._is_column_full(column_index) for column_index in range(self.board_size)])
 
     def _is_column_full(self, index_column):
-        
+        first_mark = self.rows[0].get_ith_mark(index_column)
+        if first_mark == MarkEmpty():
+            return False
+        return all([row.get_ith_mark(index_column) == first_mark for row in self.rows])
+
     def __eq__(self, other):
         return self.rows == other.rows
 
@@ -121,6 +129,7 @@ class Game:
             return self._other_player()
         if self.board.has_full_column():
             return self._other_player()
+        return Nobody()
 
     def get_current_player(self):
         return self.current_player
