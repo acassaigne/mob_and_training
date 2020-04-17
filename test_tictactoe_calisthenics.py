@@ -14,6 +14,11 @@ class Row:
             raise PositionAlreadyTaken
         self.values[position] = mark
 
+    def is_full(self):
+        if self.values[0] == MarkEmpty():
+            return False
+        return all([mark == self.values[0] for mark in self.values])
+
     def count_mark_of(self, mark):
         return len([a_mark for a_mark in self.values if a_mark == mark])
 
@@ -33,7 +38,7 @@ class Board:
                or position.column < 0 or position.column >= self.length
 
     def has_full_row_with(self, mark):
-        list_of_flags = [row.count_mark_of(mark) == self.length for row in self.rows]
+        list_of_flags = [row.is_full() for row in self.rows]
         return any(list_of_flags)
 
     def __eq__(self, other):
@@ -46,11 +51,14 @@ class Position:
         self.row = row
         self.column = column
 
+
 class PositionAlreadyTaken(Exception):
     pass
 
+
 class InvalidPosition(Exception):
     pass
+
 
 class Mark:
     def __eq__(self, other):
