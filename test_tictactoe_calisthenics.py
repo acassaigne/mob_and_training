@@ -9,8 +9,8 @@ class Row:
         return self.values == other.values
 
     def put_mark_in_row(self, position, character):
-        if  position >= len(self.values) or position < 0:
-            raise InvalidUpdateRow
+        if self.values[position] != MarkEmpty():
+            raise PositionAlreadyTaken
         self.values[position] = character
 
 
@@ -35,11 +35,7 @@ class Position:
         self.row = row
         self.column = column
 
-
-class InvalidUpdateRow(Exception):
-    pass
-
-class InvalidUpdateBoard(Exception):
+class PositionAlreadyTaken(Exception):
     pass
 
 class InvalidPosition(Exception):
@@ -69,17 +65,13 @@ class TestTicTacToe(unittest.TestCase):
         a_row.put_mark_in_row(1, MarkX())
         self.assertNotEqual(Row(2), a_row)
 
-    def test_should_raise_if_out_of_bounds(self):
-        a_row = Row(1)
-        with self.assertRaises(InvalidUpdateRow):
-            a_row.put_mark_in_row(1, MarkX())
 
     def test_update_board_with_X_should_not_be_equal_to_created_board(self):
         a_board = Board(2)
         a_board.put_mark_in_board(Position(1, 0), MarkX())
         self.assertNotEqual(Board(2), a_board)
 
-    def test_x(self):
+    def test_negative_column_number_should_raise_error(self):
         a_row = Board(1)
         with self.assertRaises(InvalidPosition):
             a_row.put_mark_in_board(Position(0, -1), MarkX())
@@ -89,3 +81,8 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(InvalidPosition):
             a_row.put_mark_in_board(Position(-1, 0), MarkX())
 
+    def test_already_taken_position_should_raise(self):
+        a_row = Board(2)
+        a_row.put_mark_in_board(Position(1, 0), MarkX())
+        with self.assertRaises(PositionAlreadyTaken):
+            a_row.put_mark_in_board(Position(1, 0), MarkO())
