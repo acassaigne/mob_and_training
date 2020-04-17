@@ -33,7 +33,8 @@ class Board:
                or position.column < 0 or position.column >= self.length
 
     def has_full_row_with(self, mark):
-        return self.rows[1].count_mark_of(mark) == self.length
+        list_of_flags = [row.count_mark_of(mark) == self.length for row in self.rows]
+        return any(list_of_flags)
 
     def __eq__(self, other):
         return self.rows == other.rows
@@ -161,7 +162,7 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(PositionAlreadyTaken):
             a_game.play(initial_position)
 
-    def test_x(self):
+    def test_O_should_win_if_fills_row_number_1(self):
         a_game = Game(board_size=3)
         a_game.play(Position(0, 0))
         a_game.play(Position(1, 0))
@@ -170,6 +171,24 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(2, 2))
         a_game.play(Position(1, 2))
         self.assertEqual(PlayerO(), a_game.who_is_winner())
+
+    def test_X_should_win_if_fills_row_number_0(self):
+        a_game = Game(board_size=3)
+        a_game.play(Position(0, 0))
+        a_game.play(Position(1, 0))
+        a_game.play(Position(0, 1))
+        a_game.play(Position(1, 1))
+        a_game.play(Position(0, 2))
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
+
+    def test_X_should_win_if_fills_column_number_0(self):
+        a_game = Game(board_size=3)
+        a_game.play(Position(0, 0))
+        a_game.play(Position(0, 1))
+        a_game.play(Position(1, 0))
+        a_game.play(Position(1, 1))
+        a_game.play(Position(2, 0))
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
 
 
 
