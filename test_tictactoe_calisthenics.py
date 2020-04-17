@@ -21,9 +21,9 @@ class Row:
 
 class Board:
 
-    def __init__(self, length):
-        self.length = length
-        self.rows = [Row(self.length) for i in range(self.length)]
+    def __init__(self, board_size):
+        self.board_size = board_size
+        self.rows = [Row(self.board_size) for i in range(self.board_size)]
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
@@ -31,13 +31,18 @@ class Board:
         self.rows[position.row].put_mark_in_row(position.column, mark)
 
     def is_out_of_board(self, position):
-        return position.row < 0 or position.row >= self.length \
-               or position.column < 0 or position.column >= self.length
+        return position.row < 0 or position.row >= self.board_size \
+               or position.column < 0 or position.column >= self.board_size
 
-    def has_full_row_with(self, mark):
+    def has_full_row(self):
         list_of_flags = [row.is_full() for row in self.rows]
         return any(list_of_flags)
 
+    def has_full_column(self):
+        return any([self.is_column_full(column_index) for column_index in range(self.board_size)])
+
+    def _is_column_full(self, index_column):
+        
     def __eq__(self, other):
         return self.rows == other.rows
 
@@ -86,6 +91,9 @@ class PlayerO(Player):
 class PlayerX(Player):
     pass
 
+class Nobody(Player):
+    pass
+
 
 class Game:
 
@@ -109,13 +117,17 @@ class Game:
     def who_is_winner(self):
         if self.board_size == 1:
             return PlayerX()
-        if self.board.has_full_row_with(self._other_player()):
+        if self.board.has_full_row():
             return self._other_player()
-
+        if self.board.has_full_column():
+            return self._other_player()
 
     def get_current_player(self):
         return self.current_player
 
+#TODO
+# Nobody is winner
+# Draw
 
 class TestTicTacToe(unittest.TestCase):
 
@@ -195,5 +207,12 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(2, 0))
         self.assertEqual(PlayerX(), a_game.who_is_winner())
 
+    def test_nobody_should_be_return_when_no_satisfied_condition(self):
+        a_game = Game(board_size=3)
+        a_game.play(Position(0, 0))
+        a_game.play(Position(0, 1))
+        a_game.play(Position(1, 0))
+        a_game.play(Position(1, 1))
+        self.assertEqual(Nobody(), a_game.who_is_winner())
 
 
