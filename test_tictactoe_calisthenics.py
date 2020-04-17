@@ -21,6 +21,8 @@ class Board:
         self.rows = self.length * [Row(self.length)]
 
     def put_mark_in_board(self, position, mark):
+        if position.row < 0 or position.row >= self.length or position.column < 0 or position.column >= self.length:
+            raise InvalidPosition
         self.rows[position.row].put_mark_in_row(position.column, mark)
 
     def __eq__(self, other):
@@ -38,6 +40,9 @@ class InvalidUpdateRow(Exception):
     pass
 
 class InvalidUpdateBoard(Exception):
+    pass
+
+class InvalidPosition(Exception):
     pass
 
 class Mark:
@@ -74,12 +79,13 @@ class TestTicTacToe(unittest.TestCase):
         a_board.put_mark_in_board(Position(1, 0), MarkX())
         self.assertNotEqual(Board(2), a_board)
 
-    def test_negative_position_in_row_should_raise(self):
-        a_row = Row(1)
-        with self.assertRaises(InvalidUpdateRow):
-            a_row.put_mark_in_row(-1, MarkX())
-
     def test_x(self):
+        a_row = Board(1)
+        with self.assertRaises(InvalidPosition):
+            a_row.put_mark_in_board(Position(0, -1), MarkX())
+
+    def test_negative_row_number_should_raise_error(self):
         a_row = Board(2)
-        with self.assertRaises(InvalidUpdateRow):
+        with self.assertRaises(InvalidPosition):
             a_row.put_mark_in_board(Position(-1, 0), MarkX())
+
