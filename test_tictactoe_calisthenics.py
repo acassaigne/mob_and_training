@@ -80,15 +80,21 @@ class Game:
     def __init__(self, board_size = 3):
         self.board_size = board_size
         self.board = Board(self.board_size)
+        self.current_player = PlayerX()
 
     def play(self, position):
-        pass
+        self.switch_player()
+
+    def switch_player(self):
+        if self.current_player == PlayerO():
+            self.current_player = PlayerX()
+        self.current_player = PlayerO()
 
     def has_winner(self):
         return PlayerX()
 
     def get_current_player(self):
-        return PlayerX()
+        return self.current_player
 
 
 class TestTicTacToe(unittest.TestCase):
@@ -123,8 +129,18 @@ class TestTicTacToe(unittest.TestCase):
     def test_game_with_size_board_to_one_should_has_player_x_as_winner(self):
         a_game = Game(board_size=1)
         a_game.play(Position(0, 0))
-        self.assertEqual(a_game.has_winner(), PlayerX())
+        self.assertEqual(PlayerX(), a_game.has_winner())
 
     def test_current_player_should_be_x_at_the_stat_of_the_game(self):
         a_game = Game(board_size=2)
-        self.assertEqual(a_game.get_current_player(), PlayerX())
+        self.assertEqual(PlayerX(), a_game.get_current_player())
+
+    def test_second_player_should_be_O(self):
+        a_game = Game(board_size=2)
+        a_game.play(Position(0, 0))
+        self.assertEqual(PlayerO(), a_game.get_current_player())
+
+    def test_x(self):
+        a_game = Game(board_size=2)
+        a_game.play(Position(0, 0))
+        self.assertEqual(PlayerO(), a_game.get_current_player())
