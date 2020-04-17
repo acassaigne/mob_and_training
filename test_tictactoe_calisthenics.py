@@ -61,22 +61,35 @@ class MarkX(Mark):
 class MarkO(Mark):
     pass
 
+
 class Player:
     def __eq__(self, other):
         return type(self) == type(other)
 
+
 class PlayerO(Player):
     pass
+
+
+class PlayerX(Player):
+    pass
+
 
 class Game:
 
     def __init__(self, board_size = 3):
         self.board_size = board_size
         self.board = Board(self.board_size)
-        self.playerO = PlayerO()
+
+    def play(self, position):
+        pass
 
     def has_winner(self):
-        return self.playerO
+        return PlayerX()
+
+    def get_current_player(self):
+        return PlayerX()
+
 
 class TestTicTacToe(unittest.TestCase):
 
@@ -107,6 +120,11 @@ class TestTicTacToe(unittest.TestCase):
         with self.assertRaises(PositionAlreadyTaken):
             a_row.put_mark_in_board(Position(1, 0), MarkO())
 
-    def test_x(self):
+    def test_game_with_size_board_to_one_should_has_player_x_as_winner(self):
         a_game = Game(board_size=1)
-        self.assertEqual(a_game.has_winner(), PlayerO())
+        a_game.play(Position(0, 0))
+        self.assertEqual(a_game.has_winner(), PlayerX())
+
+    def test_current_player_should_be_x_at_the_stat_of_the_game(self):
+        a_game = Game(board_size=2)
+        self.assertEqual(a_game.get_current_player(), PlayerX())
