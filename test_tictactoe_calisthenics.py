@@ -21,9 +21,13 @@ class Board:
         self.rows = self.length * [Row(self.length)]
 
     def put_mark_in_board(self, position, mark):
-        if position.row < 0 or position.row >= self.length or position.column < 0 or position.column >= self.length:
+        if self.is_out_of_board(position):
             raise InvalidPosition
         self.rows[position.row].put_mark_in_row(position.column, mark)
+
+    def is_out_of_board(self, position):
+        return position.row < 0 or position.row >= self.length \
+               or position.column < 0 or position.column >= self.length
 
     def __eq__(self, other):
         return self.rows == other.rows
@@ -57,6 +61,22 @@ class MarkX(Mark):
 class MarkO(Mark):
     pass
 
+class Player:
+    def __eq__(self, other):
+        return type(self) == type(other)
+
+class PlayerO(Player):
+    pass
+
+class Game:
+
+    def __init__(self, board_size = 3):
+        self.board_size = board_size
+        self.board = Board(self.board_size)
+        self.playerO = PlayerO()
+
+    def has_winner(self):
+        return self.playerO
 
 class TestTicTacToe(unittest.TestCase):
 
@@ -86,3 +106,7 @@ class TestTicTacToe(unittest.TestCase):
         a_row.put_mark_in_board(Position(1, 0), MarkX())
         with self.assertRaises(PositionAlreadyTaken):
             a_row.put_mark_in_board(Position(1, 0), MarkO())
+
+    def test_x(self):
+        a_game = Game(board_size=1)
+        self.assertEqual(a_game.has_winner(), PlayerO())
