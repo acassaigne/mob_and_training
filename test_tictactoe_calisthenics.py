@@ -1,9 +1,10 @@
 import unittest
 
+
 class Row:
 
     def __init__(self, length):
-        self.values = length*[MarkEmpty()]
+        self.values = [MarkEmpty() for i in range(0, length)]
 
     def __eq__(self, other):
         return self.values == other.values
@@ -18,7 +19,7 @@ class Board:
 
     def __init__(self, length):
         self.length = length
-        self.rows = self.length * [Row(self.length)]
+        self.rows = [Row(self.length) for i in range(self.length)]
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
@@ -83,6 +84,7 @@ class Game:
         self.current_player = PlayerX()
 
     def play(self, position):
+        self.board.put_mark_in_board(position, self.current_player)
         self.switch_player()
 
     def switch_player(self):
@@ -90,7 +92,7 @@ class Game:
             self.current_player = PlayerX()
         self.current_player = PlayerO()
 
-    def has_winner(self):
+    def who_is_winner(self):
         return PlayerX()
 
     def get_current_player(self):
@@ -129,7 +131,7 @@ class TestTicTacToe(unittest.TestCase):
     def test_game_with_size_board_to_one_should_has_player_x_as_winner(self):
         a_game = Game(board_size=1)
         a_game.play(Position(0, 0))
-        self.assertEqual(PlayerX(), a_game.has_winner())
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
 
     def test_current_player_should_be_x_at_the_stat_of_the_game(self):
         a_game = Game(board_size=2)
@@ -140,7 +142,19 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(0, 0))
         self.assertEqual(PlayerO(), a_game.get_current_player())
 
+    def test_playerO_and_playerX_cant_play_in_same_position(self):
+        a_game = Game(board_size=2)
+        initial_position = Position(0, 0)
+        a_game.play(initial_position)
+        with self.assertRaises(PositionAlreadyTaken):
+            a_game.play(initial_position)
+
     def test_x(self):
         a_game = Game(board_size=2)
         a_game.play(Position(0, 0))
-        self.assertEqual(PlayerO(), a_game.get_current_player())
+        a_game.play(Position(1, 0))
+        a_game.play(Position(0, 1))
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
+
+
+
