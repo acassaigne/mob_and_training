@@ -45,12 +45,24 @@ class Rows(SetOfSetOfMarks):
     def put_mark(self, position, mark):
         self.set_of_marks[position.row].put_mark(position.column, mark)
 
+class Columns:
+
+    def __init__(self, length):
+        self.columns = [SetOfMarks(length) for i in range(length)]
+
+    def put_mark(self, position, mark):
+        self.columns[position.column].put_mark(position.row, mark)
+
+    def has_a_full_column(self):
+        list_of_flags = [a_column.is_full_of_same_player_mark() for a_column in self.columns]
+        return any(list_of_flags)
+
 class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
         self.rows = Rows(board_size)
-        self.columns = [SetOfMarks(self.board_size) for i in range(self.board_size)]
+        self.columns = Columns(board_size)
         self.positive_diagonal = SetOfMarks(self.board_size)
         self.negative_diagonal = SetOfMarks(self.board_size)
 
@@ -58,7 +70,7 @@ class Board:
         if self.is_out_of_board(position):
             raise InvalidPosition
         self.rows.put_mark(position, mark)
-        self.columns[position.column].put_mark(position.row, mark)
+        self.columns.put_mark(position, mark)
         self.put_mark_in_diagonals(mark, position)
 
     def put_mark_in_diagonals(self, mark, position):
@@ -75,8 +87,7 @@ class Board:
         return self.rows.has_set_of_mark_full_of_same_player_mark()
 
     def has_full_column(self):
-        list_of_flags = [column.is_full_of_same_player_mark() for column in self.columns]
-        return any(list_of_flags)
+        return self.columns.has_a_full_column()
 
     def has_diagonal_full(self):
         return self._is_positive_diagonal_full() or self._is_negative_diagonal_full()
