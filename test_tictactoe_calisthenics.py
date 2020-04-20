@@ -37,9 +37,12 @@ class Board:
             raise InvalidPosition
         self.rows[position.row].put_mark(position.column, mark)
         self.columns[position.column].put_mark(position.row, mark)
+        self.put_mark_in_diagonals(mark, position)
+
+    def put_mark_in_diagonals(self, mark, position):
         if position.row == position.column:
             self.positive_diagonal.put_mark(position.row, mark)
-        if position.row == (self.board_size - 1) - position.column :
+        if position.row == (self.board_size - 1) - position.column:
             self.negative_diagonal.put_mark(position.row, mark)
 
     def is_out_of_board(self, position):
