@@ -23,6 +23,9 @@ class SetOfMarks:
     def get_ith_mark(self, index):
         return self.values[index]
 
+    def has_at_least_an_empty_mark(self):
+        return any([MarkEmpty() == element for element in self.values])
+
 class Board:
 
     def __init__(self, board_size):
@@ -42,7 +45,6 @@ class Board:
         if position.row == (self.board_size - 1) - position.column :
             self.negative_diagonal.put_mark(position.row, mark)
 
-
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
                or position.column < 0 or position.column >= self.board_size
@@ -50,7 +52,6 @@ class Board:
     def has_full_row(self):
         list_of_flags = [row.is_full() for row in self.rows]
         return any(list_of_flags)
-
 
     def has_full_column(self):
         list_of_flags = [column.is_full() for column in self.columns]
@@ -61,6 +62,7 @@ class Board:
         if first_mark == MarkEmpty():
             return False
         return all([row.get_ith_mark(index_column) == first_mark for row in self.rows])
+
 
     def has_diagonal_full(self):
         return self._is_positive_diagonal_full() or self._is_negative_diagonal_full()
