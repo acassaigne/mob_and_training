@@ -2,8 +2,7 @@ import unittest
 from tictactoe_other import MarkO, MarkX, MarkEmpty, PlayerX, PlayerO, Draw, Nobody, Position, PositionAlreadyTaken, \
     InvalidPosition
 
-
-class Row:
+class SetOfMarks:
 
     def __init__(self, length):
         self.values = [MarkEmpty() for i in range(0, length)]
@@ -11,7 +10,7 @@ class Row:
     def __eq__(self, other):
         return self.values == other.values
 
-    def put_mark_in_row(self, position, mark):
+    def put_mark(self, position, mark):
         if self.values[position] != MarkEmpty():
             raise PositionAlreadyTaken
         self.values[position] = mark
@@ -25,24 +24,6 @@ class Row:
         return self.values[index]
 
 
-class Column:
-
-    def __init__(self, length):
-        self.values = [MarkEmpty() for i in range(0, length)]
-
-    def __eq__(self, other):
-        return self.values == other.values
-
-    def put_mark_in_column(self, index, mark):
-        if self.values[index] != MarkEmpty():
-            raise PositionAlreadyTaken
-        self.values[index] = mark
-
-    def is_full(self):
-        if self.values[0] == MarkEmpty():
-            return False
-        return all([mark == self.values[0] for mark in self.values])
-
 class Diagonal:
     pass
 
@@ -53,14 +34,14 @@ class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
-        self.rows = [Row(self.board_size) for i in range(self.board_size)]
-        self.columns = [Column(self.board_size) for i in range(self.board_size)]
+        self.rows = [SetOfMarks(self.board_size) for i in range(self.board_size)]
+        self.columns = [SetOfMarks(self.board_size) for i in range(self.board_size)]
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
-        self.rows[position.row].put_mark_in_row(position.column, mark)
-        self.columns[position.column].put_mark_in_column(position.row, mark)
+        self.rows[position.row].put_mark(position.column, mark)
+        self.columns[position.column].put_mark(position.row, mark)
 
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
@@ -145,9 +126,9 @@ class Game:
 class TestTicTacToe(unittest.TestCase):
 
     def test_update_row_with_X_should_not_be_equal_to_created_row(self):
-        a_row = Row(2)
-        a_row.put_mark_in_row(1, MarkX())
-        self.assertNotEqual(Row(2), a_row)
+        a_set = SetOfMarks(2)
+        a_set.put_mark(1, MarkX())
+        self.assertNotEqual(SetOfMarks(2), a_set)
 
 
     def test_update_board_with_X_should_not_be_equal_to_created_board(self):
