@@ -39,6 +39,9 @@ class Board:
         self.columns[position.column].put_mark(position.row, mark)
         if position.row == position.column:
             self.positive_diagonal.put_mark(position.row, mark)
+        if position.row == (self.board_size - 1) - position.column :
+            self.negative_diagonal.put_mark(position.row, mark)
+
 
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
@@ -66,13 +69,7 @@ class Board:
         return self.positive_diagonal.is_full()
 
     def _is_negative_diagonal_full(self):
-        result = []
-        for i in range(self.board_size):
-            element_index = (self.board_size - 1) - i
-            if self.rows[i].get_ith_mark(element_index) == MarkEmpty():
-                return False
-            result.append(self.rows[i].get_ith_mark(element_index))
-        return all([element_diag == result[0] for element_diag in result])
+        return self.negative_diagonal.is_full()
 
     def _is_full(self):
         for row in self.rows:
