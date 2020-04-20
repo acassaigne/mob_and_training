@@ -26,6 +26,7 @@ class Row:
 
 
 class Column:
+
     def __init__(self, length):
         self.values = [MarkEmpty() for i in range(0, length)]
 
@@ -37,6 +38,16 @@ class Column:
             raise PositionAlreadyTaken
         self.values[index] = mark
 
+    def is_full(self):
+        if self.values[0] == MarkEmpty():
+            return False
+        return all([mark == self.values[0] for mark in self.values])
+
+class Diagonal:
+    pass
+
+class PositiveDiagonal(Diagonal):
+    pass
 
 class Board:
 
@@ -59,8 +70,10 @@ class Board:
         list_of_flags = [row.is_full() for row in self.rows]
         return any(list_of_flags)
 
+
     def has_full_column(self):
-        return any([self._is_column_full(column_index) for column_index in range(self.board_size)])
+        list_of_flags = [column.is_full() for column in self.columns]
+        return any(list_of_flags)
 
     def _is_column_full(self, index_column):
         first_mark = self.rows[0].get_ith_mark(index_column)
