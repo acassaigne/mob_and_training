@@ -1,4 +1,6 @@
 import unittest
+from tictactoe_other import MarkO, MarkX, MarkEmpty, PlayerX, PlayerO, Draw, Nobody, Position, PositionAlreadyTaken, \
+    InvalidPosition
 
 
 class Row:
@@ -23,16 +25,31 @@ class Row:
         return self.values[index]
 
 
+class Column:
+    def __init__(self, length):
+        self.values = [MarkEmpty() for i in range(0, length)]
+
+    def __eq__(self, other):
+        return self.values == other.values
+
+    def put_mark_in_column(self, index, mark):
+        if self.values[index] != MarkEmpty():
+            raise PositionAlreadyTaken
+        self.values[index] = mark
+
+
 class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
         self.rows = [Row(self.board_size) for i in range(self.board_size)]
+        self.columns = [Column(self.board_size) for i in range(self.board_size)]
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
         self.rows[position.row].put_mark_in_row(position.column, mark)
+        self.columns[position.column].put_mark_in_column(position.row, mark)
 
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
@@ -81,58 +98,6 @@ class Board:
 
     def __eq__(self, other):
         return self.rows == other.rows
-
-
-class Position:
-
-    def __init__(self, row, column):
-        self.row = row
-        self.column = column
-
-
-class PositionAlreadyTaken(Exception):
-    pass
-
-
-class InvalidPosition(Exception):
-    pass
-
-
-class Mark:
-    def __eq__(self, other):
-        return type(self) == type(other)
-
-
-class MarkEmpty(Mark):
-    pass
-
-
-class MarkX(Mark):
-    pass
-
-
-class MarkO(Mark):
-    pass
-
-
-class Player:
-    def __eq__(self, other):
-        return type(self) == type(other)
-
-
-class PlayerO(Player):
-    pass
-
-
-class PlayerX(Player):
-    pass
-
-class Nobody(Player):
-    pass
-
-class Draw(Player):
-    pass
-
 
 class Game:
 
