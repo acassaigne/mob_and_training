@@ -51,6 +51,15 @@ class Board:
             return False
         return all([row.get_ith_mark(index_column) == first_mark for row in self.rows])
 
+    def has_diagonal_full(self):
+        result = []
+        for i in range(self.board_size):
+            if self.rows[i].get_ith_mark(i) == MarkEmpty():
+                return False
+            result.append(self.rows[i].get_ith_mark(i))
+        return all([element_diag == result[0] for element_diag in result])
+
+
     def __eq__(self, other):
         return self.rows == other.rows
 
@@ -123,11 +132,11 @@ class Game:
         return PlayerO()
 
     def who_is_winner(self):
-        if self.board_size == 1:
-            return PlayerX()
         if self.board.has_full_row():
             return self._other_player()
         if self.board.has_full_column():
+            return self._other_player()
+        if self.board.has_diagonal_full():
             return self._other_player()
         return Nobody()
 
@@ -135,7 +144,6 @@ class Game:
         return self.current_player
 
 #TODO
-# Nobody is winner
 # Draw
 
 class TestTicTacToe(unittest.TestCase):
@@ -224,4 +232,11 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(1, 1))
         self.assertEqual(Nobody(), a_game.who_is_winner())
 
-
+    def test_x(self):
+        a_game = Game(board_size=3)
+        a_game.play(Position(0, 0))
+        a_game.play(Position(0, 1))
+        a_game.play(Position(1, 1))
+        a_game.play(Position(1, 2))
+        a_game.play(Position(2, 2))
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
