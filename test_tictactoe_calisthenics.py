@@ -23,25 +23,22 @@ class SetOfMarks:
     def get_ith_mark(self, index):
         return self.values[index]
 
-
-class Diagonal:
-    pass
-
-class PositiveDiagonal(Diagonal):
-    pass
-
 class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
         self.rows = [SetOfMarks(self.board_size) for i in range(self.board_size)]
         self.columns = [SetOfMarks(self.board_size) for i in range(self.board_size)]
+        self.positive_diagonal = SetOfMarks(self.board_size)
+        self.negative_diagonal = SetOfMarks(self.board_size)
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
         self.rows[position.row].put_mark(position.column, mark)
         self.columns[position.column].put_mark(position.row, mark)
+        if position.row == position.column:
+            self.positive_diagonal.put_mark(position.row, mark)
 
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
@@ -66,12 +63,7 @@ class Board:
         return self._is_positive_diagonal_full() or self._is_negative_diagonal_full()
 
     def _is_positive_diagonal_full(self):
-        result = []
-        for i in range(self.board_size):
-            if self.rows[i].get_ith_mark(i) == MarkEmpty():
-                return False
-            result.append(self.rows[i].get_ith_mark(i))
-        return all([element_diag == result[0] for element_diag in result])
+        return self.positive_diagonal.is_full()
 
     def _is_negative_diagonal_full(self):
         result = []
