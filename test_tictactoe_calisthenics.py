@@ -23,10 +23,30 @@ class SetOfMarks:
     def is_full_of_player_marks(self):
         return not any([MarkEmpty() == element for element in self.values])
 
+
+class SetOfSetOfMarks:
+
+    def __init__(self, length):
+        self.set_of_marks = [SetOfMarks(length) for i in range(length)]
+
+    def has_full_set_of_mark(self):
+        list_of_flags = [set_of_mark.is_full_of_same_player_mark() for set_of_mark in self.set_of_marks]
+        return any(list_of_flags)
+
+    def is_full_of_player_marks(self):
+        return not all([set_of_mark.is_full_of_player_marks() for set_of_mark in self.set_of_marks])
+
+
+class Rows(SetOfSetOfMarks):
+
+    def put_mark(self, position, mark):
+        self.set_of_marks[position.row].put_mark(position.column, mark)
+
 class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
+        self.rows_2 = Rows(board_size)
         self.rows = [SetOfMarks(self.board_size) for i in range(self.board_size)]
         self.columns = [SetOfMarks(self.board_size) for i in range(self.board_size)]
         self.positive_diagonal = SetOfMarks(self.board_size)
@@ -35,6 +55,7 @@ class Board:
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
+        self.rows_2.put_mark(position, mark)
         self.rows[position.row].put_mark(position.column, mark)
         self.columns[position.column].put_mark(position.row, mark)
         self.put_mark_in_diagonals(mark, position)
@@ -49,9 +70,8 @@ class Board:
         return position.row < 0 or position.row >= self.board_size \
                or position.column < 0 or position.column >= self.board_size
 
-    def has_full_row(self):
-        list_of_flags = [row.is_full_of_same_player_mark() for row in self.rows]
-        return any(list_of_flags)
+    def has_full_row_2(self):
+        return self.rows_2.has_full_set_of_mark()
 
     def has_full_column(self):
         list_of_flags = [column.is_full_of_same_player_mark() for column in self.columns]
@@ -92,7 +112,7 @@ class Game:
         return PlayerO()
 
     def who_is_winner(self):
-        if self.board.has_full_row() or self.board.has_full_column() or self.board.has_diagonal_full():
+        if self.board.has_full_row_2() or self.board.has_full_column() or self.board.has_diagonal_full():
             return self._other_player()
         if self.board._is_full():
             return Draw()
