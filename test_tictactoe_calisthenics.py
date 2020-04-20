@@ -72,7 +72,11 @@ class Board:
         return all([element_diag == result[0] for element_diag in result])
 
     def _is_full(self):
-        for i in range(self.board_size):
+        for row in self.rows:
+            for column_index in range(self.board_size):
+                if row.get_ith_mark(column_index) == MarkEmpty():
+                    return False
+        return True
 
 
     def __eq__(self, other):
@@ -152,13 +156,13 @@ class Game:
     def who_is_winner(self):
         if self.board.has_full_row() or self.board.has_full_column() or self.board.has_diagonal_full():
             return self._other_player()
+        if self.board._is_full():
+            return Draw()
         return Nobody()
 
     def get_current_player(self):
         return self.current_player
 
-#TODO
-# Draw
 
 class TestTicTacToe(unittest.TestCase):
 
