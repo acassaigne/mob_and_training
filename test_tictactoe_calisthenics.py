@@ -268,7 +268,7 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(0, 2))
         self.assertEqual(PlayerX(), a_game.who_is_winner())
 
-    def test_playerX_should_win_with_negative_diagonal(self):
+    def test_for_draw_game_should_return_draw_result(self):
         a_game = Game(board_size=3)
         a_game.play(Position(0, 0))
         a_game.play(Position(0, 1))
