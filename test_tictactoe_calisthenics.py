@@ -52,11 +52,23 @@ class Board:
         return all([row.get_ith_mark(index_column) == first_mark for row in self.rows])
 
     def has_diagonal_full(self):
+        return self.has_positive_diagonal_full() or self.has_negative_diagonal_full()
+
+    def has_positive_diagonal_full(self):
         result = []
         for i in range(self.board_size):
             if self.rows[i].get_ith_mark(i) == MarkEmpty():
                 return False
             result.append(self.rows[i].get_ith_mark(i))
+        return all([element_diag == result[0] for element_diag in result])
+
+    def has_negative_diagonal_full(self):
+        result = []
+        for i in range(self.board_size):
+            element_index = (self.board_size - 1) - i
+            if self.rows[i].get_ith_mark(element_index) == MarkEmpty():
+                return False
+            result.append(self.rows[i].get_ith_mark(element_index))
         return all([element_diag == result[0] for element_diag in result])
 
 
@@ -232,11 +244,20 @@ class TestTicTacToe(unittest.TestCase):
         a_game.play(Position(1, 1))
         self.assertEqual(Nobody(), a_game.who_is_winner())
 
-    def test_x(self):
+    def test_playerX_should_win_with_positive_diagonal(self):
         a_game = Game(board_size=3)
         a_game.play(Position(0, 0))
         a_game.play(Position(0, 1))
         a_game.play(Position(1, 1))
         a_game.play(Position(1, 2))
         a_game.play(Position(2, 2))
+        self.assertEqual(PlayerX(), a_game.who_is_winner())
+
+    def test_x(self):
+        a_game = Game(board_size=3)
+        a_game.play(Position(2, 0))
+        a_game.play(Position(0, 1))
+        a_game.play(Position(1, 1))
+        a_game.play(Position(1, 2))
+        a_game.play(Position(0, 2))
         self.assertEqual(PlayerX(), a_game.who_is_winner())
