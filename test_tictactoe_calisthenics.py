@@ -15,16 +15,13 @@ class SetOfMarks:
             raise PositionAlreadyTaken
         self.values[position] = mark
 
-    def is_full(self):
+    def is_full_of_same_player_mark(self):
         if self.values[0] == MarkEmpty():
             return False
         return all([mark == self.values[0] for mark in self.values])
 
-    def get_ith_mark(self, index):
-        return self.values[index]
-
-    def has_at_least_an_empty_mark(self):
-        return any([MarkEmpty() == element for element in self.values])
+    def is_full_of_player_marks(self):
+        return not any([MarkEmpty() == element for element in self.values])
 
 class Board:
 
@@ -50,36 +47,24 @@ class Board:
                or position.column < 0 or position.column >= self.board_size
 
     def has_full_row(self):
-        list_of_flags = [row.is_full() for row in self.rows]
+        list_of_flags = [row.is_full_of_same_player_mark() for row in self.rows]
         return any(list_of_flags)
 
     def has_full_column(self):
-        list_of_flags = [column.is_full() for column in self.columns]
+        list_of_flags = [column.is_full_of_same_player_mark() for column in self.columns]
         return any(list_of_flags)
-
-    def _is_column_full(self, index_column):
-        first_mark = self.rows[0].get_ith_mark(index_column)
-        if first_mark == MarkEmpty():
-            return False
-        return all([row.get_ith_mark(index_column) == first_mark for row in self.rows])
-
 
     def has_diagonal_full(self):
         return self._is_positive_diagonal_full() or self._is_negative_diagonal_full()
 
     def _is_positive_diagonal_full(self):
-        return self.positive_diagonal.is_full()
+        return self.positive_diagonal.is_full_of_same_player_mark()
 
     def _is_negative_diagonal_full(self):
-        return self.negative_diagonal.is_full()
+        return self.negative_diagonal.is_full_of_same_player_mark()
 
     def _is_full(self):
-        for row in self.rows:
-            for column_index in range(self.board_size):
-                if row.get_ith_mark(column_index) == MarkEmpty():
-                    return False
-        return True
-
+        return all([row.is_full_of_player_marks() for row in self.rows])
 
     def __eq__(self, other):
         return self.rows == other.rows
