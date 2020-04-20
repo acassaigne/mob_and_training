@@ -29,13 +29,16 @@ class SetOfSetOfMarks:
     def __init__(self, length):
         self.set_of_marks = [SetOfMarks(length) for i in range(length)]
 
-    def has_full_set_of_mark(self):
+    def has_set_of_mark_full_of_same_player_mark(self):
         list_of_flags = [set_of_mark.is_full_of_same_player_mark() for set_of_mark in self.set_of_marks]
         return any(list_of_flags)
 
     def is_full_of_player_marks(self):
-        return not all([set_of_mark.is_full_of_player_marks() for set_of_mark in self.set_of_marks])
+        return all([set_of_mark.is_full_of_player_marks() for set_of_mark in self.set_of_marks])
 
+
+    def __eq__(self, other):
+        return self.set_of_marks == other.set_of_marks
 
 class Rows(SetOfSetOfMarks):
 
@@ -46,8 +49,7 @@ class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
-        self.rows_2 = Rows(board_size)
-        self.rows = [SetOfMarks(self.board_size) for i in range(self.board_size)]
+        self.rows = Rows(board_size)
         self.columns = [SetOfMarks(self.board_size) for i in range(self.board_size)]
         self.positive_diagonal = SetOfMarks(self.board_size)
         self.negative_diagonal = SetOfMarks(self.board_size)
@@ -55,8 +57,7 @@ class Board:
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
-        self.rows_2.put_mark(position, mark)
-        self.rows[position.row].put_mark(position.column, mark)
+        self.rows.put_mark(position, mark)
         self.columns[position.column].put_mark(position.row, mark)
         self.put_mark_in_diagonals(mark, position)
 
@@ -71,7 +72,7 @@ class Board:
                or position.column < 0 or position.column >= self.board_size
 
     def has_full_row_2(self):
-        return self.rows_2.has_full_set_of_mark()
+        return self.rows.has_set_of_mark_full_of_same_player_mark()
 
     def has_full_column(self):
         list_of_flags = [column.is_full_of_same_player_mark() for column in self.columns]
@@ -87,7 +88,7 @@ class Board:
         return self.negative_diagonal.is_full_of_same_player_mark()
 
     def _is_full(self):
-        return all([row.is_full_of_player_marks() for row in self.rows])
+        return self.rows.is_full_of_player_marks()
 
     def __eq__(self, other):
         return self.rows == other.rows
