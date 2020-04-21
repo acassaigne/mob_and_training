@@ -36,7 +36,6 @@ class SetOfSetOfMarks:
     def is_full_of_player_marks(self):
         return all([set_of_mark.is_full_of_player_marks() for set_of_mark in self.set_of_marks])
 
-
     def __eq__(self, other):
         return self.set_of_marks == other.set_of_marks
 
@@ -53,27 +52,38 @@ class Columns(SetOfSetOfMarks):
         self.set_of_marks[position.column].put_mark(position.row, mark)
 
 
+class PositiveDiagonal(SetOfMarks):
+
+    def put_mark(self, position, mark):
+        if position.row == position.column:
+            self.values[position.row] = mark
+
+
+class NegativeDiagonal(SetOfMarks):
+
+    def put_mark(self, position, mark):
+        length = len(self.values)
+        if position.row == (length - 1) - position.column:
+            self.values[position.row] = mark
+
+
 class Board:
 
     def __init__(self, board_size):
         self.board_size = board_size
         self.rows = Rows(board_size)
         self.columns = Columns(board_size)
-        self.positive_diagonal = SetOfMarks(self.board_size)
+        self.positive_diagonal = PositiveDiagonal(self.board_size)
         self.negative_diagonal = SetOfMarks(self.board_size)
+        self.negative_diagonal = NegativeDiagonal(self.board_size)
 
     def put_mark_in_board(self, position, mark):
         if self.is_out_of_board(position):
             raise InvalidPosition
         self.rows.put_mark(position, mark)
         self.columns.put_mark(position, mark)
-        self.put_mark_in_diagonals(mark, position)
-
-    def put_mark_in_diagonals(self, mark, position):
-        if position.row == position.column:
-            self.positive_diagonal.put_mark(position.row, mark)
-        if position.row == (self.board_size - 1) - position.column:
-            self.negative_diagonal.put_mark(position.row, mark)
+        self.positive_diagonal.put_mark(position, mark)
+        self.negative_diagonal.put_mark(position, mark)
 
     def is_out_of_board(self, position):
         return position.row < 0 or position.row >= self.board_size \
