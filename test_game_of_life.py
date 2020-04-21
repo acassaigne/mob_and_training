@@ -46,8 +46,13 @@ class Grid:
         return self.rows[position.row][position.column] != AliveCell()
 
     def count_alive_cells_around(self, position):
-        horizontal_neighbours = [1 if self.rows[position.row][position.column + 1] == AliveCell() else 0]
-        return sum(horizontal_neighbours)
+        horizontal_index = []
+        if position.column < self.number_columns - 1:
+            horizontal_index.append(position.column + 1)
+        if position.column > 0:
+            horizontal_index.append(position.column - 1)
+        result = [self.rows[position.row][column] == AliveCell() for column in horizontal_index]
+        return sum(result)
 
 
 class TestGameOfLife(unittest.TestCase):
@@ -92,7 +97,18 @@ class TestGameOfLife(unittest.TestCase):
         a_grid.seed(position)
         self.assertEqual(0, a_grid.count_alive_cells_around(position))
 
-    def test_grid_with_alive_cell_should_return_count_alive_neighbour_in_cell_around_it(self):
+    def test_count_alive_cell_around_cell_with_alive_cell_on_the_east_should_return_1(self):
         a_grid = Grid(1, 2)
         a_grid.seed(Position(0, 1))
-        self.assertEqual(1, a_grid.count_alive_cells_around(Position(0,0)))
+        self.assertEqual(1, a_grid.count_alive_cells_around(Position(0, 0)))
+
+    def test_count_alive_cell_around_cell_with_alive_cell_on_the_west_should_return_1(self):
+        a_grid = Grid(1, 2)
+        a_grid.seed(Position(0, 0))
+        self.assertEqual(1, a_grid.count_alive_cells_around(Position(0, 1)))
+
+    def test_x(self):
+        a_grid = Grid(1, 2)
+        position = Position(-1,0)
+        with self.assertRaises(InvalidPosition):
+            a_grid.count_alive_cells_around(position)
