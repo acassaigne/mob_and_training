@@ -33,7 +33,7 @@ class Grid:
         return [DeadCell() for i in range(self.number_columns)]
 
     def seed(self, position):
-        if position.row >= self.number_rows or position.column >= self.number_columns:
+        if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns or position.column < 0:
             raise InvalidPosition
         self.rows[position.row][position.column] = AliveCell()
 
@@ -44,6 +44,9 @@ class Grid:
         if len(self.rows) == 0:
             return True
         return self.rows[position.row][position.column] != AliveCell()
+
+    def count_alive_cells_around(self, position):
+        return 0
 
 
 class TestGameOfLife(unittest.TestCase):
@@ -70,9 +73,22 @@ class TestGameOfLife(unittest.TestCase):
         a_grid.seed(position)
         self.assertFalse(a_grid.is_dead(position))
 
-    def test_x(self):
+    def test_seeding_positive_out_of_board_should_raise_error(self):
         a_grid = Grid(1, 1)
         position = Position(0, 1)
         with self.assertRaises(InvalidPosition):
             a_grid.seed(position)
 
+    def test_seeding_negative_out_of_board_should_raise_error(self):
+        a_grid = Grid(1, 1)
+        position = Position(-1, 0)
+        with self.assertRaises(InvalidPosition):
+            a_grid.seed(position)
+
+    def test_unique_alive_cell_should_have_no_living_neighbour(self):
+        a_grid = Grid(1, 2)
+        position = Position(0, 0)
+        a_grid.seed(position)
+        self.assertEqual(0, a_grid.count_alive_cells_around(position))
+
+    def test_x(self):
