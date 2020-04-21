@@ -19,18 +19,22 @@ class Position:
         self.row = row
         self.column = column
 
+class InvalidPosition(Exception):
+    pass
+
 class Grid:
 
-    def __init__(self, number_columns, number_rows):
+    def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
         self.rows = [number_rows * self._generate_dead_row()]
-        self.columns = []
 
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
 
     def seed(self, position):
+        if position.row >= self.number_rows or position.column >= self.number_columns:
+            raise InvalidPosition
         self.rows[position.row][position.column] = AliveCell()
 
     def __eq__(self, other):
@@ -40,6 +44,7 @@ class Grid:
         if len(self.rows) == 0:
             return True
         return self.rows[position.row][position.column] != AliveCell()
+
 
 class TestGameOfLife(unittest.TestCase):
 
@@ -59,11 +64,15 @@ class TestGameOfLife(unittest.TestCase):
         a_grid.seed(position)
         self.assertFalse(a_grid.is_dead(position))
 
-    def test_x(self):
+    def test_cell_seeded_should_not_be_dead(self):
         a_grid = Grid(1, 2)
         position = Position(0, 1)
         a_grid.seed(position)
         self.assertFalse(a_grid.is_dead(position))
 
-
+    def test_x(self):
+        a_grid = Grid(1, 1)
+        position = Position(0, 1)
+        with self.assertRaises(InvalidPosition):
+            a_grid.seed(position)
 
