@@ -40,13 +40,14 @@ class SetOfSetOfMarks:
     def __eq__(self, other):
         return self.set_of_marks == other.set_of_marks
 
+
 class Rows(SetOfSetOfMarks):
 
     def put_mark(self, position, mark):
         self.set_of_marks[position.row].put_mark(position.column, mark)
 
-class Columns(SetOfSetOfMarks):
 
+class Columns(SetOfSetOfMarks):
 
     def put_mark(self, position, mark):
         self.set_of_marks[position.column].put_mark(position.row, mark)
