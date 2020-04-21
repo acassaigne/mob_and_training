@@ -9,7 +9,10 @@ class SetOfMarks:
 
     def __eq__(self, other):
         return self.values == other.values
-
+    
+    def length(self):
+        return len(self.values)
+        
     def put_mark(self, position, mark):
         if self.values[position] != MarkEmpty():
             raise PositionAlreadyTaken
@@ -62,8 +65,7 @@ class PositiveDiagonal(SetOfMarks):
 class NegativeDiagonal(SetOfMarks):
 
     def put_mark(self, position, mark):
-        length = len(self.values)
-        if position.row == (length - 1) - position.column:
+        if position.row == (self.length() - 1) - position.column:
             self.values[position.row] = mark
 
 
@@ -74,7 +76,6 @@ class Board:
         self.rows = Rows(board_size)
         self.columns = Columns(board_size)
         self.positive_diagonal = PositiveDiagonal(self.board_size)
-        self.negative_diagonal = SetOfMarks(self.board_size)
         self.negative_diagonal = NegativeDiagonal(self.board_size)
 
     def put_mark_in_board(self, position, mark):
