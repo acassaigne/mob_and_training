@@ -63,10 +63,23 @@ class Grid:
         result = [self.rows[row][position.column] == AliveCell() for row in vertical_index]
         return sum(result)
 
+    def count_alive_cells_around_in_diagonals(self, position):
+        horizontal_index = []
+        if position.column < self.number_columns - 1:
+            horizontal_index.append(position.column + 1)
+        if position.column > 0:
+            horizontal_index.append(position.column - 1)
+        result = 0
+        for column in horizontal_index:
+            result += self.count_alive_cells_around_vertical(Position(position.row, column))
+        return result
+
     def count_alive_cells_around(self, position):
-        if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns or position.column < 0:
+        if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns\
+                or position.column < 0:
             raise InvalidPosition
-        return self.count_alive_cells_around_horizontal(position) + self.count_alive_cells_around_vertical(position)
+        return self.count_alive_cells_around_horizontal(position) + self.count_alive_cells_around_vertical(position) \
+            + self.count_alive_cells_around_in_diagonals(position)
 
 
 class TestGameOfLife(unittest.TestCase):
@@ -136,12 +149,12 @@ class TestGameOfLife(unittest.TestCase):
         a_grid = Grid(2, 2)
         self.assertEqual([[DeadCell(), DeadCell()],[DeadCell(), DeadCell()]], a_grid.rows)
 
-    def test_xxxxxxx(self):
+    def test_x(self):
         a_grid = Grid(2, 2)
         a_grid.seed(Position(row=0, column=0))
         self.assertEqual(1, a_grid.count_alive_cells_around(Position(row=1, column=1)))
 
-    def test_r(self):
+    def test_seeded_grid_should_be_well_seeded(self):
         a_grid = Grid(2, 2)
         a_grid.seed(Position(row=0, column=1))
-        self.assertEqual([[DeadCell(), AliveCell()],[DeadCell(), DeadCell()]], a_grid.rows)
+        self.assertEqual([[DeadCell(), AliveCell()], [DeadCell(), DeadCell()]], a_grid.rows)
