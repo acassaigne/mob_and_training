@@ -72,51 +72,12 @@ class Grid:
     def __eq__(self, other):
         return self.rows == other.rows
 
-    def is_dead(self, position):
-        if len(self.rows) == 0:
-            return True
-        return self.rows[position.row][position.column] != AliveCell()
-
-    def generate_neighbour_horizontal_index(self, position):
-        horizontal_index = []
-        if position.column < self.number_columns - 1:
-            horizontal_index.append(position.column + 1)
-        if position.column > 0:
-            horizontal_index.append(position.column - 1)
-        return horizontal_index
-
-    def generate_neighbour_vertical_index(self, position):
-        vertical_index = []
-        if position.row < self.number_rows - 1:
-            vertical_index.append(position.row + 1)
-        if position.row > 0:
-            vertical_index.append(position.row - 1)
-        return vertical_index
-
-    def count_alive_cells_around_horizontal(self, position):
-        horizontal_index = self.generate_neighbour_horizontal_index(position)
-        result = [self.rows[position.row][column] == AliveCell() for column in horizontal_index]
-        return sum(result)
-
-    def count_alive_cells_around_vertical(self, position):
-        vertical_index = self.generate_neighbour_vertical_index(position)
-        result = [self.rows[row][position.column] == AliveCell() for row in vertical_index]
-        return sum(result)
-
-    def count_alive_cells_around_in_diagonals(self, position):
-        horizontal_index = self.generate_neighbour_horizontal_index(position)
-        result = 0
-        for column in horizontal_index:
-            result += self.count_alive_cells_around_vertical(Position(position.row, column))
-        return result
-
-
     def raise_if_out_of_bounds(self, position):
         if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns\
                 or position.column < 0:
             raise InvalidPosition
 
-    def count_alive_cells_around_2(self, position):
+    def count_alive_cells_around(self, position):
         self.raise_if_out_of_bounds(position)
         neighbours = position.generate_positions_around(Position(self.number_rows - 1, self.number_columns - 1))
         result = 0
@@ -125,12 +86,15 @@ class Grid:
                 result += 1
         return result
 
-    def count_alive_cells_around(self, position):
-        return self.count_alive_cells_around_2(position)
-        self.raise_if_out_of_bounds(position)
-        return self.count_alive_cells_around_horizontal(position) + self.count_alive_cells_around_vertical(position) \
-            + self.count_alive_cells_around_in_diagonals(position)
 
+class GameOfLife:
+
+    def __init__(self, grid):
+        self.grid = grid
+
+    def tick(self):
+        if self.grid.rows[0][0] == AliveCell():
+            self.grid.rows[0][0] = DeadCell()
 
 class TestGameOfLife(unittest.TestCase):
 
@@ -139,22 +103,6 @@ class TestGameOfLife(unittest.TestCase):
         position = Position(0, 0)
         a_grid.seed(position)
         self.assertNotEqual(a_grid, Grid(1, 1))
-
-    def test_cell_shouldnt_be_dead(self):
-        a_grid = Grid(1, 1)
-        self.assertTrue(a_grid.is_dead(Position(0, 0)))
-
-    def test_grid_with_a_live_cell_at_0_0_should_not_be_dead(self):
-        a_grid = Grid(1, 1)
-        position = Position(0, 0)
-        a_grid.seed(position)
-        self.assertFalse(a_grid.is_dead(position))
-
-    def test_cell_seeded_should_not_be_dead(self):
-        a_grid = Grid(1, 2)
-        position = Position(0, 1)
-        a_grid.seed(position)
-        self.assertFalse(a_grid.is_dead(position))
 
     def test_seeding_positive_out_of_board_should_raise_error(self):
         a_grid = Grid(1, 1)
@@ -219,6 +167,25 @@ class TestGameOfLife(unittest.TestCase):
         result = p.generate_positions_around(Position(0, 1))
         self.assertEqual([Position(0, 1)], result)
 
-    def test_y(self):
+    def test_str_of_position_3_3_should_return_good_name(self):
         p = Position(3, 3)
         self.assertEqual("position row=3 column=3", str(p))
+
+    def test_create_new_game_with_1_1_grid_and_a_tick_should_return_1_1_grid_with_dead_cell(self):
+        a_game = GameOfLife(Grid(1, 1))
+        a_game.tick()
+        self.assertEqual(Grid(1, 1), a_game.grid)
+
+    def test_alone_live_cell_in_game_should_die_for_grid_1_1(self):
+        a_grid = Grid(1, 1)
+        a_grid.seed(Position(0, 0))
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
+        self.assertEqual(Grid(1, 1), a_game.grid)
+
+    def test_x(self):
+        a_grid = Grid(1, 2)
+        a_grid.seed(Position(0, 1))
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
+        self.assertEqual(Grid(1, 2), a_game.grid)
