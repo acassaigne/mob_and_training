@@ -27,14 +27,13 @@ class Grid:
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
-        self.rows = [ self._generate_dead_row() for row in range(self.number_rows) ]
+        self.rows = [ self._generate_dead_row() for row in range(self.number_rows)]
 
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
 
     def seed(self, position):
-        if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns or position.column < 0:
-            raise InvalidPosition
+        self.raise_if_out_of_bounds(position)
         self.rows[position.row][position.column] = AliveCell()
 
     def __eq__(self, other):
@@ -45,39 +44,46 @@ class Grid:
             return True
         return self.rows[position.row][position.column] != AliveCell()
 
-    def count_alive_cells_around_horizontal(self, position):
+    def generate_neighbour_horizontal_index(self, position):
         horizontal_index = []
         if position.column < self.number_columns - 1:
             horizontal_index.append(position.column + 1)
         if position.column > 0:
             horizontal_index.append(position.column - 1)
-        result = [self.rows[position.row][column] == AliveCell() for column in horizontal_index]
-        return sum(result)
+        return horizontal_index
 
-    def count_alive_cells_around_vertical(self, position):
+    def generate_neighbour_vertical_index(self, position):
         vertical_index = []
         if position.row < self.number_rows - 1:
             vertical_index.append(position.row + 1)
         if position.row > 0:
             vertical_index.append(position.row - 1)
+        return vertical_index
+
+    def count_alive_cells_around_horizontal(self, position):
+        horizontal_index = self.generate_neighbour_horizontal_index(position)
+        result = [self.rows[position.row][column] == AliveCell() for column in horizontal_index]
+        return sum(result)
+
+    def count_alive_cells_around_vertical(self, position):
+        vertical_index = self.generate_neighbour_vertical_index(position)
         result = [self.rows[row][position.column] == AliveCell() for row in vertical_index]
         return sum(result)
 
     def count_alive_cells_around_in_diagonals(self, position):
-        horizontal_index = []
-        if position.column < self.number_columns - 1:
-            horizontal_index.append(position.column + 1)
-        if position.column > 0:
-            horizontal_index.append(position.column - 1)
+        horizontal_index = self.generate_neighbour_horizontal_index(position)
         result = 0
         for column in horizontal_index:
             result += self.count_alive_cells_around_vertical(Position(position.row, column))
         return result
 
-    def count_alive_cells_around(self, position):
+    def raise_if_out_of_bounds(self, position):
         if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns\
                 or position.column < 0:
             raise InvalidPosition
+
+    def count_alive_cells_around(self, position):
+        self.raise_if_out_of_bounds(position)
         return self.count_alive_cells_around_horizontal(position) + self.count_alive_cells_around_vertical(position) \
             + self.count_alive_cells_around_in_diagonals(position)
 
@@ -149,7 +155,7 @@ class TestGameOfLife(unittest.TestCase):
         a_grid = Grid(2, 2)
         self.assertEqual([[DeadCell(), DeadCell()],[DeadCell(), DeadCell()]], a_grid.rows)
 
-    def test_x(self):
+    def test_should_count_alive_cell_in_diagonal(self):
         a_grid = Grid(2, 2)
         a_grid.seed(Position(row=0, column=0))
         self.assertEqual(1, a_grid.count_alive_cells_around(Position(row=1, column=1)))
