@@ -164,3 +164,8 @@ class TestGameOfLife(unittest.TestCase):
         a_grid = Grid(2, 2)
         a_grid.seed(Position(row=0, column=1))
         self.assertEqual([[DeadCell(), AliveCell()], [DeadCell(), DeadCell()]], a_grid.rows)
+
+    def test_x(self):
+        p = Position(0,0)
+        result = p.generate_positions_around(max_row=0, max_column=0)
+        self.assertEqual([],result)
