@@ -19,10 +19,16 @@ class Position:
         self.row = row
         self.column = column
 
-    def generate_positions_around(self, maximum_row, maximum_column):
+    def generate_corners(self, max_position):
+        upper_left_corner = Position(max(self.row - 1, 0), max(self.column - 1, 0))
+        lower_right_corner = Position(min(max_position.row, self.row + 1), min(max_position.column, self.column + 1))
+        return upper_left_corner, lower_right_corner
+
+    def generate_positions_around(self, max_position):
         result = []
-        for row in range(max(self.row - 1, 0), min(maximum_row, self.row + 1) + 1):
-            for column in range(max(self.column -1, 0), min(maximum_column, self.column + 1) + 1):
+        upper_left_corner, lower_right_corner = self.generate_corners(max_position)
+        for row in range(upper_left_corner.row, lower_right_corner.row + 1):
+            for column in range(upper_left_corner.column, lower_right_corner.column + 1):
                 if row == self.row and column == self.column:
                     continue
                 result.append(Position(row, column))
@@ -31,15 +37,17 @@ class Position:
     def __eq__(self, other):
         return self.row == other.row and self.column == other.column 
 
+
 class InvalidPosition(Exception):
     pass
+
 
 class Grid:
 
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
-        self.rows = [ self._generate_dead_row() for row in range(self.number_rows)]
+        self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
 
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
@@ -177,12 +185,13 @@ class TestGameOfLife(unittest.TestCase):
         a_grid.seed(Position(row=0, column=1))
         self.assertEqual([[DeadCell(), AliveCell()], [DeadCell(), DeadCell()]], a_grid.rows)
 
-    def test_x(self):
-        p = Position(0,0)
-        result = p.generate_positions_around(maximum_row=0, maximum_column=0)
-        self.assertEqual([],result)
+    def test_positions_around_0_0_with_0_0_boundaries_should_return_empty_list(self):
+        p = Position(0, 0)
+        result = p.generate_positions_around(Position(0, 0))
+        self.assertEqual([], result)
 
-    def test_xx(self):
-        p = Position(0,0)
-        result = p.generate_positions_around(maximum_row=0, maximum_column=1)
-        self.assertEqual([Position(0,1)],result)
+    def test_positions_around_0_0_with_0_1_boundaries_should_return_position_0_1(self):
+        p = Position(0, 0)
+        result = p.generate_positions_around(Position(0, 1))
+        self.assertEqual([Position(0, 1)], result)
+
