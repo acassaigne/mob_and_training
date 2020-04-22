@@ -19,6 +19,18 @@ class Position:
         self.row = row
         self.column = column
 
+    def generate_positions_around(self, maximum_row, maximum_column):
+        result = []
+        for row in range(max(self.row - 1, 0), min(maximum_row, self.row + 1) + 1):
+            for column in range(max(self.column -1, 0), min(maximum_column, self.column + 1) + 1):
+                if row == self.row and column == self.column:
+                    continue
+                result.append(Position(row, column))
+        return result
+
+    def __eq__(self, other):
+        return self.row == other.row and self.column == other.column 
+
 class InvalidPosition(Exception):
     pass
 
@@ -167,5 +179,10 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_x(self):
         p = Position(0,0)
-        result = p.generate_positions_around(max_row=0, max_column=0)
+        result = p.generate_positions_around(maximum_row=0, maximum_column=0)
         self.assertEqual([],result)
+
+    def test_xx(self):
+        p = Position(0,0)
+        result = p.generate_positions_around(maximum_row=0, maximum_column=1)
+        self.assertEqual([Position(0,1)],result)
