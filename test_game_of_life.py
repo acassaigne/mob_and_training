@@ -27,7 +27,7 @@ class Grid:
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
-        self.rows = number_rows * [self._generate_dead_row()]
+        self.rows = [ self._generate_dead_row() for row in range(self.number_rows) ]
 
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
@@ -66,7 +66,7 @@ class Grid:
     def count_alive_cells_around(self, position):
         if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns or position.column < 0:
             raise InvalidPosition
-        return self.count_alive_cells_around_horizontal(position)
+        return self.count_alive_cells_around_horizontal(position) + self.count_alive_cells_around_vertical(position)
 
 
 class TestGameOfLife(unittest.TestCase):
@@ -127,7 +127,6 @@ class TestGameOfLife(unittest.TestCase):
         with self.assertRaises(InvalidPosition):
             a_grid.count_alive_cells_around(position)
 
-    @unittest.skip('debugging')
     def test_count_alive_cell_around_cell_with_alive_cell_on_the_north_should_return_1(self):
         a_grid = Grid(2, 1)
         a_grid.seed(Position(0, 0))
@@ -136,3 +135,13 @@ class TestGameOfLife(unittest.TestCase):
     def test_rows_should_be_generated_as_lists_of_lists(self):
         a_grid = Grid(2, 2)
         self.assertEqual([[DeadCell(), DeadCell()],[DeadCell(), DeadCell()]], a_grid.rows)
+
+    def test_xxxxxxx(self):
+        a_grid = Grid(2, 2)
+        a_grid.seed(Position(row=0, column=0))
+        self.assertEqual(1, a_grid.count_alive_cells_around(Position(row=1, column=1)))
+
+    def test_r(self):
+        a_grid = Grid(2, 2)
+        a_grid.seed(Position(row=0, column=1))
+        self.assertEqual([[DeadCell(), AliveCell()],[DeadCell(), DeadCell()]], a_grid.rows)
