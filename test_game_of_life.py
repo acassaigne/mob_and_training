@@ -24,14 +24,24 @@ class Position:
         lower_right_corner = Position(min(max_position.row, self.row + 1), min(max_position.column, self.column + 1))
         return upper_left_corner, lower_right_corner
 
-    def generate_positions_around(self, max_position):
+    def add_position_to(self, list_positions, position):
+        if self.row == position.row and self.column == position.column:
+            return list_positions
+        list_positions.append(position)
+        return list_positions
+
+    def generate_horizontal_positions_on_fixed_row(self, row, maximum_position):
         result = []
-        upper_left_corner, lower_right_corner = self.generate_corners(max_position)
+        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
+        for column in range(upper_left_corner.column, lower_right_corner.column + 1):
+            result = self.add_position_to(result, Position(row, column))
+        return result
+
+    def generate_positions_around(self, maximum_position):
+        result = []
+        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
         for row in range(upper_left_corner.row, lower_right_corner.row + 1):
-            for column in range(upper_left_corner.column, lower_right_corner.column + 1):
-                if row == self.row and column == self.column:
-                    continue
-                result.append(Position(row, column))
+            result += self.generate_horizontal_positions_on_fixed_row(row, maximum_position)
         return result
 
     def __eq__(self, other):
