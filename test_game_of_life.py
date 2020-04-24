@@ -54,26 +54,37 @@ class Position:
 class InvalidPosition(Exception):
     pass
 
-class StringInterpreter:
+class GridFactory:
 
-    def __init__(self, input_string):
+    def __init__(self):
+        self.input_string = None
+        self.list_of_rows = None
+        self.number_of_rows = None
+        self.number_of_columns = None
+        self.grid = None
+
+    def extract_dimensions(self, input_string):
         self.input_string = input_string
         self.list_of_rows = input_string.split('\n')
         self.number_of_rows = len(self.list_of_rows)
         self.number_of_columns = len(self.list_of_rows[0])
+        self.grid = Grid(self.number_of_rows, self.number_of_columns)
 
-    def string_to_grid(self):
-        a_grid = Grid(self.number_of_rows, self.number_of_columns)
+    def create(self, input_string):
+        self.extract_dimensions(input_string)
         row_number = 0
         for row_string in self.list_of_rows:
-            column_number = 0
-            for cell_string in row_string:
-                if cell_string == '1':
-                    a_grid.seed(Position(row_number, column_number))
-                column_number += 1
+            self.seed_row(row_number, row_string)
             row_number += 1
-            return a_grid
-        return Grid(2, 1)
+            return self.grid
+
+    def seed_row(self, row_number, row_string):
+        column_number = 0
+        for cell_string in row_string:
+            if cell_string == '1':
+                self.grid.seed(Position(row_number, column_number))
+            column_number += 1
+
 
 class Grid:
 
@@ -279,20 +290,24 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_string_to_grid_with_00_string_should_return_1_2_grid_with_2_dead_cells(self):
         a_grid = Grid(1, 2)
-        self.assertEqual(a_grid, Grid.string_to_grid('00'))
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid, grid_factory.create('00'))
 
     def test_string_to_grid_with_01_string_should_return_1_2_grid_with_1_dead_cell_and_1_alive_cell(self):
         a_grid = Grid(1, 2)
         a_grid.seed(Position(0, 1))
-        self.assertEqual(a_grid, Grid.string_to_grid('01'))
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid, grid_factory.create('01'))
 
     def test_string_to_grid_with_00_string_should_return_2_1_grid_with_two_dead_cells(self):
         a_grid = Grid(2, 1)
-        self.assertEqual(a_grid, Grid.string_to_grid('0\n' +
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid, grid_factory.create('0\n' +
                                                      '0'))
 
     def test_x(self):
         a_grid = Grid(2, 1)
         a_grid.seed(Position(row=0, column=0))
-        self.assertEqual(a_grid, Grid.string_to_grid('1\n' +
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid, grid_factory.create('1\n' +
                                                      '0'))
