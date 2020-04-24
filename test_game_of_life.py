@@ -86,6 +86,9 @@ class Grid:
                 result += 1
         return result
 
+    def is_alive(self, position):
+        return self.rows[position.row][position.column] == AliveCell()
+
     def kill_all(self):
         for row in self.rows:
             self.kill_row(row)
@@ -190,9 +193,18 @@ class TestGameOfLife(unittest.TestCase):
         a_game.tick()
         self.assertEqual(Grid(1, 1), a_game.grid)
 
-    def test_x(self):
+    def test_alone_live_cell_in_game_should_die_for_grid_1_2(self):
         a_grid = Grid(1, 2)
         a_grid.seed(Position(0, 1))
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertEqual(Grid(1, 2), a_game.grid)
+
+    def test_x(self):
+        a_grid = Grid(2, 2)
+        a_grid.seed(Position(0, 0))
+        a_grid.seed(Position(0, 1))
+        a_grid.seed(Position(1, 0))
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
+        self.assertTrue(a_grid.is_alive(Position(1, 1)))
