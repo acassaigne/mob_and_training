@@ -86,6 +86,14 @@ class Grid:
                 result += 1
         return result
 
+    def kill_all(self):
+        for row in self.rows:
+            self.kill_row(row)
+
+    def kill_row(self, row):
+        for column in range(self.number_columns):
+            row[column] = DeadCell()
+
 
 class GameOfLife:
 
@@ -93,8 +101,7 @@ class GameOfLife:
         self.grid = grid
 
     def tick(self):
-        if self.grid.rows[0][0] == AliveCell():
-            self.grid.rows[0][0] = DeadCell()
+        self.grid.kill_all()
 
 class TestGameOfLife(unittest.TestCase):
 
