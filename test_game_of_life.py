@@ -54,6 +54,26 @@ class Position:
 class InvalidPosition(Exception):
     pass
 
+class StringInterpreter:
+
+    def __init__(self, input_string):
+        self.input_string = input_string
+        self.list_of_rows = input_string.split('\n')
+        self.number_of_rows = len(self.list_of_rows)
+        self.number_of_columns = len(self.list_of_rows[0])
+
+    def string_to_grid(self):
+        a_grid = Grid(self.number_of_rows, self.number_of_columns)
+        row_number = 0
+        for row_string in self.list_of_rows:
+            column_number = 0
+            for cell_string in row_string:
+                if cell_string == '1':
+                    a_grid.seed(Position(row_number, column_number))
+                column_number += 1
+            row_number += 1
+            return a_grid
+        return Grid(2, 1)
 
 class Grid:
 
@@ -65,13 +85,17 @@ class Grid:
     @staticmethod
     def string_to_grid(input_string):
         list_of_rows = input_string.split('\n')
-        if len(list_of_rows) == 1:
-            a_grid = Grid(1, len(input_string))
-            column = 0
-            for character in input_string:
-                if character == '1':
-                    a_grid.seed(Position(0, column))
-                column += 1
+        number_of_rows = len(list_of_rows)
+        number_of_columns = len(list_of_rows[0])
+        a_grid = Grid(number_of_rows, number_of_columns)
+        row_number = 0
+        for row_string in list_of_rows:
+            column_number = 0
+            for cell_string in row_string:
+                if cell_string == '1':
+                    a_grid.seed(Position(row_number, column_number))
+                column_number += 1
+            row_number += 1
             return a_grid
         return Grid(2, 1)
 
