@@ -104,7 +104,14 @@ class GameOfLife:
         self.grid = grid
 
     def tick(self):
-        self.grid.kill_all()
+        try:
+            count_alive = self.grid.count_alive_cells_around(Position(1, 1))
+        except InvalidPosition:
+            count_alive = 0
+        if count_alive == 3:
+            self.grid.seed(Position(1, 1))
+        else:
+            self.grid.kill_all()
 
 class TestGameOfLife(unittest.TestCase):
 
@@ -200,7 +207,7 @@ class TestGameOfLife(unittest.TestCase):
         a_game.tick()
         self.assertEqual(Grid(1, 2), a_game.grid)
 
-    def test_x(self):
+    def test_dead_cell_in_position_1_1_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
         a_grid = Grid(2, 2)
         a_grid.seed(Position(0, 0))
         a_grid.seed(Position(0, 1))
@@ -208,3 +215,12 @@ class TestGameOfLife(unittest.TestCase):
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_grid.is_alive(Position(1, 1)))
+
+    def test_x(self):
+        a_grid = Grid(2, 2)
+        a_grid.seed(Position(0, 1))
+        a_grid.seed(Position(1, 1))
+        a_grid.seed(Position(1, 0))
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
+        self.assertTrue(a_grid.is_alive(Position(0, 0)))
