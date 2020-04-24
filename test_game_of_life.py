@@ -141,21 +141,29 @@ class GameOfLife:
     def tick(self):
         try:
             count_alive = self.grid.count_alive_cells_around(Position(1, 1))
-
         except InvalidPosition:
             count_alive = 0
         try:
             count_alive_0_0 = self.grid.count_alive_cells_around(Position(0, 0))
         except InvalidPosition:
             count_alive_0_0 = 0
+        try:
+            count_alive_0_1 = self.grid.count_alive_cells_around(Position(0, 1))
+        except InvalidPosition:
+            count_alive_0_1 = 0
         self.grid.kill_all()
         if count_alive == 3:
             self.grid.seed(Position(1, 1))
         if count_alive_0_0 == 3:
             self.grid.seed(Position(0, 0))
+        if count_alive_0_1 == 3:
+            self.grid.seed(Position(0, 1))
 
 
 class TestGameOfLife(unittest.TestCase):
+
+    def initialize_grid_factory(self):
+        self.factory = GridFactory()
 
     def test_empty_grid_should_not_equal_grid_with_1_element(self):
         a_grid = Grid(1, 1)
@@ -269,42 +277,42 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_string_to_grid_should_return_1_1_grid_with_1_dead_cell(self):
         a_grid = Grid(1, 1)
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid, grid_factory.create('0'))
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid, self.factory.create('0'))
 
     def test_string_to_grid_with_1_string_should_return_1_1_grid_with_1_alive_cell(self):
         a_grid_expected = Grid(1, 1)
         a_grid_expected.seed(Position(0, 0))
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid_expected, grid_factory.create('1'))
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid_expected, self.factory.create('1'))
 
     def test_string_to_grid_with_00_string_should_return_1_2_grid_with_2_dead_cells(self):
         a_grid = Grid(1, 2)
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid, grid_factory.create('00'))
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid, self.factory.create('00'))
 
     def test_string_to_grid_with_01_string_should_return_1_2_grid_with_1_dead_cell_and_1_alive_cell(self):
         a_grid = Grid(1, 2)
         a_grid.seed(Position(0, 1))
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid, grid_factory.create('01'))
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid, self.factory.create('01'))
 
     def test_string_to_grid_with_00_string_should_return_2_1_grid_with_two_dead_cells(self):
         a_grid = Grid(2, 1)
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid, grid_factory.create('0\n' +
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid, self.factory.create('0\n' +
                                                      '0'))
 
     def test_string_to_grid_with_two_rows_1_newline_0_string_should_return_2_1_grid_with_one_alive_at_position_0_0_and_one_dead(self):
         a_grid = Grid(2, 1)
         a_grid.seed(Position(row=0, column=0))
-        grid_factory = GridFactory()
-        self.assertEqual(a_grid, grid_factory.create('1\n' +
+        self.initialize_grid_factory()
+        self.assertEqual(a_grid, self.factory.create('1\n' +
                                                      '0'))
 
-    def test_track_bug(self):
-        factory = GridFactory()
-        a_grid_2 = factory.create("11\n" +
+    def test_facory_created_grid_should_be_equal_to_seeded_grid(self):
+        self.initialize_grid_factory()
+        a_grid_2 = self.factory.create("11\n" +
                                   "10")
         a_grid = Grid(2, 2)
         a_grid.seed(Position(0, 0))
@@ -312,4 +320,16 @@ class TestGameOfLife(unittest.TestCase):
         a_grid.seed(Position(1, 0))
         expected = str(a_grid)
         self.assertEqual(expected, str(a_grid_2))
+
+    def test_dead_cell_in_position_0_1_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
+        self.initialize_grid_factory()
+        a_grid = self.factory.create("10\n" +
+                                     "11")
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
+        self.assertTrue(a_grid.is_alive(Position(0, 1)))
+
+
+
+
 
