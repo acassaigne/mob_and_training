@@ -59,16 +59,12 @@ class GridFactory:
     def __init__(self):
         self.input_string = None
         self.list_of_rows = None
-        self.number_of_rows = None
-        self.number_of_columns = None
         self.grid = None
 
     def extract_dimensions(self, input_string):
         self.input_string = input_string
-        self.list_of_rows = input_string.split('\n')
-        self.number_of_rows = len(self.list_of_rows)
-        self.number_of_columns = len(self.list_of_rows[0])
-        self.grid = Grid(self.number_of_rows, self.number_of_columns)
+        self.list_of_rows = input_string.split("\n")
+        self.grid = Grid(len(self.list_of_rows), len(self.list_of_rows[0]))
 
     def create(self, input_string):
         self.extract_dimensions(input_string)
@@ -76,7 +72,7 @@ class GridFactory:
         for row_string in self.list_of_rows:
             self.seed_row(row_number, row_string)
             row_number += 1
-            return self.grid
+        return self.grid
 
     def seed_row(self, row_number, row_string):
         column_number = 0
@@ -93,22 +89,13 @@ class Grid:
         self.number_rows = number_rows
         self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
 
-    @staticmethod
-    def string_to_grid(input_string):
-        list_of_rows = input_string.split('\n')
-        number_of_rows = len(list_of_rows)
-        number_of_columns = len(list_of_rows[0])
-        a_grid = Grid(number_of_rows, number_of_columns)
-        row_number = 0
-        for row_string in list_of_rows:
-            column_number = 0
-            for cell_string in row_string:
-                if cell_string == '1':
-                    a_grid.seed(Position(row_number, column_number))
-                column_number += 1
-            row_number += 1
-            return a_grid
-        return Grid(2, 1)
+    def __str__(self):
+        result = ""
+        for row in self.rows:
+            for cell in row:
+                result += "1" if cell == AliveCell() else "0"
+            result += "\n"
+        return result
 
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
@@ -264,38 +251,32 @@ class TestGameOfLife(unittest.TestCase):
         a_game.tick()
         self.assertEqual(a_full_dead_grid, a_game.grid)
 
-    @unittest.skip("refacto")
     def test_dead_cell_in_position_1_1_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
         factory = GridFactory()
-        a_grid_2 = factory.create("11\n" +
+        a_grid = factory.create("11\n" +
                                 "10")
-
-        a_grid = Grid(2, 2)
-        a_grid.seed(Position(0, 0))
-        a_grid.seed(Position(0, 1))
-        a_grid.seed(Position(1, 0))
-        self.assertEqual(a_grid, a_grid_2)
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_grid.is_alive(Position(1, 1)))
 
     def test_dead_cell_in_position_0_0_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
-        a_grid = Grid(2, 2)
-        a_grid.seed(Position(0, 1))
-        a_grid.seed(Position(1, 1))
-        a_grid.seed(Position(1, 0))
+        factory = GridFactory()
+        a_grid = factory.create("01\n" +
+                                "11")
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_grid.is_alive(Position(0, 0)))
 
     def test_string_to_grid_should_return_1_1_grid_with_1_dead_cell(self):
         a_grid = Grid(1, 1)
-        self.assertEqual(a_grid, Grid.string_to_grid('0'))
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid, grid_factory.create('0'))
 
     def test_string_to_grid_with_1_string_should_return_1_1_grid_with_1_alive_cell(self):
-        a_grid = Grid(1, 1)
-        a_grid.seed(Position(0, 0))
-        self.assertEqual(a_grid, Grid.string_to_grid('1'))
+        a_grid_expected = Grid(1, 1)
+        a_grid_expected.seed(Position(0, 0))
+        grid_factory = GridFactory()
+        self.assertEqual(a_grid_expected, grid_factory.create('1'))
 
     def test_string_to_grid_with_00_string_should_return_1_2_grid_with_2_dead_cells(self):
         a_grid = Grid(1, 2)
@@ -322,5 +303,13 @@ class TestGameOfLife(unittest.TestCase):
                                                      '0'))
 
     def test_track_bug(self):
-        pass
-    
+        factory = GridFactory()
+        a_grid_2 = factory.create("11\n" +
+                                  "10")
+        a_grid = Grid(2, 2)
+        a_grid.seed(Position(0, 0))
+        a_grid.seed(Position(0, 1))
+        a_grid.seed(Position(1, 0))
+        expected = str(a_grid)
+        self.assertEqual(expected, str(a_grid_2))
+
