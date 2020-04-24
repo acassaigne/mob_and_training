@@ -167,6 +167,7 @@ class GameOfLife:
         if count_alive_0_0 == 3:
             self.grid.seed(Position(0, 0))
 
+
 class TestGameOfLife(unittest.TestCase):
 
     def test_empty_grid_should_not_equal_grid_with_1_element(self):
@@ -248,24 +249,32 @@ class TestGameOfLife(unittest.TestCase):
         self.assertEqual(Grid(1, 1), a_game.grid)
 
     def test_alone_live_cell_in_game_should_die_for_grid_1_1(self):
-        a_grid = Grid(1, 1)
-        a_grid.seed(Position(0, 0))
+        factory = GridFactory()
+        a_grid = factory.create("1")
+        a_full_dead_grid = factory.create("0")
         a_game = GameOfLife(a_grid)
         a_game.tick()
-        self.assertEqual(Grid(1, 1), a_game.grid)
+        self.assertEqual(a_full_dead_grid, a_game.grid)
 
     def test_alone_live_cell_in_game_should_die_for_grid_1_2(self):
-        a_grid = Grid(1, 2)
-        a_grid.seed(Position(0, 1))
+        factory = GridFactory()
+        a_grid = factory.create("01")
+        a_full_dead_grid = factory.create("00")
         a_game = GameOfLife(a_grid)
         a_game.tick()
-        self.assertEqual(Grid(1, 2), a_game.grid)
+        self.assertEqual(a_full_dead_grid, a_game.grid)
 
+    @unittest.skip("refacto")
     def test_dead_cell_in_position_1_1_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
+        factory = GridFactory()
+        a_grid_2 = factory.create("11\n" +
+                                "10")
+
         a_grid = Grid(2, 2)
         a_grid.seed(Position(0, 0))
         a_grid.seed(Position(0, 1))
         a_grid.seed(Position(1, 0))
+        self.assertEqual(a_grid, a_grid_2)
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_grid.is_alive(Position(1, 1)))
@@ -305,9 +314,13 @@ class TestGameOfLife(unittest.TestCase):
         self.assertEqual(a_grid, grid_factory.create('0\n' +
                                                      '0'))
 
-    def test_x(self):
+    def test_string_to_grid_with_two_rows_1_newline_0_string_should_return_2_1_grid_with_one_alive_at_position_0_0_and_one_dead(self):
         a_grid = Grid(2, 1)
         a_grid.seed(Position(row=0, column=0))
         grid_factory = GridFactory()
         self.assertEqual(a_grid, grid_factory.create('1\n' +
                                                      '0'))
+
+    def test_track_bug(self):
+        pass
+    
