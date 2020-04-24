@@ -62,6 +62,10 @@ class Grid:
         self.number_rows = number_rows
         self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
 
+    @staticmethod
+    def string_to_grid(input_string):
+        return Grid(1, 1)
+
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
 
@@ -230,4 +234,14 @@ class TestGameOfLife(unittest.TestCase):
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_grid.is_alive(Position(0, 0)))
+
+    def test_string_to_grid_should_return_1_1_grid_with_1_dead_cell(self):
+        a_grid = Grid(1, 1)
+        self.assertEqual(a_grid, Grid.string_to_grid('0'))
+
+    def test_x(self):
+        a_grid = Grid(1, 1)
+        a_grid.seed(Position(0, 0))
+        self.assertEqual(a_grid, Grid.string_to_grid('1'))
+
 
