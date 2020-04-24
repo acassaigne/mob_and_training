@@ -318,8 +318,10 @@ class TestGameOfLife(unittest.TestCase):
                                 "11")
         a_game = GameOfLife(a_grid)
         a_game.tick()
-        #TODO: refacto a_game.grid.is_alive, respect constraints & rules for calisthenic
-        self.assertTrue(a_game.grid.is_alive(Position(0, 0)))
+        #TODO: implementer l'égalité sur la classe GameOfLife
+        expected_grid = "11\n" +\
+                        "11"
+        self.assertTrue(a_game.grid, factory.create(expected_grid))
 
 
 
