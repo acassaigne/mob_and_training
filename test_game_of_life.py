@@ -130,11 +130,9 @@ class Grid:
     def seed(self, position):
         self.raise_if_out_of_bounds(position)
         self.new_rows[position.row].seed(position.column)
-        self.rows[position.row][position.column] = AliveCell()
 
     def kill(self, position):
         self.raise_if_out_of_bounds(position)
-        self.rows[position.row][position.column] = DeadCell()
         self.new_rows[position.row].kill(position.column)
 
     def __eq__(self, other):
@@ -168,10 +166,9 @@ class GameOfLife:
     def tick(self):
         self.new_grid = Grid(self.grid.number_rows, self.grid.number_columns)
         #refacto
-        for index_row in range(len(self.grid.rows)):
-            for index_column in range(len(self.grid.rows[index_row])):
+        for index_row in range(self.grid.number_rows):
+            for index_column in range(self.grid.number_columns):
                 position = Position(row=index_row, column=index_column)
-                self.new_grid.rows[index_row][index_column] = self.grid.rows[index_row][index_column]
                 self.new_grid.new_rows[index_row].cells[index_column] = self.grid.new_rows[index_row].cells[index_column]
                 count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
                 if count_alive == 3:
@@ -233,7 +230,8 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_rows_should_be_generated_as_lists_of_lists(self):
         a_grid = Grid(2, 2)
-        self.assertEqual([[DeadCell(), DeadCell()],[DeadCell(), DeadCell()]], a_grid.rows)
+        a_dead_row = CellsRow(2)
+        self.assertEqual([a_dead_row, a_dead_row], a_grid.new_rows)
 
     def test_should_count_alive_cell_in_diagonal(self):
         a_grid = Grid(2, 2)
@@ -242,8 +240,13 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_seeded_grid_should_be_well_seeded(self):
         a_grid = Grid(2, 2)
+        a_row = CellsRow(2)
+        a_row.seed(cell_index=1)
+        a_dead_row = CellsRow(2)
+
         a_grid.seed(Position(row=0, column=1))
-        self.assertEqual([[DeadCell(), AliveCell()], [DeadCell(), DeadCell()]], a_grid.rows)
+
+        self.assertEqual([a_row, a_dead_row], a_grid.new_rows)
 
     def test_positions_around_0_0_with_0_0_boundaries_should_return_empty_list(self):
         p = Position(0, 0)
