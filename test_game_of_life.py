@@ -149,12 +149,13 @@ class GameOfLife:
         #refacto
         for index_row in range(len(self.grid.rows)):
             for index_column in range(len(self.grid.rows[index_row])):
+                position = Position(row=index_row, column=index_column)
                 self.new_grid.rows[index_row][index_column] = self.grid.rows[index_row][index_column]
                 count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
                 if count_alive == 3:
-                    self.new_grid.seed(Position(row=index_row, column=index_column))
-                if count_alive < 2:
-                    self.new_grid.kill(Position(row=index_row, column=index_column))
+                    self.new_grid.seed(position)
+                if count_alive < 2 or count_alive > 3:
+                    self.new_grid.kill(position)
         self.grid = self.new_grid
 
 
@@ -296,7 +297,7 @@ class TestGameOfLife(unittest.TestCase):
     def test_facory_created_grid_should_be_equal_to_seeded_grid(self):
         self.initialize_grid_factory()
         a_grid_2 = self.factory.create("11\n" +
-                                  "10")
+                                       "10")
         a_grid = Grid(2, 2)
         a_grid.seed(Position(0, 0))
         a_grid.seed(Position(0, 1))
@@ -313,24 +314,35 @@ class TestGameOfLife(unittest.TestCase):
         self.assertTrue(a_game.grid.is_alive(Position(0, 1)))
 
     def test_dead_cell_in_position_1_1_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
-        factory = GridFactory()
-        a_grid = factory.create("11\n" +
-                                "10")
+        self.initialize_grid_factory()
+        a_grid = self.factory.create("11\n" +
+                                     "10")
         a_game = GameOfLife(a_grid)
         a_game.tick()
         self.assertTrue(a_game.grid.is_alive(Position(1, 1)))
 
     def test_dead_cell_in_position_0_0_in_2_2_grid_with_3_alive_neighbours_should_be_alive_after_tick(self):
-        factory = GridFactory()
-        a_grid = factory.create("01\n" +
-                                "11")
-        expected_grid = factory.create("11\n" + \
+        self.initialize_grid_factory()
+        a_grid = self.factory.create("01\n" +
+                                     "11")
+        expected_grid = self.factory.create("11\n" + \
                                         "11")
         a_game = GameOfLife(a_grid)
         a_game.tick()
-        #TODO: implementer l'égalité sur la classe GameOfLife
+
+        self.assertEqual(expected_grid, a_game.grid)
+
+    def test_alive_cell_between_more_than_3_live_cell_should_die(self):
+        self.initialize_grid_factory()
+        a_grid = self.factory.create("111\n" +
+                                     "111")
+        expected_grid = self.factory.create("101\n" + \
+                                            "101")
+        a_game = GameOfLife(a_grid)
+        a_game.tick()
 
         self.assertEqual(str(expected_grid), str(a_game.grid))
+
 
 
 
