@@ -91,6 +91,12 @@ class CellsRow:
     def __eq__(self, other):
         return self.cells == other.cells
 
+    def __str__(self):
+        result = ""
+        for cell in self.cells:
+            result += "1" if cell == AliveCell() else "0"
+        return result
+
     def seed(self, cell_index):
         self.cells[cell_index] = AliveCell()
 
@@ -114,10 +120,8 @@ class Grid:
 
     def __str__(self):
         result = ""
-        for row in self.rows:
-            for cell in row:
-                result += "1" if cell == AliveCell() else "0"
-            result += "\n"
+        for row in self.new_rows:
+            result += str(row) + "\n"
         return result
 
     def _generate_dead_row(self):
@@ -130,11 +134,11 @@ class Grid:
 
     def kill(self, position):
         self.raise_if_out_of_bounds(position)
-        self.new_rows[position.row].kill(position.column)
         self.rows[position.row][position.column] = DeadCell()
+        self.new_rows[position.row].kill(position.column)
 
     def __eq__(self, other):
-        return self.rows == other.rows
+        return self.new_rows == other.new_rows
 
     def raise_if_out_of_bounds(self, position):
         if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns\
@@ -168,6 +172,7 @@ class GameOfLife:
             for index_column in range(len(self.grid.rows[index_row])):
                 position = Position(row=index_row, column=index_column)
                 self.new_grid.rows[index_row][index_column] = self.grid.rows[index_row][index_column]
+                self.new_grid.new_rows[index_row].cells[index_column] = self.grid.new_rows[index_row].cells[index_column]
                 count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
                 if count_alive == 3:
                     self.new_grid.seed(position)
