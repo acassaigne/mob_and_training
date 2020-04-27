@@ -81,6 +81,18 @@ class GridFactory:
                 self.grid.seed(Position(row_number, column_number))
             column_number += 1
 
+class Row:
+
+    def __init__(self, number_columns):
+        self.number_columns = number_columns
+        self.cells = self._generate_dead_row()
+
+    def __eq__(self, other):
+        return self.cells == other.cells
+
+    def _generate_dead_row(self):
+        return [DeadCell() for i in range(self.number_columns)]
+
 
 class Grid:
 
