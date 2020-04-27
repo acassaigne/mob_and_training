@@ -316,12 +316,13 @@ class TestGameOfLife(unittest.TestCase):
         factory = GridFactory()
         a_grid = factory.create("01\n" +
                                 "11")
+        expected_grid = factory.create("11\n" + \
+                                        "11")
+        expected_game = GameOfLife(expected_grid)
         a_game = GameOfLife(a_grid)
         a_game.tick()
         #TODO: implementer l'égalité sur la classe GameOfLife
-        expected_grid = "11\n" +\
-                        "11"
-        self.assertTrue(a_game.grid, factory.create(expected_grid))
+        self.assertEqual(expected_grid, a_game.grid)
 
 
 
