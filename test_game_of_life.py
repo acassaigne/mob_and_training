@@ -13,6 +13,7 @@ class DeadCell:
         return type(self) == type(other)
 
 
+
 class Position:
 
     def __init__(self, row, column):
@@ -50,6 +51,15 @@ class Position:
         return f"position row={self.row} column={self.column}"
 
 # TODO: class SetNeighbours class iterable
+
+class SetNeighbours:
+
+    def __init__(self):
+        self.positions = []
+
+    def append(self, position):
+        self.positions.append(position)
+
 
 class InvalidPosition(Exception):
     pass
@@ -115,12 +125,11 @@ class Grid:
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
-        self.new_rows = [CellsRow(number_columns) for row in range(self.number_rows)]
-        self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
+        self.rows = [CellsRow(number_columns) for row in range(self.number_rows)]
 
     def __str__(self):
         result = ""
-        for row in self.new_rows:
+        for row in self.rows:
             result += str(row) + "\n"
         return result
 
@@ -129,14 +138,14 @@ class Grid:
 
     def seed(self, position):
         self.raise_if_out_of_bounds(position)
-        self.new_rows[position.row].seed(position.column)
+        self.rows[position.row].seed(position.column)
 
     def kill(self, position):
         self.raise_if_out_of_bounds(position)
-        self.new_rows[position.row].kill(position.column)
+        self.rows[position.row].kill(position.column)
 
     def __eq__(self, other):
-        return self.new_rows == other.new_rows
+        return self.rows == other.rows
 
     def raise_if_out_of_bounds(self, position):
         if position.row >= self.number_rows or position.row < 0 or position.column >= self.number_columns\
@@ -148,12 +157,12 @@ class Grid:
         neighbours = position.generate_positions_around(Position(self.number_rows - 1, self.number_columns - 1))
         result = 0
         for neighbour in neighbours:
-            if self.new_rows[neighbour.row].is_alive(neighbour.column):
+            if self.rows[neighbour.row].is_alive(neighbour.column):
                 result += 1
         return result
 
     def is_alive(self, position):
-        return self.new_rows[position.row].is_alive(position.column)
+        return self.rows[position.row].is_alive(position.column)
 
 
 
@@ -169,7 +178,7 @@ class GameOfLife:
         for index_row in range(self.grid.number_rows):
             for index_column in range(self.grid.number_columns):
                 position = Position(row=index_row, column=index_column)
-                self.new_grid.new_rows[index_row].cells[index_column] = self.grid.new_rows[index_row].cells[index_column]
+                self.new_grid.rows[index_row].cells[index_column] = self.grid.rows[index_row].cells[index_column]
                 count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
                 if count_alive == 3:
                     self.new_grid.seed(position)
@@ -231,7 +240,7 @@ class TestGameOfLife(unittest.TestCase):
     def test_rows_should_be_generated_as_lists_of_lists(self):
         a_grid = Grid(2, 2)
         a_dead_row = CellsRow(2)
-        self.assertEqual([a_dead_row, a_dead_row], a_grid.new_rows)
+        self.assertEqual([a_dead_row, a_dead_row], a_grid.rows)
 
     def test_should_count_alive_cell_in_diagonal(self):
         a_grid = Grid(2, 2)
@@ -246,7 +255,7 @@ class TestGameOfLife(unittest.TestCase):
 
         a_grid.seed(Position(row=0, column=1))
 
-        self.assertEqual([a_row, a_dead_row], a_grid.new_rows)
+        self.assertEqual([a_row, a_dead_row], a_grid.rows)
 
     def test_positions_around_0_0_with_0_0_boundaries_should_return_empty_list(self):
         p = Position(0, 0)
