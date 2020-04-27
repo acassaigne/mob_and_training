@@ -90,6 +90,12 @@ class Row:
     def __eq__(self, other):
         return self.cells == other.cells
 
+    def seed(self, cell_index):
+        self.cells[cell_index] = AliveCell()
+
+    def kill(self, cell_index):
+        self.cells[cell_index] = DeadCell()
+
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
 
@@ -99,6 +105,7 @@ class Grid:
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
+        self.new_rows = [Row(number_columns) for row in range(self.number_rows)]
         self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
 
     def __str__(self):
@@ -114,6 +121,7 @@ class Grid:
 
     def seed(self, position):
         self.raise_if_out_of_bounds(position)
+        self.new_rows[position.row].seed(position.column)
         self.rows[position.row][position.column] = AliveCell()
 
     def kill(self, position):
