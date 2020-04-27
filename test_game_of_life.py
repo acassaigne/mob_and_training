@@ -104,6 +104,10 @@ class Grid:
         self.raise_if_out_of_bounds(position)
         self.rows[position.row][position.column] = AliveCell()
 
+    def kill(self, position):
+        self.raise_if_out_of_bounds(position)
+        self.rows[position.row][position.column] = DeadCell()
+
     def __eq__(self, other):
         return self.rows == other.rows
 
@@ -133,6 +137,7 @@ class Grid:
             row[column] = DeadCell()
 
 
+
 class GameOfLife:
 
     def __init__(self, grid):
@@ -141,12 +146,15 @@ class GameOfLife:
 
     def tick(self):
         self.new_grid = Grid(self.grid.number_rows, self.grid.number_columns)
-
+        #refacto
         for index_row in range(len(self.grid.rows)):
             for index_column in range(len(self.grid.rows[index_row])):
+                self.new_grid.rows[index_row][index_column] = self.grid.rows[index_row][index_column]
                 count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
                 if count_alive == 3:
                     self.new_grid.seed(Position(row=index_row, column=index_column))
+                if count_alive < 2:
+                    self.new_grid.kill(Position(row=index_row, column=index_column))
         self.grid = self.new_grid
 
 
@@ -318,11 +326,11 @@ class TestGameOfLife(unittest.TestCase):
                                 "11")
         expected_grid = factory.create("11\n" + \
                                         "11")
-        expected_game = GameOfLife(expected_grid)
         a_game = GameOfLife(a_grid)
         a_game.tick()
         #TODO: implementer l'égalité sur la classe GameOfLife
-        self.assertEqual(expected_grid, a_game.grid)
+
+        self.assertEqual(str(expected_grid), str(a_game.grid))
 
 
 
