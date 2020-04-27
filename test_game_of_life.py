@@ -81,7 +81,8 @@ class GridFactory:
                 self.grid.seed(Position(row_number, column_number))
             column_number += 1
 
-class Row:
+
+class CellsRow:
 
     def __init__(self, number_columns):
         self.number_columns = number_columns
@@ -96,6 +97,9 @@ class Row:
     def kill(self, cell_index):
         self.cells[cell_index] = DeadCell()
 
+    def is_alive(self, cell_index):
+        return self.cells[cell_index] == AliveCell()
+
     def _generate_dead_row(self):
         return [DeadCell() for i in range(self.number_columns)]
 
@@ -105,7 +109,7 @@ class Grid:
     def __init__(self, number_rows, number_columns):
         self.number_columns = number_columns
         self.number_rows = number_rows
-        self.new_rows = [Row(number_columns) for row in range(self.number_rows)]
+        self.new_rows = [CellsRow(number_columns) for row in range(self.number_rows)]
         self.rows = [self._generate_dead_row() for row in range(self.number_rows)]
 
     def __str__(self):
@@ -126,6 +130,7 @@ class Grid:
 
     def kill(self, position):
         self.raise_if_out_of_bounds(position)
+        self.new_rows[position.row].kill(position.column)
         self.rows[position.row][position.column] = DeadCell()
 
     def __eq__(self, other):
@@ -141,20 +146,12 @@ class Grid:
         neighbours = position.generate_positions_around(Position(self.number_rows - 1, self.number_columns - 1))
         result = 0
         for neighbour in neighbours:
-            if self.rows[neighbour.row][neighbour.column] == AliveCell():
+            if self.new_rows[neighbour.row].is_alive(neighbour.column):
                 result += 1
         return result
 
     def is_alive(self, position):
-        return self.rows[position.row][position.column] == AliveCell()
-
-    def kill_all(self):
-        for row in self.rows:
-            self.kill_row(row)
-
-    def kill_row(self, row):
-        for column in range(self.number_columns):
-            row[column] = DeadCell()
+        return self.new_rows[position.row].is_alive(position.column)
 
 
 
