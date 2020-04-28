@@ -1,3 +1,4 @@
+import copy
 import unittest
 
 
@@ -193,18 +194,25 @@ class GameOfLife:
         self.new_grid = None
 
     def tick(self):
-        self.new_grid = Grid(self.grid.number_rows, self.grid.number_columns)
-        #refacto
+        self.new_grid = copy.deepcopy(self.grid)
         for index_row in range(self.grid.number_rows):
-            for index_column in range(self.grid.number_columns):
-                position = Position(row=index_row, column=index_column)
-                self.new_grid.rows[index_row].cells[index_column] = self.grid.rows[index_row].cells[index_column]
-                count_alive = self.grid.count_alive_cells_around(Position(index_row, index_column))
-                if count_alive == 3:
-                    self.new_grid.seed(position)
-                if count_alive < 2 or count_alive > 3:
-                    self.new_grid.kill(position)
+            self.tick_on_row(index_row)
         self.grid = self.new_grid
+
+    def tick_on_row(self, index_row):
+        for index_column in range(self.grid.number_columns):
+            position = Position(row=index_row, column=index_column)
+            count_alive = self.grid.count_alive_cells_around(position)
+            self.birth_cell_at(count_alive, position)
+            self.death_cell_at(count_alive, position)
+
+    def death_cell_at(self, count_alive, position):
+        if count_alive < 2 or count_alive > 3:
+            self.new_grid.kill(position)
+
+    def birth_cell_at(self, count_alive, position):
+        if count_alive == 3:
+            self.new_grid.seed(position)
 
 
 class TestGameOfLife(unittest.TestCase):
