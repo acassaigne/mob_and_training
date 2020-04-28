@@ -62,10 +62,13 @@ class NeighboursGenerator:
         self.lower_right_corner = None
         self.central_position = None
 
-    def create(self, central_position):
+    def _initialize_from_central_position(self, central_position):
         self.central_position = central_position
+        self.neighbours = SetNeighbours()
         self.generate_corners()
-        self.neighbours = SetNeighbour()
+
+    def create(self, central_position):
+        self._initialize_from_central_position(central_position)
         for row in range(self.upper_left_corner.row, self.lower_right_corner.row + 1):
             self.generate_horizontal_positions_on_fixed_row(row)
         return self.neighbours
@@ -93,8 +96,10 @@ class SetNeighbours:
         self.positions.append(position)
 
     def __eq__(self, other):
-        return sorted(self.positions, ) == sorted(other.positions)
-    sorted(l, key=lambda position: str(position)) 
+        return self.sorted() == other.sorted()
+
+    def sorted(self):
+        return sorted(self.positions, key=lambda position: str(position))
 
 class InvalidPosition(Exception):
     pass
@@ -220,15 +225,6 @@ class GameOfLife:
                 if count_alive < 2 or count_alive > 3:
                     self.new_grid.kill(position)
         self.grid = self.new_grid
-
-
-class SetNeighbour:
-
-    def __init__(self):
-        self.set_of_neighbour = []
-
-    def append(self, neighbour_position):
-        self.set_of_neighbour.append(neighbour_position)
 
 
 class TestGameOfLife(unittest.TestCase):
@@ -421,12 +417,12 @@ class TestGameOfLife(unittest.TestCase):
 
         self.assertEqual(str(expected_grid), str(a_game.grid))
 
-
-    def generate_str_set(self, a_set):
-        return [str(element) for element in a_set]
-
     def test_neighbours_generator_with_central_position_0_0_should_return_three_neighbours_for_max_position_1_1(self):
         neighbours_generator = NeighboursGenerator(max_position=Position(1,1))
         result = neighbours_generator.create(central_position=Position(0,0))
-        self.assertEqual([str(Position(0, 1)), str(Position(1, 0)), str(Position(1,1))], self.generate_str_set(result))
+        set_neighbours = SetNeighbours()
+        set_neighbours.append(Position(0, 1))
+        set_neighbours.append(Position(1, 0))
+        set_neighbours.append(Position(1, 1))
+        self.assertEqual(set_neighbours, result)
 
