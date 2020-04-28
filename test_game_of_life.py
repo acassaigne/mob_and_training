@@ -53,8 +53,38 @@ class Position:
 # TODO: class SetNeighbours class iterable
 
 class NeighboursGenerator:
-#TODO
 
+    def __init__(self, max_position):
+        self.max_position = max_position
+        self.neighbours = []
+        self.upper_left_corner = None
+        self.lower_right_corner = None
+
+    def create(self, position):
+        self.generate_corners(self, position)
+
+    def generate_corners(self, position):
+        self.upper_left_corner = Position(max(position.row - 1, 0), max(position.column - 1, 0))
+        self.lower_right_corner = Position(min(self.max_position.row, position.row + 1), min(self.max_position.column, position.column + 1))
+
+    def neighbours_accumulator(self, list_positions, position):
+        if self.row == position.row and self.column == position.column:
+            return list_positions
+        return list_positions + [position]
+
+    def generate_horizontal_positions_on_fixed_row(self, row, maximum_position):
+        result = []
+        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
+        for column in range(upper_left_corner.column, lower_right_corner.column + 1):
+            result = self.neighbours_accumulator(result, Position(row, column))
+        return result
+
+    def generate_positions_around(self, maximum_position):
+        result = []
+        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
+        for row in range(upper_left_corner.row, lower_right_corner.row + 1):
+            result += self.generate_horizontal_positions_on_fixed_row(row, maximum_position)
+        return result
 
 class SetNeighbours:
 
