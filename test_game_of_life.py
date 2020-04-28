@@ -94,7 +94,7 @@ class SetNeighbours:
 
     def __eq__(self, other):
         return sorted(self.positions, ) == sorted(other.positions)
-
+    sorted(l, key=lambda position: str(position)) 
 
 class InvalidPosition(Exception):
     pass
