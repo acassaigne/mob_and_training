@@ -13,44 +13,17 @@ class DeadCell:
         return type(self) == type(other)
 
 
-
 class Position:
 
     def __init__(self, row, column):
         self.row = row
         self.column = column
 
-    def generate_corners(self, max_position):
-        upper_left_corner = Position(max(self.row - 1, 0), max(self.column - 1, 0))
-        lower_right_corner = Position(min(max_position.row, self.row + 1), min(max_position.column, self.column + 1))
-        return upper_left_corner, lower_right_corner
-
-    def neighbours_accumulator(self, list_positions, position):
-        if self.row == position.row and self.column == position.column:
-            return list_positions
-        return list_positions + [position]
-
-    def generate_horizontal_positions_on_fixed_row(self, row, maximum_position):
-        result = []
-        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
-        for column in range(upper_left_corner.column, lower_right_corner.column + 1):
-            result = self.neighbours_accumulator(result, Position(row, column))
-        return result
-
-    def generate_positions_around(self, maximum_position):
-        result = []
-        upper_left_corner, lower_right_corner = self.generate_corners(maximum_position)
-        for row in range(upper_left_corner.row, lower_right_corner.row + 1):
-            result += self.generate_horizontal_positions_on_fixed_row(row, maximum_position)
-        return result
-
     def __eq__(self, other):
         return self.row == other.row and self.column == other.column 
 
     def __str__(self):
         return f"position row={self.row} column={self.column}"
-
-# TODO: class SetNeighbours class iterable
 
 
 class NeighboursGenerator:
@@ -101,8 +74,14 @@ class SetNeighbours:
     def sorted(self):
         return sorted(self.positions, key=lambda position: str(position))
 
+    def __iter__(self):
+        for position in self.positions:
+            yield position
+
+
 class InvalidPosition(Exception):
     pass
+
 
 class GridFactory:
 
@@ -166,6 +145,7 @@ class Grid:
         self.number_columns = number_columns
         self.number_rows = number_rows
         self.rows = [CellsRow(number_columns) for row in range(self.number_rows)]
+        self.max_position = Position(number_rows - 1, number_columns - 1)
 
     def __str__(self):
         result = ""
@@ -194,7 +174,8 @@ class Grid:
 
     def count_alive_cells_around(self, position):
         self.raise_if_out_of_bounds(position)
-        neighbours = position.generate_positions_around(Position(self.number_rows - 1, self.number_columns - 1))
+        neighbours_generator = NeighboursGenerator(self.max_position)
+        neighbours = neighbours_generator.create(position)
         result = 0
         for neighbour in neighbours:
             if self.rows[neighbour.row].is_alive(neighbour.column):
@@ -203,7 +184,6 @@ class Grid:
 
     def is_alive(self, position):
         return self.rows[position.row].is_alive(position.column)
-
 
 
 class GameOfLife:
@@ -299,13 +279,16 @@ class TestGameOfLife(unittest.TestCase):
 
     def test_positions_around_0_0_with_0_0_boundaries_should_return_empty_list(self):
         p = Position(0, 0)
-        result = p.generate_positions_around(Position(0, 0))
-        self.assertEqual([], result)
+        neighbours_generator = NeighboursGenerator(p)
+        neighbours = neighbours_generator.create(p)
+        self.assertEqual(neighbours, SetNeighbours())
 
     def test_positions_around_0_0_with_0_1_boundaries_should_return_position_0_1(self):
-        p = Position(0, 0)
-        result = p.generate_positions_around(Position(0, 1))
-        self.assertEqual([Position(0, 1)], result)
+        neighbours_generator = NeighboursGenerator(Position(0, 1))
+        neighbours = neighbours_generator.create(Position(0, 0))
+        expected = SetNeighbours()
+        expected.append(Position(0, 1))
+        self.assertEqual(expected, neighbours)
 
     def test_str_of_position_3_3_should_return_good_name(self):
         p = Position(3, 3)
