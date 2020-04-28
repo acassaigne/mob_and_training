@@ -52,6 +52,10 @@ class Position:
 
 # TODO: class SetNeighbours class iterable
 
+class NeighboursGenerator:
+#TODO
+
+
 class SetNeighbours:
 
     def __init__(self):
@@ -185,6 +189,15 @@ class GameOfLife:
                 if count_alive < 2 or count_alive > 3:
                     self.new_grid.kill(position)
         self.grid = self.new_grid
+
+
+class SetNeighbour:
+
+    def __init__(self):
+        self.set_of_neighbour = []
+
+    def append(self, neighbour_position):
+        self.set_of_neighbour.append(neighbour_position)
 
 
 class TestGameOfLife(unittest.TestCase):
