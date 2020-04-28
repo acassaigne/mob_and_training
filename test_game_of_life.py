@@ -57,7 +57,7 @@ class NeighboursGenerator:
 
     def __init__(self, max_position):
         self.maximum_position = max_position
-        self.neighbours = []
+        self.neighbours = None
         self.upper_left_corner = None
         self.lower_right_corner = None
         self.central_position = None
@@ -65,7 +65,7 @@ class NeighboursGenerator:
     def create(self, central_position):
         self.central_position = central_position
         self.generate_corners()
-        self.neighbours = []
+        self.neighbours = SetNeighbour()
         for row in range(self.upper_left_corner.row, self.lower_right_corner.row + 1):
             self.generate_horizontal_positions_on_fixed_row(row)
         return self.neighbours
@@ -91,6 +91,9 @@ class SetNeighbours:
 
     def append(self, position):
         self.positions.append(position)
+
+    def __eq__(self, other):
+        return sorted(self.positions, ) == sorted(other.positions)
 
 
 class InvalidPosition(Exception):
@@ -419,5 +422,11 @@ class TestGameOfLife(unittest.TestCase):
         self.assertEqual(str(expected_grid), str(a_game.grid))
 
 
+    def generate_str_set(self, a_set):
+        return [str(element) for element in a_set]
 
+    def test_neighbours_generator_with_central_position_0_0_should_return_three_neighbours_for_max_position_1_1(self):
+        neighbours_generator = NeighboursGenerator(max_position=Position(1,1))
+        result = neighbours_generator.create(central_position=Position(0,0))
+        self.assertEqual([str(Position(0, 1)), str(Position(1, 0)), str(Position(1,1))], self.generate_str_set(result))
 
