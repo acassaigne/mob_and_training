@@ -81,7 +81,7 @@ class NeighboursGenerator:
 
     def generate_horizontal_positions_on_fixed_row(self, row):
         for column in range(self.upper_left_corner.column, self.lower_right_corner.column + 1):
-            self.neighbours_accumulator(self.central_position, Position(row, column))
+            self.neighbours_accumulator(Position(row, column))
 
 
 class SetNeighbours:
