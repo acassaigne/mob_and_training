@@ -11,6 +11,18 @@ class Statement:
 
     def split_to_list_of_words(self):
         result = ListOfWords()
+        start_word = 0
+        end_word = 0
+        for a_character in self.content:
+            if a_character == ' ':
+                word = self.content[start_word:end_word]
+                start_word = end_word + 1
+                end_word = start_word
+                if word == 'FALSE':
+                    result.append(FalseWord())
+                if word == 'TRUE':
+                    result.append(TrueWord())
+            end_word += 1
         if self.content == 'FALSE':
             result.append(FalseWord())
         if self.content == 'TRUE':
@@ -62,6 +74,16 @@ class ListOfWords:
     def __getitem__(self, item):
         return self.words[item]
 
+    def __str__(self):
+        result = ""
+        count = 0
+        for word in self.words:
+            if count >= 1:
+                result += ' | '
+            result += str(word)
+            count += 1
+        return result
+
     def append(self, word):
         self.words.append(word)
 
@@ -91,26 +113,32 @@ class Word:
 
 
 class TrueWord(Word):
-    pass
+    def __str__(self):
+        return "true"
 
 
 class FalseWord(Word):
-    pass
+    def __str__(self):
+        return "false"
 
 
 class BooleanEvaluator:
 
     def evaluate(self, list_of_words):
-        if type(list_of_words) != ListOfWords:
-            raise InvalidArgument
+        self._checkIfInvalideArgument(list_of_words)
         if list_of_words[0] == TrueWord():
             return True
         if list_of_words[0] == FalseWord():
             return False
 
+    def _checkIfInvalideArgument(self, list_of_words):
+        if type(list_of_words) != ListOfWords or list_of_words == ListOfWords():
+            raise InvalidArgument
+
 
 class InvalidArgument(Exception):
     pass
+
 
 
 class TestStringMethods(unittest.TestCase):
@@ -184,7 +212,30 @@ class TestStringMethods(unittest.TestCase):
         list_of_words.append(FalseWord())
         self.assertFalse(a_evaluator.evaluate(list_of_words))
 
-    def test_x(self):
+    def test_invalid_type_of_list_of_words_should_raise_error(self):
         a_evaluator = BooleanEvaluator()
         with self.assertRaises(InvalidArgument):
             a_evaluator.evaluate([])
+
+    def test_an_evaluation_of_an_empty_list_of_words_should_raise_error(self):
+        a_evaluator = BooleanEvaluator()
+        with self.assertRaises(InvalidArgument):
+            a_evaluator.evaluate(ListOfWords())
+
+    def test_x(self):
+        a_statement = Statement('TRUE FALSE')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(TrueWord())
+        expected_list_of_words.append(FalseWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_y(self):
+        list_of_word = ListOfWords()
+        list_of_word.append(TrueWord())
+        self.assertEqual('true', str(list_of_word))
+
+    def test_z(self):
+        list_of_word = ListOfWords()
+        list_of_word.append(TrueWord())
+        list_of_word.append(FalseWord())
+        self.assertEqual('true | false', str(list_of_word))
