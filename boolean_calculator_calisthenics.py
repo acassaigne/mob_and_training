@@ -9,25 +9,28 @@ class Statement:
     def __eq__(self, other):
         return self.content == other.content
 
+    def _convert(self, word_string):
+        words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord()}
+        if word_string in words_dict:
+            return words_dict[word_string]
+
+    def _extract_word_from_indexes(self, start, end):
+        return self.content[start:end]
+
     def split_to_list_of_words(self):
         result = ListOfWords()
-        start_word = 0
-        end_word = 0
-        for a_character in self.content:
-            if a_character == ' ':
-                word = self.content[start_word:end_word]
-                start_word = end_word + 1
-                end_word = start_word
-                if word == 'FALSE':
-                    result.append(FalseWord())
-                if word == 'TRUE':
-                    result.append(TrueWord())
-            end_word += 1
-        if self.content == 'FALSE':
-            result.append(FalseWord())
-        if self.content == 'TRUE':
-            result.append(TrueWord())
+        self.recursive_split(self.content, result)
         return result
+
+    def recursive_split(self, input_string, result_list):
+        current_index = 0
+        while current_index < len(input_string) and input_string[current_index] != ' ':
+            current_index += 1
+        word = input_string[0:current_index]
+        converted_word = self._convert(word)
+        result_list.append(converted_word)
+        if current_index < len(input_string):
+            self.recursive_split(input_string[current_index + 1:], result_list)
 
     def split_by_space_2(self):
         splitted_statement = SplittedStatement()
@@ -85,6 +88,10 @@ class ListOfWords:
         return result
 
     def append(self, word):
+        if word is None:
+            return
+        if not issubclass(type(word), Word):
+            raise InvalidWord
         self.words.append(word)
 
 class SplittedStatement:
@@ -108,7 +115,7 @@ class SplittedStatement:
 
 
 class Word:
-    def __eq__(self,other):
+    def __eq__(self, other):
         return type(self) == type(other)
 
 
@@ -139,6 +146,28 @@ class BooleanEvaluator:
 class InvalidArgument(Exception):
     pass
 
+
+class InvalidWord(Exception):
+    pass
+
+
+class NotWord(Word):
+    def __str__(self):
+        return "not"
+
+
+class AndWord(Word):
+    def __str__(self):
+        return "and"
+
+
+class OrWord(Word):
+    def __str__(self):
+        return "or"
+
+
+class InvalidStatement(Exception):
+    pass
 
 
 class TestStringMethods(unittest.TestCase):
@@ -186,7 +215,7 @@ class TestStringMethods(unittest.TestCase):
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
         a_statement = Statement('')
         a_list_of_words = ListOfWords()
-        self.assertEqual(a_list_of_words, a_statement.split_to_list_of_words())
+        self.assertEqual(str(a_list_of_words), str(a_statement.split_to_list_of_words()))
 
     def test_true_statement_split_to_list_should_return_good_list_of_words(self):
         a_statement = Statement('TRUE')
@@ -222,20 +251,53 @@ class TestStringMethods(unittest.TestCase):
         with self.assertRaises(InvalidArgument):
             a_evaluator.evaluate(ListOfWords())
 
-    def test_x(self):
+    def test_split_to_list_of_words_of_true_false_should_return_true_false(self):
         a_statement = Statement('TRUE FALSE')
         expected_list_of_words = ListOfWords()
         expected_list_of_words.append(TrueWord())
         expected_list_of_words.append(FalseWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
-    def test_y(self):
+    def test_str_list_of_word_with_true_should_return_true(self):
         list_of_word = ListOfWords()
         list_of_word.append(TrueWord())
         self.assertEqual('true', str(list_of_word))
 
-    def test_z(self):
+    def test_str_list_of_word_with_true_false_should_return_true_false(self):
         list_of_word = ListOfWords()
         list_of_word.append(TrueWord())
         list_of_word.append(FalseWord())
         self.assertEqual('true | false', str(list_of_word))
+        
+    def test_append_of_non_word_type_should_raise(self):
+        list_of_word = ListOfWords()
+        with self.assertRaises(InvalidWord):
+            list_of_word.append(1)
+
+    def test_append_of_none_should_append_nothing(self):
+        list_of_word = ListOfWords()
+        list_of_word.append(None)
+        self.assertEqual(ListOfWords(), list_of_word)
+
+    def test_not_string_should_return_list_of_word_with_not(self):
+        a_statement = Statement('NOT')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(NotWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_and_string_should_return_list_of_word_with_and(self):
+        a_statement = Statement('AND')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(AndWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_or_string_should_return_list_of_word_with_or(self):
+        a_statement = Statement('OR')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(OrWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_x(self):
+        a_statement = Statement('TRUC')
+        with self.assertRaises(InvalidStatement):
+            a_statement.split_to_list_of_words()
