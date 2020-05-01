@@ -59,6 +59,9 @@ class ListOfWords:
     def __eq__(self, other):
         return self.words == other.words
 
+    def __getitem__(self, item):
+        return self.words[item]
+
     def append(self, word):
         self.words.append(word)
 
@@ -96,6 +99,17 @@ class FalseWord(Word):
 
 
 class BooleanEvaluator:
+
+    def evaluate(self, list_of_words):
+        if type(list_of_words) != ListOfWords:
+            raise InvalidArgument
+        if list_of_words[0] == TrueWord():
+            return True
+        if list_of_words[0] == FalseWord():
+            return False
+
+
+class InvalidArgument(Exception):
     pass
 
 
@@ -158,8 +172,19 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(FalseWord())
         self.assertEqual(expected_list_of_words, a_statement.split_to_list_of_words())
 
-    def test_x(self):
+    def test_true_statement_should_be_evaluated_as_true(self):
         a_evaluator = BooleanEvaluator()
         list_of_words = ListOfWords()
         list_of_words.append(TrueWord())
-        self.asserTrue(a_evaluator.evaluate(list_of_words))
+        self.assertTrue(a_evaluator.evaluate(list_of_words))
+
+    def test_false_statement_should_be_evaluated_as_false(self):
+        a_evaluator = BooleanEvaluator()
+        list_of_words = ListOfWords()
+        list_of_words.append(FalseWord())
+        self.assertFalse(a_evaluator.evaluate(list_of_words))
+
+    def test_x(self):
+        a_evaluator = BooleanEvaluator()
+        with self.assertRaises(InvalidArgument):
+            a_evaluator.evaluate([])
