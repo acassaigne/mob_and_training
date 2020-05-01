@@ -11,6 +11,8 @@ class Statement:
 
     def split_to_list_of_words(self):
         result = ListOfWords()
+        if self.content == 'FALSE':
+            result.append(FalseWord())
         if self.content == 'TRUE':
             result.append(TrueWord())
         return result
@@ -48,11 +50,6 @@ class Statement:
             return not rest_of_statement.evaluate_statement()
 
 
-class TrueWord:
-
-    def __eq__(self,other):
-        return type(self) == type(other)
-
 
 class ListOfWords:
 
@@ -83,6 +80,24 @@ class SplittedStatement:
             if self.words[index] == word:
                 return index
         return None
+
+
+class Word:
+    def __eq__(self,other):
+        return type(self) == type(other)
+
+
+class TrueWord(Word):
+    pass
+
+
+class FalseWord(Word):
+    pass
+
+
+class BooleanEvaluator:
+    pass
+
 
 class TestStringMethods(unittest.TestCase):
 
@@ -136,3 +151,15 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words = ListOfWords()
         expected_list_of_words.append(TrueWord())
         self.assertEqual(expected_list_of_words, a_statement.split_to_list_of_words())
+
+    def test_false_statement_split_to_list_should_return_good_list_of_words(self):
+        a_statement = Statement('FALSE')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(FalseWord())
+        self.assertEqual(expected_list_of_words, a_statement.split_to_list_of_words())
+
+    def test_x(self):
+        a_evaluator = BooleanEvaluator()
+        list_of_words = ListOfWords()
+        list_of_words.append(TrueWord())
+        self.asserTrue(a_evaluator.evaluate(list_of_words))
