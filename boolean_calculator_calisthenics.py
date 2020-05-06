@@ -13,6 +13,8 @@ class Statement:
         words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord()}
         if word_string in words_dict:
             return words_dict[word_string]
+        if word_string != '' and word_string not in words_dict:
+            raise InvalidStatement
 
     def _extract_word_from_indexes(self, start, end):
         return self.content[start:end]
@@ -40,7 +42,7 @@ class Statement:
     def split_by_space(self):
         return self.content.split(' ')
 
-    def separate_statement_at_ith_word(self,index):
+    def separate_statement_at_ith_word(self, index):
         splitted_statement = self.split_by_space_2()
         first_part_of_statement_splitted = splitted_statement.words[:index]
 
@@ -65,7 +67,6 @@ class Statement:
             return not rest_of_statement.evaluate_statement()
 
 
-
 class ListOfWords:
 
     def __init__(self):
@@ -76,6 +77,9 @@ class ListOfWords:
 
     def __getitem__(self, item):
         return self.words[item]
+
+    def __len__(self):
+        return len(self.words)
 
     def __str__(self):
         result = ""
@@ -94,6 +98,20 @@ class ListOfWords:
             raise InvalidWord
         self.words.append(word)
 
+    def find_first_instance_of_word(self, word):
+        count = 0
+        for word_in_list in self.words:
+            if word_in_list == word:
+                return count
+            count += 1
+        return None
+
+    def create_sublist(self, start_index, end_index):
+        sublist = ListOfWords()
+        sublist.words = self.words[start_index:end_index]
+        return sublist
+
+
 class SplittedStatement:
 
     def __init__(self):
@@ -107,7 +125,7 @@ class SplittedStatement:
         statement = Statement(statement_content)
         return statement
 
-    def find_first_instance_of_word(self,word):
+    def find_first_instance_of_word(self, word):
         for index in range(self.words):
             if self.words[index] == word:
                 return index
@@ -133,10 +151,20 @@ class BooleanEvaluator:
 
     def evaluate(self, list_of_words):
         self._checkIfInvalideArgument(list_of_words)
-        if list_of_words[0] == TrueWord():
+        if len(list_of_words) == 1 and list_of_words[0] == TrueWord():
             return True
-        if list_of_words[0] == FalseWord():
+        if len(list_of_words) == 1 and list_of_words[0] == FalseWord():
             return False
+        if len(list_of_words) == 2 and list_of_words[0] == NotWord():
+            return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
+        and_index = list_of_words.find_first_instance_of_word(AndWord())
+        or_index = list_of_words.find_first_instance_of_word(OrWord())
+        if or_index:
+            return self.evaluate(list_of_words.create_sublist(0, or_index)) or \
+                   self.evaluate(list_of_words.create_sublist(or_index + 1, len(list_of_words)))
+        if and_index:
+            return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
+                   self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
 
     def _checkIfInvalideArgument(self, list_of_words):
         if type(list_of_words) != ListOfWords or list_of_words == ListOfWords():
@@ -268,7 +296,7 @@ class TestStringMethods(unittest.TestCase):
         list_of_word.append(TrueWord())
         list_of_word.append(FalseWord())
         self.assertEqual('true | false', str(list_of_word))
-        
+
     def test_append_of_non_word_type_should_raise(self):
         list_of_word = ListOfWords()
         with self.assertRaises(InvalidWord):
@@ -297,7 +325,31 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(OrWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
-    def test_x(self):
+    def test_invalid_word_in_statement_should_raise(self):
         a_statement = Statement('TRUC')
         with self.assertRaises(InvalidStatement):
             a_statement.split_to_list_of_words()
+
+    def test_not_true_statement_should_return_false(self):
+        a_statement = Statement('NOT TRUE')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(False, a_evaluator.evaluate(list_of_words))
+
+    def test_true_and_false_should_return_false(self):
+        a_statement = Statement('TRUE AND FALSE')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(False, a_evaluator.evaluate(list_of_words))
+
+    def test_not_false_and_true_should_return_true(self):
+        a_statement = Statement('NOT FALSE AND TRUE')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(True, a_evaluator.evaluate(list_of_words))
+
+    def test_true_or_false_should_return_true(self):
+        a_statement = Statement('TRUE OR FALSE')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(True, a_evaluator.evaluate(list_of_words))
