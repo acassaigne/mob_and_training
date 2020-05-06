@@ -91,6 +91,9 @@ class ListOfWords:
             count += 1
         return result
 
+    def is_single_word(self):
+        return len(self.words) == 1
+
     def append(self, word):
         if word is None:
             return
@@ -149,22 +152,38 @@ class FalseWord(Word):
 
 class BooleanEvaluator:
 
-    def evaluate(self, list_of_words):
-        self._checkIfInvalideArgument(list_of_words)
-        if len(list_of_words) == 1 and list_of_words[0] == TrueWord():
+    def evaluate_single_word(self, word):
+        if word == TrueWord():
             return True
-        if len(list_of_words) == 1 and list_of_words[0] == FalseWord():
+        if word == FalseWord():
             return False
-        if len(list_of_words) == 2 and list_of_words[0] == NotWord():
-            return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
-        and_index = list_of_words.find_first_instance_of_word(AndWord())
+        raise InvalidStatement
+
+    def evaluate_or(self, list_of_words):
         or_index = list_of_words.find_first_instance_of_word(OrWord())
         if or_index:
             return self.evaluate(list_of_words.create_sublist(0, or_index)) or \
                    self.evaluate(list_of_words.create_sublist(or_index + 1, len(list_of_words)))
+
+    def evaluate_and(self, list_of_words):
+        and_index = list_of_words.find_first_instance_of_word(AndWord())
         if and_index:
             return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
                    self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
+
+    def evaluate(self, list_of_words):
+        self._checkIfInvalideArgument(list_of_words)
+        if list_of_words.is_single_word():
+            word = list_of_words[0]
+            return self.evaluate_single_word(word)
+        if len(list_of_words) == 2 and list_of_words[0] == NotWord():
+            return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
+        result_or = self.evaluate_or(list_of_words)
+        if result_or:
+            return result_or
+        result_and = self.evaluate_and(list_of_words)
+        if result_and:
+            return result_and
 
     def _checkIfInvalideArgument(self, list_of_words):
         if type(list_of_words) != ListOfWords or list_of_words == ListOfWords():
@@ -267,7 +286,7 @@ class TestStringMethods(unittest.TestCase):
         a_evaluator = BooleanEvaluator()
         list_of_words = ListOfWords()
         list_of_words.append(FalseWord())
-        self.assertFalse(a_evaluator.evaluate(list_of_words))
+        self.assertEqual(False, a_evaluator.evaluate(list_of_words))
 
     def test_invalid_type_of_list_of_words_should_raise_error(self):
         a_evaluator = BooleanEvaluator()
@@ -336,7 +355,7 @@ class TestStringMethods(unittest.TestCase):
         a_evaluator = BooleanEvaluator()
         self.assertEqual(False, a_evaluator.evaluate(list_of_words))
 
-    def test_true_and_false_should_return_false(self):
+    def test_true_and_false_should_return_false_2(self):
         a_statement = Statement('TRUE AND FALSE')
         list_of_words = a_statement.split_to_list_of_words()
         a_evaluator = BooleanEvaluator()
