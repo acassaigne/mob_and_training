@@ -135,20 +135,6 @@ class SplittedStatement:
         return None
 
 
-class Word:
-    def __eq__(self, other):
-        return type(self) == type(other)
-
-
-class TrueWord(Word):
-    def __str__(self):
-        return "true"
-
-
-class FalseWord(Word):
-    def __str__(self):
-        return "false"
-
 
 class BooleanEvaluator:
 
@@ -178,6 +164,12 @@ class BooleanEvaluator:
             return self.evaluate_single_word(word)
         if len(list_of_words) == 2 and list_of_words[0] == NotWord():
             return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
+        # operator = list_of_words.first_operator()
+        # if operator == OrWord():
+        #     return self.evaluate_or(list_of_words)
+        # if operator == AndWord():
+        #     return self.evaluate_and(list_of_words)
+        #
         result_or = self.evaluate_or(list_of_words)
         if result_or is not None:
             return result_or
@@ -198,6 +190,21 @@ class InvalidArgument(Exception):
 
 class InvalidWord(Exception):
     pass
+
+
+class Word:
+    def __eq__(self, other):
+        return type(self) == type(other)
+
+
+class TrueWord(Word):
+    def __str__(self):
+        return "true"
+
+
+class FalseWord(Word):
+    def __str__(self):
+        return "false"
 
 
 class NotWord(Word):
@@ -374,3 +381,9 @@ class TestStringMethods(unittest.TestCase):
         list_of_words = a_statement.split_to_list_of_words()
         a_evaluator = BooleanEvaluator()
         self.assertEqual(True, a_evaluator.evaluate(list_of_words))
+
+    def test_x(self):
+        a_statement = Statement('TRUE OR FALSE')
+        list_of_words = a_statement.split_to_list_of_words()
+        operator = list_of_words.find_higher_priority_operator()
+        self.assertEqual(OrWord(), operator)
