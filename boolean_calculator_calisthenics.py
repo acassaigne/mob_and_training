@@ -179,12 +179,14 @@ class BooleanEvaluator:
         if len(list_of_words) == 2 and list_of_words[0] == NotWord():
             return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
         result_or = self.evaluate_or(list_of_words)
-        if result_or:
+        if result_or is not None:
             return result_or
         result_and = self.evaluate_and(list_of_words)
-        if result_and:
+        if result_and is not None:
             return result_and
-
+        raise InvalidStatement
+    
+    
     def _checkIfInvalideArgument(self, list_of_words):
         if type(list_of_words) != ListOfWords or list_of_words == ListOfWords():
             raise InvalidArgument
