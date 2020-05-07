@@ -109,6 +109,15 @@ class ListOfWords:
             count += 1
         return None
 
+    #TODO : Refactor this function
+    def find_higher_priority_operator(self):
+        or_instance = self.find_first_instance_of_word(OrWord())
+        if or_instance is not None:
+            return OrWord()
+        and_instance = self.find_first_instance_of_word(AndWord())
+        if and_instance is not None:
+            return AndWord()
+
     def create_sublist(self, start_index, end_index):
         sublist = ListOfWords()
         sublist.words = self.words[start_index:end_index]
@@ -157,6 +166,8 @@ class BooleanEvaluator:
             return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
                    self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
 
+    #TODO : integrate the not operator in find_higher_priority_operator
+
     def evaluate(self, list_of_words):
         self._checkIfInvalideArgument(list_of_words)
         if list_of_words.is_single_word():
@@ -164,18 +175,11 @@ class BooleanEvaluator:
             return self.evaluate_single_word(word)
         if len(list_of_words) == 2 and list_of_words[0] == NotWord():
             return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
-        # operator = list_of_words.first_operator()
-        # if operator == OrWord():
-        #     return self.evaluate_or(list_of_words)
-        # if operator == AndWord():
-        #     return self.evaluate_and(list_of_words)
-        #
-        result_or = self.evaluate_or(list_of_words)
-        if result_or is not None:
-            return result_or
-        result_and = self.evaluate_and(list_of_words)
-        if result_and is not None:
-            return result_and
+        operator = list_of_words.find_higher_priority_operator()
+        if operator == OrWord():
+            return self.evaluate_or(list_of_words)
+        if operator == AndWord():
+            return self.evaluate_and(list_of_words)
         raise InvalidStatement
     
     
