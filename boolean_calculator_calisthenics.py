@@ -111,7 +111,7 @@ class ListOfWords:
 
     def find_highest_priority_operator(self):
         result = None
-        list_of_operators = [OrWord(), AndWord()]
+        list_of_operators = [OrWord(), AndWord(), NotWord()]
         while result is None and list_of_operators != []:
             operator = list_of_operators.pop(0)
             result = self.find_first_instance_of_word(operator)
@@ -155,33 +155,31 @@ class BooleanEvaluator:
 
     def evaluate_or(self, list_of_words):
         or_index = list_of_words.find_first_instance_of_word(OrWord())
-        if or_index:
-            return self.evaluate(list_of_words.create_sublist(0, or_index)) or \
+        return self.evaluate(list_of_words.create_sublist(0, or_index)) or \
                    self.evaluate(list_of_words.create_sublist(or_index + 1, len(list_of_words)))
 
     def evaluate_and(self, list_of_words):
         and_index = list_of_words.find_first_instance_of_word(AndWord())
-        if and_index:
-            return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
+        return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
                    self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
-
-    #TODO : integrate the not operator in find_higher_priority_operator
 
     def evaluate(self, list_of_words):
         self._checkIfInvalideArgument(list_of_words)
         if list_of_words.is_single_word():
             word = list_of_words[0]
             return self.evaluate_single_word(word)
-        if len(list_of_words) == 2 and list_of_words[0] == NotWord():
-            return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
         operator = list_of_words.find_highest_priority_operator()
+        return self._evaluate_operator(operator, list_of_words)
+
+    def _evaluate_operator(self, operator, list_of_words):
+        if operator == NotWord():
+            return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
         if operator == OrWord():
             return self.evaluate_or(list_of_words)
         if operator == AndWord():
             return self.evaluate_and(list_of_words)
         raise InvalidStatement
-    
-    
+
     def _checkIfInvalideArgument(self, list_of_words):
         if type(list_of_words) != ListOfWords or list_of_words == ListOfWords():
             raise InvalidArgument
