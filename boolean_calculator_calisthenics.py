@@ -10,7 +10,8 @@ class Statement:
         return self.content == other.content
 
     def _convert(self, word_string):
-        words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord()}
+        words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord(),
+                      '(': OpenBracketWord()}
         if word_string in words_dict:
             return words_dict[word_string]
         if word_string != '' and word_string not in words_dict:
@@ -34,37 +35,6 @@ class Statement:
         if current_index < len(input_string):
             self.recursive_split(input_string[current_index + 1:], result_list)
 
-    def split_by_space_2(self):
-        splitted_statement = SplittedStatement()
-        splitted_statement.words = self.content.split(' ')
-        return splitted_statement
-
-    def split_by_space(self):
-        return self.content.split(' ')
-
-    def separate_statement_at_ith_word(self, index):
-        splitted_statement = self.split_by_space_2()
-        first_part_of_statement_splitted = splitted_statement.words[:index]
-
-    def evaluate_statement(self):
-        splitted = self.split_by_space()
-        splitted2 = self.split_by_space_2()
-        if self.content == 'TRUE':
-            return True
-        if self.content == 'FALSE':
-            return False
-        if splitted[1] == 'AND':
-            first_part_statement = Statement(splitted[0])
-            second_part_statement = Statement(' '.join(splitted[2:]))
-            return first_part_statement.evaluate_statement() and second_part_statement.evaluate_statement()
-        if len(splitted) > 2:
-            if splitted[2] == 'AND':
-                first_part_statement = Statement(' '.join(splitted[0:2]))
-                second_part_statement = Statement(' '.join(splitted[3:]))
-                return first_part_statement.evaluate_statement() and second_part_statement.evaluate_statement()
-        if splitted[0] == "NOT":
-            rest_of_statement = Statement(' '.join(splitted[1:]))
-            return not rest_of_statement.evaluate_statement()
 
 
 class ListOfWords:
@@ -223,51 +193,16 @@ class OrWord(Word):
         return "or"
 
 
+class OpenBracketWord(Word):
+    def __str__(self):
+        return "("
+
+
 class InvalidStatement(Exception):
     pass
 
 
 class TestStringMethods(unittest.TestCase):
-
-    def test_true_should_return_true(self):
-        a_statement = Statement("TRUE")
-        self.assertEqual(True, a_statement.evaluate_statement())
-
-    def test_false_should_return_false(self):
-        a_statement = Statement("FALSE")
-        self.assertEqual(False, a_statement.evaluate_statement())
-
-    def test_not_true_should_return_false(self):
-        a_statement = Statement("NOT TRUE")
-        self.assertEqual(False, a_statement.evaluate_statement())
-
-    def test_not_false_should_return_true(self):
-        a_statement = Statement("NOT FALSE")
-        self.assertEqual(True, a_statement.evaluate_statement())
-
-    def test_not_not_true_should_return_true(self):
-        a_statement = Statement("NOT NOT TRUE")
-        self.assertEqual(True, a_statement.evaluate_statement())
-
-    def test_true_and_false_should_return_false(self):
-        a_statement = Statement("TRUE AND FALSE")
-        self.assertEqual(False, a_statement.evaluate_statement())
-
-    def test_true_and_true_should_return_true(self):
-        a_statement = Statement("TRUE AND TRUE")
-        self.assertEqual(True, a_statement.evaluate_statement())
-
-    def test_falsee_and_false_should_return_false(self):
-        a_statement = Statement("FALSE AND FALSE")
-        self.assertEqual(False, a_statement.evaluate_statement())
-
-    def test_not_true_and_false_should_return_False(self):
-        a_statement = Statement("NOT TRUE AND FALSE")
-        self.assertEqual(False, a_statement.evaluate_statement())
-
-    def test__true_and_not_true_should_return_False(self):
-        a_statement = Statement("TRUE AND NOT TRUE")
-        self.assertEqual(False, a_statement.evaluate_statement())
 
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
         a_statement = Statement('')
@@ -383,8 +318,14 @@ class TestStringMethods(unittest.TestCase):
         a_evaluator = BooleanEvaluator()
         self.assertEqual(True, a_evaluator.evaluate(list_of_words))
 
-    def test_x(self):
+    def test_find_highest_priority_operator_on_true_or_false_should_return_or(self):
         a_statement = Statement('TRUE OR FALSE')
         list_of_words = a_statement.split_to_list_of_words()
         operator = list_of_words.find_highest_priority_operator()
         self.assertEqual(OrWord(), operator)
+
+    def test_open_bracket_statement_should_be_accepted(self):
+        a_statement = Statement('(')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(OpenBracketWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
