@@ -25,11 +25,22 @@ class Statement:
         self.recursive_split(self.content, result)
         return result
 
+
+#TODO: refacto recursive_split
+#TODO: character becomes separator
     def recursive_split(self, input_string, result_list):
+        if input_string == '':
+            return result_list
+        start_word = 0
         current_index = 0
+        if input_string[current_index] == '(':
+            converted_word = self._convert(input_string[current_index])
+            result_list.append(converted_word)
+            current_index += 1
+            start_word = current_index
         while current_index < len(input_string) and input_string[current_index] != ' ':
             current_index += 1
-        word = input_string[0:current_index]
+        word = input_string[start_word:current_index]
         converted_word = self._convert(word)
         result_list.append(converted_word)
         if current_index < len(input_string):
@@ -328,4 +339,11 @@ class TestStringMethods(unittest.TestCase):
         a_statement = Statement('(')
         expected_list_of_words = ListOfWords()
         expected_list_of_words.append(OpenBracketWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+        
+    def test_x(self):
+        a_statement = Statement('(TRUE')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(OpenBracketWord())
+        expected_list_of_words.append(TrueWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
