@@ -109,14 +109,14 @@ class ListOfWords:
             count += 1
         return None
 
-    def find_first_operator(self):
+    def find_highest_priority_operator(self):
         result = None
         list_of_operators = [OrWord(), AndWord()]
         while result is None and list_of_operators != []:
             operator = list_of_operators.pop(0)
             result = self.find_first_instance_of_word(operator)
         return operator
-
+    
     def create_sublist(self, start_index, end_index):
         sublist = ListOfWords()
         sublist.words = self.words[start_index:end_index]
@@ -174,7 +174,7 @@ class BooleanEvaluator:
             return self.evaluate_single_word(word)
         if len(list_of_words) == 2 and list_of_words[0] == NotWord():
             return not self.evaluate(list_of_words.create_sublist(1, len(list_of_words)))
-        operator = list_of_words.find_first_operator()
+        operator = list_of_words.find_highest_priority_operator()
         if operator == OrWord():
             return self.evaluate_or(list_of_words)
         if operator == AndWord():
@@ -388,5 +388,5 @@ class TestStringMethods(unittest.TestCase):
     def test_x(self):
         a_statement = Statement('TRUE OR FALSE')
         list_of_words = a_statement.split_to_list_of_words()
-        operator = list_of_words.find_higher_priority_operator()
+        operator = list_of_words.find_highest_priority_operator()
         self.assertEqual(OrWord(), operator)
