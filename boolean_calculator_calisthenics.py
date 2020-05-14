@@ -25,26 +25,44 @@ class Statement:
         self.recursive_split(self.content, result)
         return result
 
-
+    # def extract_word(self, input_string):
+    #     index = 0
+    #     if input_string[0] == '(':
+    #         return '(', index+1
+    #     else:
+    #         input_string
+    #     word = ""
+    #     return index, word
 #TODO: refacto recursive_split
 #TODO: character becomes separator
     def recursive_split(self, input_string, result_list):
         if input_string == '':
             return result_list
+        if input_string == '(':
+            converted_word = self._convert(input_string)
+            result_list.append(converted_word)
+            return result_list
         start_word = 0
         current_index = 0
-        if input_string[current_index] == '(':
-            converted_word = self._convert(input_string[current_index])
-            result_list.append(converted_word)
-            current_index += 1
-            start_word = current_index
-        while current_index < len(input_string) and input_string[current_index] != ' ':
+        # if input_string[current_index] == '(':
+        #     converted_word = self._convert(input_string[current_index])
+        #     result_list.append(converted_word)
+        #     current_index += 1
+        #     start_word = current_index
+        while current_index < len(input_string) and input_string[current_index] != ' ' \
+                and input_string[current_index] != '(':
             current_index += 1
         word = input_string[start_word:current_index]
         converted_word = self._convert(word)
         result_list.append(converted_word)
         if current_index < len(input_string):
-            self.recursive_split(input_string[current_index + 1:], result_list)
+            if input_string[current_index] == ' ':
+                self.recursive_split(input_string[current_index + 1:], result_list)
+            if input_string[current_index] == '(':
+                bracket = input_string[current_index]
+                converted_bracket = self._convert(bracket)
+                result_list.append(converted_bracket)
+                self.recursive_split(input_string[current_index + 1:], result_list)
 
 
 
