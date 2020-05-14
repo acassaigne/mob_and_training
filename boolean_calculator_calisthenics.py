@@ -38,7 +38,9 @@ class Statement:
         while current_index < len(input_string) and input_string[current_index] != ' ' \
                 and input_string[current_index] != '(':
             current_index += 1
-        return current_index - 1
+        if current_index != len(input_string):
+            return current_index + 1
+        return current_index
 
     def _find_end_of_word(self, input_string):
         current_index = self._skip_space(input_string)
@@ -263,7 +265,12 @@ class TestStringMethods(unittest.TestCase):
     def test_es(self):
         a_statement = Statement('')
         idx = a_statement._index_end_of_word('TRUE')
-        self.assertEqual(3, idx)
+        self.assertEqual(4, idx)
+
+    def test_parenthese(self):
+        a_statement = Statement('')
+        idx = a_statement._index_end_of_word('(')
+        self.assertEqual(1, idx)
 
 
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
