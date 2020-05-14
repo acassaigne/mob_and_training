@@ -1,6 +1,8 @@
 import unittest
 
 
+
+
 class Statement:
 
     def __init__(self, input_string):
@@ -25,30 +27,44 @@ class Statement:
         self.recursive_split(self.content, result)
         return result
 
-    # def extract_word(self, input_string):
-    #     index = 0
-    #     if input_string[0] == '(':
-    #         return '(', index+1
-    #     else:
-    #         input_string
-    #     word = ""
-    #     return index, word
-#TODO: refacto recursive_split
+    def _skip_space(self, input_string):
+        current_index = 0
+        while current_index < len(input_string) and input_string[current_index] == ' ':
+            current_index += 1
+        return current_index
+
+    def _index_end_of_word(self, input_string):
+        current_index = 0
+        while current_index < len(input_string) and input_string[current_index] != ' ' \
+                and input_string[current_index] != '(':
+            current_index += 1
+        return current_index - 1
+
+    def _find_end_of_word(self, input_string):
+        current_index = self._skip_space(input_string)
+        while current_index < len(input_string) and input_string[current_index] != ' ' \
+                and input_string[current_index] != '(':
+            current_index += 1
+        if current_index != 0:
+            word = input_string[:current_index]
+            converted_word = self._convert(word)
+        else:
+            current_index += 1
+            converted_word = self._convert('(')
+        return current_index, converted_word
+
+    #TODO: refacto recursive_split
 #TODO: character becomes separator
     def recursive_split(self, input_string, result_list):
         if input_string == '':
             return result_list
+
         if input_string == '(':
             converted_word = self._convert(input_string)
             result_list.append(converted_word)
             return result_list
         start_word = 0
         current_index = 0
-        # if input_string[current_index] == '(':
-        #     converted_word = self._convert(input_string[current_index])
-        #     result_list.append(converted_word)
-        #     current_index += 1
-        #     start_word = current_index
         while current_index < len(input_string) and input_string[current_index] != ' ' \
                 and input_string[current_index] != '(':
             current_index += 1
@@ -197,6 +213,12 @@ class Word:
         return type(self) == type(other)
 
 
+class EndOfFrame(Word):
+
+    def __str__(self):
+        return "<>"
+
+
 class TrueWord(Word):
     def __str__(self):
         return "true"
@@ -232,6 +254,17 @@ class InvalidStatement(Exception):
 
 
 class TestStringMethods(unittest.TestCase):
+
+    def test_s(self):
+        a_statement = Statement('')
+        idx = a_statement._skip_space(' TRUE')
+        self.assertEqual(1, idx)
+
+    def test_es(self):
+        a_statement = Statement('')
+        idx = a_statement._index_end_of_word('TRUE')
+        self.assertEqual(3, idx)
+
 
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
         a_statement = Statement('')
