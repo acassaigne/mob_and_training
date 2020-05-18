@@ -11,6 +11,13 @@ class Statement:
     def __eq__(self, other):
         return self.content == other.content
 
+    def start_of_word(self, input_string):
+        index = 0
+        while index < len(input_string) and input_string[index] == ' ':
+            index += 1
+        return index
+
+
     def _convert(self, word_string):
         words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord(),
                       '(': OpenBracketWord()}
@@ -82,6 +89,11 @@ class Statement:
                 result_list.append(converted_bracket)
                 self.recursive_split(input_string[current_index + 1:], result_list)
 
+    def end_of_word(self, input_string):
+        index = 0
+        while index < len(input_string) and input_string[index] != ' ':
+            index += 1
+        return index
 
 
 class ListOfWords:
@@ -399,9 +411,31 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(OpenBracketWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
         
-    def test_x(self):
+    def test_open_bracket_true_should_be_correctly_split(self):
         a_statement = Statement('(TRUE')
         expected_list_of_words = ListOfWords()
         expected_list_of_words.append(OpenBracketWord())
         expected_list_of_words.append(TrueWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_true_statement_should_have_start_word_0(self):
+        a_statement = Statement('TRUE')
+        result = a_statement.start_of_word('TRUE')
+        self.assertEqual(0, result)
+
+    def test_start_word_for_statement_starting_by_spaces_character_should_return_two_index_position(self):
+        a_statement = Statement('  TRUE')
+        result = a_statement.start_of_word('  TRUE')
+        self.assertEqual(2, result)
+
+    def test_end_of_word_true_statement_should_return_three(self):
+        a_statement = Statement('TRUE')
+        result = a_statement.end_of_word('TRUE')
+        self.assertEqual(3, result)
+
+    def test_x(self):
+        a_statement = Statement('x')
+        word = "FALSE"
+        result_index = a_statement.end_of_word(word)
+        self.assertEqual( "FALSE", word[:result_index])
+
