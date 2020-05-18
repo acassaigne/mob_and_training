@@ -11,6 +11,17 @@ class Statement:
     def __eq__(self, other):
         return self.content == other.content
 
+    def start_word(self, input_string):
+        index = 0
+        while index < len(input_string) and input_string[index] == ' ':
+            index += 1
+        return index
+
+    def skip_space(self, input_string):
+        index = 0
+        while index < len(input_string) and input_string[index] == ' ':
+            index += 1
+
     def _convert(self, word_string):
         words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord(),
                       '(': OpenBracketWord()}
@@ -392,9 +403,19 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(OpenBracketWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
         
-    def test_x(self):
+    def test_open_bracket_true_should_be_correctly_split(self):
         a_statement = Statement('(TRUE')
         expected_list_of_words = ListOfWords()
         expected_list_of_words.append(OpenBracketWord())
         expected_list_of_words.append(TrueWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
+    def test_true_statement_should_have_start_word_0(self):
+        a_statement = Statement('TRUE')
+        result = a_statement.start_word('TRUE')
+        self.assertEqual(0, result)
+
+    def test_x(self):
+        a_statement = Statement('  TRUE')
+        result = a_statement.start_word('  TRUE')
+        self.assertEqual(2, result)
