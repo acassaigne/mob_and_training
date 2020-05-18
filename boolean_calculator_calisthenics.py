@@ -97,8 +97,9 @@ class Statement:
 
     def get_first_word(self, input_string):
         start_index = self.start_of_word(input_string)
-        end_index = self.end_of_word(input_string[start_index:])
-        return input_string[start_index : start_index+end_index], input_string[start_index+end_index:]
+        rest_of_string = input_string[start_index:]
+        end_index = self.end_of_word(rest_of_string)
+        return rest_of_string[0:end_index], rest_of_string[end_index:]
 
 
 class ListOfWords:
@@ -446,9 +447,14 @@ class TestStringMethods(unittest.TestCase):
         result_index = a_statement.end_of_word(word)
         self.assertEqual( "FALSE", word[:result_index])
 
-    def test_x(self):
+    def test_get_first_word_of_space_then_false_should_return_false(self):
         a_statement = Statement('x')
         input_string = " FALSE"
         word , rest_of_string = a_statement.get_first_word(input_string)
         self.assertEqual("FALSE", word)
 
+    def test_x(self):
+        a_statement = Statement('x')
+        input_string = "(FALSE"
+        word, rest_of_string = a_statement.get_first_word(input_string)
+        self.assertEqual("(", word)
