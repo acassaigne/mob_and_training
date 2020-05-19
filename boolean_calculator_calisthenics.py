@@ -91,7 +91,9 @@ class Statement:
 
     def end_of_word(self, input_string):
         index = 0
-        while index < len(input_string) and input_string[index] != ' ':
+        if input_string[index] == '(':
+            return index + 1
+        while index < len(input_string) and input_string[index] not in [' ', '(']:
             index += 1
         return index
 
@@ -438,23 +440,29 @@ class TestStringMethods(unittest.TestCase):
         a_statement = Statement('x')
         word = "TRUE"
         result_index = a_statement.end_of_word(word)
-        self.assertEqual( "TRUE", word[:result_index])
+        self.assertEqual("TRUE", word[:result_index])
 
 
     def test_end_of_word_false_statement_should_return_false(self):
         a_statement = Statement('x')
         word = "FALSE"
         result_index = a_statement.end_of_word(word)
-        self.assertEqual( "FALSE", word[:result_index])
+        self.assertEqual("FALSE", word[:result_index])
 
     def test_get_first_word_of_space_then_false_should_return_false(self):
         a_statement = Statement('x')
         input_string = " FALSE"
-        word , rest_of_string = a_statement.get_first_word(input_string)
+        word, rest_of_string = a_statement.get_first_word(input_string)
         self.assertEqual("FALSE", word)
 
-    def test_x(self):
+    def test_get_first_word_of_bracket_false_should_return_bracket(self):
         a_statement = Statement('x')
         input_string = "(FALSE"
         word, rest_of_string = a_statement.get_first_word(input_string)
         self.assertEqual("(", word)
+
+    def test_x(self):
+        a_statement = Statement('x')
+        input_string = "FALSE("
+        word, rest_of_string = a_statement.get_first_word(input_string)
+        self.assertEqual("FALSE", word)
