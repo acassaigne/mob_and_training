@@ -181,24 +181,58 @@ class ListOfWords:
         return sublist
 
 
-class SplittedStatement:
+class SplitStatement:
 
-    def __init__(self):
-        self.words = []
+    def __init__(self, statement):
+        self.input_string = statement
+        self.first_word, self.rest_of_statement = self.get_first_word(statement)
 
-    def __getitem__(self, item):
-        return self.words[item]
+    def get_first_word(self, input_string):
+        start_index = self.start_of_word(input_string)
+        rest_of_string = input_string[start_index:]
+        end_index = self.end_of_word(rest_of_string)
+        return rest_of_string[0:end_index], rest_of_string[end_index:]
 
-    def rebuild_statement(self):
-        statement_content = ' '.join(self.words)
-        statement = Statement(statement_content)
-        return statement
+    def end_of_word(self, input_string):
+        if self.is_bracket(input_string[0]):
+            return 1
+        return self.get_index_of_next_separator(input_string)
 
-    def find_first_instance_of_word(self, word):
-        for index in range(self.words):
-            if self.words[index] == word:
-                return index
-        return None
+    def get_index_of_next_separator(self, input_string):
+        index = 0
+        while index < len(input_string) and self.is_character_of_word(input_string[index]):
+            index += 1
+        return index
+
+    def is_bracket(self, character):
+        return self.is_open_bracket(character) or self.is_close_bracket(character)
+
+    def is_close_bracket(self, character):
+        return character == ')'
+
+    def is_character_of_word(self, character):
+        return not self.is_space(character) and not self.is_bracket(character)
+
+    def is_space(self, character):
+        return character == ' '
+
+    def is_not_space(self, character):
+        return character != ' '
+
+    def is_open_bracket(self, character):
+        return character == '('
+
+    def get_first_word(self, input_string):
+        start_index = self.start_of_word(input_string)
+        rest_of_string = input_string[start_index:]
+        end_index = self.end_of_word(rest_of_string)
+        return rest_of_string[0:end_index], rest_of_string[end_index:]
+
+    def start_of_word(self, input_string):
+        index = 0
+        while index < len(input_string) and input_string[index] == ' ':
+            index += 1
+        return index
 
 
 
@@ -502,4 +536,4 @@ class TestStringMethods(unittest.TestCase):
 
     def test_x(self):
         a_split_statement = SplitStatement('FALSE')
-        self.assertEqual('FALSE', a_split_statement.first_word())
+        self.assertEqual('FALSE', a_split_statement.first_word)
