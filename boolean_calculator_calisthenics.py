@@ -91,14 +91,24 @@ class Statement:
 
     def end_of_word(self, input_string):
         index = 0
-        if self.is_open_bracket(input_string[index]):
+        current_character = input_string[index]
+        if self.is_bracket(current_character):
             return index + 1
         while index < len(input_string) and self.is_character_of_word(input_string[index]):
             index += 1
         return index
 
+    def is_bracket(self, character):
+        return self.is_open_bracket(character) or self.is_close_bracket(character)
+
+    def is_close_bracket(self, character):
+        return character == ')'
+
     def is_character_of_word(self, character):
-        return self.is_not_space(character) and not self.is_open_bracket(character)
+        return not self.is_space(character) and not self.is_open_bracket(character)
+
+    def is_space(self, character):
+        return character == ' '
 
     def is_not_space(self, character):
         return character != ' '
@@ -470,8 +480,14 @@ class TestStringMethods(unittest.TestCase):
         word, rest_of_string = a_statement.get_first_word(input_string)
         self.assertEqual("(", word)
 
-    def test_x(self):
+    def test_get_first_word_of_false_bracket_should_return_false(self):
         a_statement = Statement('x')
         input_string = "FALSE("
         word, rest_of_string = a_statement.get_first_word(input_string)
         self.assertEqual("FALSE", word)
+
+    def test_x(self):
+        a_statement = Statement('x')
+        input_string = ")FALSE"
+        word, rest_of_string = a_statement.get_first_word(input_string)
+        self.assertEqual(")", word)
