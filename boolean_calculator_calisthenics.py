@@ -185,19 +185,14 @@ class SplitStatement:
 
     def __init__(self, statement):
         self.input_string = statement
-        self.first_word, self.rest_of_statement = self.get_first_word(statement)
+        self.first_word, self.rest_of_statement = self.get_first_word()
 
-    def get_first_word(self, input_string):
-        start_index = self.start_of_word(input_string)
-        rest_of_string = input_string[start_index:]
-        end_index = self.end_of_word(rest_of_string)
-        return rest_of_string[0:end_index], rest_of_string[end_index:]
-
-    def end_of_word(self, input_string):
-        if self.is_bracket(input_string[0]):
+    def end_of_word(self):
+        if self.is_bracket(self.input_string[0]):
             return 1
-        return self.get_index_of_next_separator(input_string)
+        return self.get_index_of_next_separator(self.input_string)
 
+    #refacto a continuer supprime statement en paramètre
     def get_index_of_next_separator(self, input_string):
         index = 0
         while index < len(input_string) and self.is_character_of_word(input_string[index]):
@@ -222,17 +217,16 @@ class SplitStatement:
     def is_open_bracket(self, character):
         return character == '('
 
-    def get_first_word(self, input_string):
-        start_index = self.start_of_word(input_string)
-        rest_of_string = input_string[start_index:]
-        end_index = self.end_of_word(rest_of_string)
-        return rest_of_string[0:end_index], rest_of_string[end_index:]
+    def get_first_word(self):
+        self.start_of_word()
+        end_index = self.end_of_word()
+        return self.input_string[0:end_index], self.input_string[end_index:]
 
-    def start_of_word(self, input_string):
+    def start_of_word(self):
         index = 0
-        while index < len(input_string) and input_string[index] == ' ':
+        while index < len(self.input_string) and self.input_string[index] == ' ':
             index += 1
-        return index
+        self.input_string = self.input_string[index:]
 
 
 
@@ -497,7 +491,7 @@ class TestStringMethods(unittest.TestCase):
         result_index = a_statement.end_of_word(word)
         self.assertEqual("TRUE", word[:result_index])
 
-
+    #TODO récupérer ces tests à adapter pour SplitStatement et continuer le refacto de ce SplitStamement
     def test_end_of_word_false_statement_should_return_false(self):
         a_statement = Statement('x')
         word = "FALSE"
