@@ -42,7 +42,7 @@ class Statement:
 
     def _index_end_of_word(self, input_string):
         current_index = 0
-        while current_index < len(input_string) and input_string[current_index] != ' ' \
+        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
                 and input_string[current_index] != '(':
             current_index += 1
         if current_index != len(input_string):
@@ -51,7 +51,7 @@ class Statement:
 
     def _find_end_of_word(self, input_string):
         current_index = self._skip_space(input_string)
-        while current_index < len(input_string) and input_string[current_index] != ' ' \
+        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
                 and input_string[current_index] != '(':
             current_index += 1
         if current_index != 0:
@@ -74,7 +74,7 @@ class Statement:
             return result_list
         start_word = 0
         current_index = 0
-        while current_index < len(input_string) and input_string[current_index] != ' ' \
+        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
                 and input_string[current_index] != '(':
             current_index += 1
         word = input_string[start_word:current_index]
@@ -91,11 +91,20 @@ class Statement:
 
     def end_of_word(self, input_string):
         index = 0
-        if input_string[index] == '(':
+        if self.is_open_bracket(input_string[index]):
             return index + 1
-        while index < len(input_string) and input_string[index] not in [' ', '(']:
+        while index < len(input_string) and self.is_character_of_word(input_string[index]):
             index += 1
         return index
+
+    def is_character_of_word(self, character):
+        return self.is_not_space(character) and not self.is_open_bracket(character)
+
+    def is_not_space(self, character):
+        return character != ' '
+
+    def is_open_bracket(self, character):
+        return character == '('
 
     def get_first_word(self, input_string):
         start_index = self.start_of_word(input_string)
