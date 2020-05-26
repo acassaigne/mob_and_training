@@ -498,36 +498,23 @@ class TestStringMethods(unittest.TestCase):
         result_index = a_statement.end_of_word(word)
         self.assertEqual("FALSE", word[:result_index])
 
-    def test_get_first_word_of_space_then_false_should_return_false(self):
-        a_statement = Statement('x')
-        input_string = " FALSE"
-        word, rest_of_string = a_statement.get_first_word(input_string)
-        self.assertEqual("FALSE", word)
-
-    def test_get_first_word_of_bracket_false_should_return_bracket(self):
-        a_statement = Statement('x')
-        input_string = "(FALSE"
-        word, rest_of_string = a_statement.get_first_word(input_string)
-        self.assertEqual("(", word)
-
-    def test_get_first_word_of_false_bracket_should_return_false(self):
-        a_statement = Statement('x')
-        input_string = "FALSE("
-        word, rest_of_string = a_statement.get_first_word(input_string)
-        self.assertEqual("FALSE", word)
-
-    def test_get_first_word_of_close_bracket_false_should_return_close_bracket(self):
-        a_statement = Statement('x')
-        input_string = ")FALSE"
-        word, rest_of_string = a_statement.get_first_word(input_string)
-        self.assertEqual(")", word)
-
-    def test_get_first_word_of_false_close_bracket_should_return_false(self):
-        a_statement = Statement('x')
-        input_string = "FALSE)"
-        word, rest_of_string = a_statement.get_first_word(input_string)
-        self.assertEqual("FALSE", word)
-
-    def test_x(self):
+    def test_get_first_word_of_false_should_return_false(self):
         a_split_statement = SplitStatement('FALSE')
         self.assertEqual('FALSE', a_split_statement.first_word)
+
+    def test_get_first_word_of_bracket_false_should_return_bracket(self):
+        a_split_statement = SplitStatement('(FALSE')
+        self.assertEqual("(", a_split_statement.first_word)
+
+    def test_get_first_word_of_false_bracket_should_return_false(self):
+        a_split_statement = SplitStatement('FALSE(')
+        self.assertEqual("FALSE", a_split_statement.first_word)
+
+    def test_get_first_word_of_close_bracket_false_should_return_close_bracket(self):
+        a_split_statement = SplitStatement(')FALSE')
+        self.assertEqual(")", a_split_statement.first_word)
+
+    def test_get_first_word_of_close_bracket_false_should_return_close_bracket(self):
+        a_split_statement = SplitStatement('FALSE)')
+        self.assertEqual("FALSE", a_split_statement.first_word)
+        self.assertEqual(")", a_split_statement.rest_of_statement)
