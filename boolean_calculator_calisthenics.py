@@ -13,7 +13,7 @@ class Statement:
 
     def _convert(self, word_string):
         words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord(),
-                      '(': OpenBracketWord()}
+                      '(': OpenBracketWord(), ')': CloseBracketWord()}
         if word_string in words_dict:
             return words_dict[word_string]
         if word_string != '' and word_string not in words_dict:
@@ -233,6 +233,11 @@ class InvalidStatement(Exception):
     pass
 
 
+class CloseBracketWord(Word):
+    def __str__(self):
+        return ")"
+
+
 class TestStringMethods(unittest.TestCase):
 
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
@@ -368,7 +373,6 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(TrueWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
-    #TODO récupérer ces tests à adapter pour SplitStatement et continuer le refacto de ce SplitStamement
 
     def test_get_first_word_of_false_should_return_false(self):
         a_split_statement = SplitStatement('FALSE')
@@ -391,9 +395,9 @@ class TestStringMethods(unittest.TestCase):
         self.assertEqual("FALSE", a_split_statement.first_word)
         self.assertEqual(")", a_split_statement.rest_of_statement)
 
-    def test_m_not_string_should_return_list_of_word_with_not(self):
-        a_statement = Statement('NOT')
+    def test_statement_with_close_bracket_should_return_close_bracket_word(self):
+        a_statement = Statement(')')
         expected_list_of_words = ListOfWords()
-        expected_list_of_words.append(NotWord())
+        expected_list_of_words.append(CloseBracketWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
