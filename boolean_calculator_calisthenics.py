@@ -11,13 +11,6 @@ class Statement:
     def __eq__(self, other):
         return self.content == other.content
 
-    def start_of_word(self, input_string):
-        index = 0
-        while index < len(input_string) and input_string[index] == ' ':
-            index += 1
-        return index
-
-
     def _convert(self, word_string):
         words_dict = {'FALSE': FalseWord(), 'TRUE': TrueWord(), 'NOT': NotWord(), 'AND': AndWord(), 'OR': OrWord(),
                       '(': OpenBracketWord()}
@@ -26,103 +19,20 @@ class Statement:
         if word_string != '' and word_string not in words_dict:
             raise InvalidStatement
 
-    def _extract_word_from_indexes(self, start, end):
-        return self.content[start:end]
-
     def split_to_list_of_words(self):
         result = ListOfWords()
         self.recursive_split(self.content, result)
         return result
 
-    def _skip_space(self, input_string):
-        current_index = 0
-        while current_index < len(input_string) and input_string[current_index] == ' ':
-            current_index += 1
-        return current_index
-
-    def _index_end_of_word(self, input_string):
-        current_index = 0
-        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
-                and input_string[current_index] != '(':
-            current_index += 1
-        if current_index != len(input_string):
-            return current_index + 1
-        return current_index
-
-    def _find_end_of_word(self, input_string):
-        current_index = self._skip_space(input_string)
-        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
-                and input_string[current_index] != '(':
-            current_index += 1
-        if current_index != 0:
-            word = input_string[:current_index]
-            converted_word = self._convert(word)
-        else:
-            current_index += 1
-            converted_word = self._convert('(')
-        return current_index, converted_word
-
-    #TODO: refacto recursive_split
-#TODO: character becomes separator
     def recursive_split(self, input_string, result_list):
         if input_string == '':
             return result_list
 
-        if input_string == '(':
-            converted_word = self._convert(input_string)
-            result_list.append(converted_word)
-            return result_list
-        start_word = 0
-        current_index = 0
-        while current_index < len(input_string) and self.is_not_space(input_string[current_index]) \
-                and input_string[current_index] != '(':
-            current_index += 1
-        word = input_string[start_word:current_index]
-        converted_word = self._convert(word)
+        split_statement = SplitStatement(input_string)
+        converted_word = self._convert(split_statement.first_word)
         result_list.append(converted_word)
-        if current_index < len(input_string):
-            if input_string[current_index] == ' ':
-                self.recursive_split(input_string[current_index + 1:], result_list)
-            if input_string[current_index] == '(':
-                bracket = input_string[current_index]
-                converted_bracket = self._convert(bracket)
-                result_list.append(converted_bracket)
-                self.recursive_split(input_string[current_index + 1:], result_list)
 
-    def end_of_word(self, input_string):
-        if self.is_bracket(input_string[0]):
-            return 1
-        return self.get_index_of_next_separator(input_string)
-
-    def get_index_of_next_separator(self, input_string):
-        index = 0
-        while index < len(input_string) and self.is_character_of_word(input_string[index]):
-            index += 1
-        return index
-
-    def is_bracket(self, character):
-        return self.is_open_bracket(character) or self.is_close_bracket(character)
-
-    def is_close_bracket(self, character):
-        return character == ')'
-
-    def is_character_of_word(self, character):
-        return not self.is_space(character) and not self.is_bracket(character)
-
-    def is_space(self, character):
-        return character == ' '
-
-    def is_not_space(self, character):
-        return character != ' '
-
-    def is_open_bracket(self, character):
-        return character == '('
-
-    def get_first_word(self, input_string):
-        start_index = self.start_of_word(input_string)
-        rest_of_string = input_string[start_index:]
-        end_index = self.end_of_word(rest_of_string)
-        return rest_of_string[0:end_index], rest_of_string[end_index:]
+        self.recursive_split(split_statement.rest_of_statement, result_list)
 
 
 class ListOfWords:
@@ -190,12 +100,11 @@ class SplitStatement:
     def end_of_word(self):
         if self.is_bracket(self.input_string[0]):
             return 1
-        return self.get_index_of_next_separator(self.input_string)
+        return self.get_index_of_next_separator()
 
-    #refacto a continuer supprime statement en paramètre
-    def get_index_of_next_separator(self, input_string):
+    def get_index_of_next_separator(self):
         index = 0
-        while index < len(input_string) and self.is_character_of_word(input_string[index]):
+        while index < len(self.input_string) and self.is_character_of_word(self.input_string[index]):
             index += 1
         return index
 
@@ -325,22 +234,6 @@ class InvalidStatement(Exception):
 
 
 class TestStringMethods(unittest.TestCase):
-
-    def test_s(self):
-        a_statement = Statement('')
-        idx = a_statement._skip_space(' TRUE')
-        self.assertEqual(1, idx)
-
-    def test_es(self):
-        a_statement = Statement('')
-        idx = a_statement._index_end_of_word('TRUE')
-        self.assertEqual(4, idx)
-
-    def test_parenthese(self):
-        a_statement = Statement('')
-        idx = a_statement._index_end_of_word('(')
-        self.assertEqual(1, idx)
-
 
     def test_empty_statement_should_be_split_to_empty_list_of_words(self):
         a_statement = Statement('')
@@ -475,28 +368,7 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(TrueWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
-    def test_true_statement_should_have_start_word_0(self):
-        a_statement = Statement('TRUE')
-        result = a_statement.start_of_word('TRUE')
-        self.assertEqual(0, result)
-
-    def test_start_word_for_statement_starting_by_spaces_character_should_return_two_index_position(self):
-        a_statement = Statement('  TRUE')
-        result = a_statement.start_of_word('  TRUE')
-        self.assertEqual(2, result)
-
-    def test_end_of_word_true_statement_should_return_true(self):
-        a_statement = Statement('x')
-        word = "TRUE"
-        result_index = a_statement.end_of_word(word)
-        self.assertEqual("TRUE", word[:result_index])
-
     #TODO récupérer ces tests à adapter pour SplitStatement et continuer le refacto de ce SplitStamement
-    def test_end_of_word_false_statement_should_return_false(self):
-        a_statement = Statement('x')
-        word = "FALSE"
-        result_index = a_statement.end_of_word(word)
-        self.assertEqual("FALSE", word[:result_index])
 
     def test_get_first_word_of_false_should_return_false(self):
         a_split_statement = SplitStatement('FALSE')
@@ -518,3 +390,10 @@ class TestStringMethods(unittest.TestCase):
         a_split_statement = SplitStatement('FALSE)')
         self.assertEqual("FALSE", a_split_statement.first_word)
         self.assertEqual(")", a_split_statement.rest_of_statement)
+
+    def test_m_not_string_should_return_list_of_word_with_not(self):
+        a_statement = Statement('NOT')
+        expected_list_of_words = ListOfWords()
+        expected_list_of_words.append(NotWord())
+        self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
+
