@@ -158,11 +158,36 @@ class BooleanEvaluator:
         return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
                    self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
 
+    # TODO Refacto
+    def find_same_level_bracket_index(self, list_of_words):
+        level = 0
+        index = 0
+        for word in list_of_words:
+            if word == OpenBracketWord():
+                level += 1
+            if word == CloseBracketWord():
+                level -= 1
+            if level == 0:
+                return index
+            index += 1
+
+    def create_word_from_boolean(self, boolean):
+        if boolean:
+            return TrueWord()
+        return FalseWord()
+
     def evaluate(self, list_of_words):
         self._checkIfInvalideArgument(list_of_words)
         if list_of_words.is_single_word():
             word = list_of_words[0]
             return self.evaluate_single_word(word)
+        if list_of_words[0] == OpenBracketWord():
+            sub_list_of_word = list_of_words.create_sublist(1, self.find_same_level_bracket_index(list_of_words))
+            temporary_result = self.create_word_from_boolean(self.evaluate(sub_list_of_word))
+            new_list_of_words = ListOfWords()
+            new_list_of_words.append(temporary_result)
+            new_list_of_words.append(list_of_words.create_sublist(self.find_same_level_bracket_index(list_of_words)+1, len(list_of_words)))
+            return self.evaluate(new_list_of_words)
         operator = list_of_words.find_highest_priority_operator()
         return self._evaluate_operator(operator, list_of_words)
 
@@ -401,3 +426,28 @@ class TestStringMethods(unittest.TestCase):
         expected_list_of_words.append(CloseBracketWord())
         self.assertEqual(str(expected_list_of_words), str(a_statement.split_to_list_of_words()))
 
+    def test_true_between_parentheses_should_return_true(self):
+        a_statement = Statement('(TRUE)')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(True, a_evaluator.evaluate(list_of_words))
+
+    def test_false_between_parentheses_should_return_false(self):
+        a_statement = Statement('(FALSE)')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(False, a_evaluator.evaluate(list_of_words))
+
+    def test_false_between_two_parentheses_should_return_false(self):
+        a_statement = Statement('((FALSE))')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(False, a_evaluator.evaluate(list_of_words))
+
+    def test_parenthese_true_parenthese_or_false_should_return_true(self):
+        a_statement = Statement('(TRUE) OR FALSE')
+        list_of_words = a_statement.split_to_list_of_words()
+        a_evaluator = BooleanEvaluator()
+        self.assertEqual(True, a_evaluator.evaluate(list_of_words))
+
+    #TODO parenthese ouvrante sans fermante
