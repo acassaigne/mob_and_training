@@ -163,20 +163,27 @@ class BooleanEvaluator:
         return self.evaluate(list_of_words.create_sublist(0, and_index)) and \
                    self.evaluate(list_of_words.create_sublist(and_index + 1, len(list_of_words)))
 
+    # TODO mini classe? pour level
+    def update_level(self, word, level):
+        if word == OpenBracketWord():
+            level += 1
+        if word == CloseBracketWord():
+            level -= 1
+        return level
+
     # TODO Refacto
+    # TODO dans quelle classe mettre cette méthode
     def find_same_level_bracket_index(self, list_of_words):
         if list_of_words[0] != OpenBracketWord():
             raise OpenBracketExpected
         level = 0
         index = 0
         for word in list_of_words:
-            if word == OpenBracketWord():
-                level += 1
-            if word == CloseBracketWord():
-                level -= 1
+            level = self.update_level(word, level)
             if level == 0:
-                return index
+                break
             index += 1
+        return index
 
     def create_word_from_boolean(self, boolean):
         if boolean:
