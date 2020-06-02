@@ -168,7 +168,7 @@ class BooleanEvaluator:
         if list_of_words[0] != OpenBracketWord():
             raise OpenBracketExpected
         level = 0
-        index = 1
+        index = 0
         for word in list_of_words:
             if word == OpenBracketWord():
                 level += 1
