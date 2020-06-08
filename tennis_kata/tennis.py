@@ -3,43 +3,38 @@
 class TennisGame1:
 
     def __init__(self, player1Name, player2Name):
-        self.player1Name = player1Name
-        self.player2Name = player2Name
-        self.p1points = 0
-        self.p2points = 0
+        self.player_1_name = player1Name
+        self.player_2_name = player2Name
+        self.player_1_points = 0
+        self.player_2_points = 0
         
     def won_point(self, playerName):
-        if playerName == self.player1Name:
-            self.p1points += 1
+        if playerName == self.player_1_name:
+            self.player_1_points += 1
         else:
-            self.p2points += 1
+            self.player_2_points += 1
     
     def score(self):
         result = ""
         tempScore=0
-        if (self.p1points==self.p2points):
-            result = {
-                0 : "Love-All",
-                1 : "Fifteen-All",
-                2 : "Thirty-All",
-            }.get(self.p1points, "Deuce")
-        elif (self.p1points>=4 or self.p2points>=4):
-            minusResult = self.p1points-self.p2points
-            if (minusResult==1):
-                result ="Advantage " + self.player1Name
-            elif (minusResult ==-1):
-                result ="Advantage " + self.player2Name
-            elif (minusResult>=2):
-                result = "Win for " + self.player1Name
+        if (self.player_1_points==self.player_2_points):
+            result = self.get_score_if_tied()
+        elif (self.player_1_points >= 4 or self.player_2_points >= 4):
+            minusResult = self.player_1_points - self.player_2_points
+            leading_player = self.get_leading_player_name(minusResult)
+            score_gap = self.get_score_gap()
+            if score_gap==1:
+                result ="Advantage "
             else:
-                result ="Win for " + self.player2Name
+                result ="Win for "
+            result += leading_player
         else:
             for i in range(1,3):
                 if (i==1):
-                    tempScore = self.p1points
+                    tempScore = self.player_1_points
                 else:
                     result+="-"
-                    tempScore = self.p2points
+                    tempScore = self.player_2_points
                 result += {
                     0 : "Love",
                     1 : "Fifteen",
@@ -47,6 +42,24 @@ class TennisGame1:
                     3 : "Forty",
                 }[tempScore]
         return result
+
+    def get_leading_player_name(self, minusResult):
+        if minusResult > 0:
+            leading_player = self.player_1_name
+        else:
+            leading_player = self.player_2_name
+        return leading_player
+
+    def get_score_if_tied(self):
+        result = {
+            0: "Love-All",
+            1: "Fifteen-All",
+            2: "Thirty-All",
+        }.get(self.player_1_points, "Deuce")
+        return result
+
+    def get_score_gap(self):
+        return abs(self.player_1_points - self.player_2_points)
 
 
 class TennisGame2:
