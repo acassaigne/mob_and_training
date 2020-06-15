@@ -21,26 +21,22 @@ class TennisGame1:
         return self.player_1_points >= 4 or self.player_2_points >= 4
 
     def score(self):
-        result = ""
-        tempScore=0
         if self.is_tied():
-            result = self.get_tied_score()
-        elif (self.one_player_upper_forty()):
-            result = self.advantage_or_win()
-        else:
-            for i in range(1,3):
-                if (i==1):
-                    tempScore = self.player_1_points
-                else:
-                    result+="-"
-                    tempScore = self.player_2_points
-                result += {
+            return self.get_tied_score()
+        if self.one_player_upper_forty():
+            return self.advantage_or_win()
+        return self.get_score_below_deuce()
+
+    def get_score_below_deuce(self):
+        return f"{self.get_score_name(self.player_1_points)}-{self.get_score_name(self.player_2_points)}"
+
+    def get_score_name(self, player_points):
+        return {
                     0 : "Love",
                     1 : "Fifteen",
                     2 : "Thirty",
                     3 : "Forty",
-                }[tempScore]
-        return result
+                }[player_points]
 
     def advantage_or_win(self):
         player_name = self.get_leading_player_name()
