@@ -13,21 +13,20 @@ class TennisGame1:
             self.player_1_points += 1
         else:
             self.player_2_points += 1
-    
+
+    def is_tied(self):
+        return self.player_1_points==self.player_2_points
+
+    def one_player_upper_forty(self):
+        return self.player_1_points >= 4 or self.player_2_points >= 4
+
     def score(self):
         result = ""
         tempScore=0
-        if (self.player_1_points==self.player_2_points):
-            result = self.get_score_if_tied()
-        elif (self.player_1_points >= 4 or self.player_2_points >= 4):
-            minusResult = self.player_1_points - self.player_2_points
-            leading_player = self.get_leading_player_name(minusResult)
-            score_gap = self.get_score_gap()
-            if score_gap==1:
-                result ="Advantage "
-            else:
-                result ="Win for "
-            result += leading_player
+        if self.is_tied():
+            result = self.get_tied_score()
+        elif (self.one_player_upper_forty()):
+            result = self.advantage_or_win()
         else:
             for i in range(1,3):
                 if (i==1):
@@ -43,14 +42,18 @@ class TennisGame1:
                 }[tempScore]
         return result
 
-    def get_leading_player_name(self, minusResult):
-        if minusResult > 0:
-            leading_player = self.player_1_name
-        else:
-            leading_player = self.player_2_name
-        return leading_player
+    def advantage_or_win(self):
+        player_name = self.get_leading_player_name()
+        if self.get_score_gap() == 1:
+            return f"Advantage {player_name}"
+        return f"Win for {player_name}"
 
-    def get_score_if_tied(self):
+    def get_leading_player_name(self):
+        if self.player_1_points > self.player_2_points:
+            return self.player_1_name
+        return self.player_2_name
+
+    def get_tied_score(self):
         result = {
             0: "Love-All",
             1: "Fifteen-All",
