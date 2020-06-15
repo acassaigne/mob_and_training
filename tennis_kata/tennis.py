@@ -73,52 +73,24 @@ class TennisGame2:
             self.increment_player_1_score()
         else:
             self.increment_player_2_score()
-    
+
+    def is_tied(self):
+        return self.player_1_points == self.player_2_points
+
+    def is_below_deuce(self):
+        return self.player_2_points < 4 and self.player_1_points < 4
+
     def score(self):
         result = ""
         score_dict = {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}
-        if (self.player_1_points == self.player_2_points and self.player_1_points < 3):
+        if (self.is_tied() and self.player_1_points < 3):
             result = score_dict[self.player_1_points] + "-All"
         if (self.player_1_points==self.player_2_points and self.player_1_points>2):
             result = "Deuce"
-        
-        P1res = ""
-        P2res = ""
-        if (4 > self.player_1_points > 0 and self.player_2_points==0):
+
+        if (not self.is_tied() and self.is_below_deuce()):
             P1res = score_dict[self.player_1_points]
-            P2res = "Love"
-            result = P1res + "-" + P2res
-        if (self.player_2_points > 0 and self.player_1_points==0):
-            if (self.player_2_points==1):
-                P2res = "Fifteen"
-            if (self.player_2_points==2):
-                P2res = "Thirty"
-            if (self.player_2_points==3):
-                P2res = "Forty"
-            
-            P1res = "Love"
-            result = P1res + "-" + P2res
-        
-        
-        if (self.player_1_points>self.player_2_points and self.player_1_points < 4):
-            if (self.player_1_points==2):
-                P1res="Thirty"
-            if (self.player_1_points==3):
-                P1res="Forty"
-            if (self.player_2_points==1):
-                P2res="Fifteen"
-            if (self.player_2_points==2):
-                P2res="Thirty"
-            result = P1res + "-" + P2res
-        if (self.player_2_points>self.player_1_points and self.player_2_points < 4):
-            if (self.player_2_points==2):
-                P2res="Thirty"
-            if (self.player_2_points==3):
-                P2res="Forty"
-            if (self.player_1_points==1):
-                P1res="Fifteen"
-            if (self.player_1_points==2):
-                P1res="Thirty"
+            P2res = score_dict[self.player_2_points]
             result = P1res + "-" + P2res
         
         if (self.player_1_points > self.player_2_points and self.player_2_points >= 3):
