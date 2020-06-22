@@ -67,6 +67,7 @@ class TennisGame2:
         self.player_2_name = player_2_name
         self.player_1_points = 0
         self.player_2_points = 0
+        self.score_dict = {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}
         
     def won_point(self, playerName):
         if playerName == self.player_1_name:
@@ -81,30 +82,32 @@ class TennisGame2:
         return self.player_2_points < 4 and self.player_1_points < 4
 
     def score(self):
-        result = ""
-        score_dict = {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}
-        if (self.is_tied() and self.player_1_points < 3):
-            result = score_dict[self.player_1_points] + "-All"
-        if (self.player_1_points==self.player_2_points and self.player_1_points>2):
-            result = "Deuce"
+        result = self.score_tied()
 
         if (not self.is_tied() and self.is_below_deuce()):
-            P1res = score_dict[self.player_1_points]
-            P2res = score_dict[self.player_2_points]
+            P1res = self.score_dict[self.player_1_points]
+            P2res = self.score_dict[self.player_2_points]
             result = P1res + "-" + P2res
-        
+
         if (self.player_1_points > self.player_2_points and self.player_2_points >= 3):
             result = "Advantage " + self.player_1_name
         
         if (self.player_2_points > self.player_1_points and self.player_1_points >= 3):
             result = "Advantage " + self.player_2_name
-        
+
         if (self.player_1_points>=4 and self.player_2_points>=0 and (self.player_1_points - self.player_2_points)>=2):
             result = "Win for " + self.player_1_name
         if (self.player_2_points>=4 and self.player_1_points>=0 and (self.player_2_points - self.player_1_points)>=2):
             result = "Win for " + self.player_2_name
         return result
-    
+
+    def score_tied(self):
+        result = ""
+        if (self.is_tied() and self.player_1_points < 3):
+            result = self.score_dict[self.player_1_points] + "-All"
+        if (self.is_tied() and self.player_1_points > 2):
+            result = "Deuce"
+        return result
 
     def increment_player_1_score(self):
         self.player_1_points +=1

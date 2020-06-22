@@ -1,8 +1,6 @@
 import unittest
 
 
-
-
 class Statement:
 
     def __init__(self, input_string):
