@@ -105,12 +105,7 @@ class TennisGame2:
             result = "Win for " + self.player_2_name
         return result
     
-    def SetP1Score(self, number):
-        self.player_1_points = number
-    
-    def SetP2Score(self, number):
-        self.player_2_points = number
-    
+
     def increment_player_1_score(self):
         self.player_1_points +=1
 
