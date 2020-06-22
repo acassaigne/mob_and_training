@@ -140,13 +140,16 @@ class TennisGame3:
             self.player_1_score += 1
         else:
             self.player_2_score += 1
-    
+
+    def is_deuce(self):
+        return 3 <= self.player_1_score == self.player_2_score
+
     def score(self):
-        if (self.player_1_score < 4 and self.player_2_score < 4) and (self.player_1_score + self.player_2_score < 6):
+        if self.is_deuce():
+            return "Deuce"
+        if self.player_1_score < 4 and self.player_2_score < 4:
             score_dictionary = ["Love", "Fifteen", "Thirty", "Forty"]
             player_1_score_name = score_dictionary[self.player_1_score]
             return player_1_score_name + "-All" if (self.player_1_score == self.player_2_score) else player_1_score_name + "-" + score_dictionary[self.player_2_score]
-        if self.player_1_score == self.player_2_score:
-            return "Deuce"
         player_1_score_name = self.player_1_name if self.player_1_score > self.player_2_score else self.player_2_name
         return "Advantage " + player_1_score_name if (abs(self.player_1_score - self.player_2_score) == 1) else "Win for " + player_1_score_name
