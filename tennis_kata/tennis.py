@@ -81,45 +81,52 @@ class TennisGame2:
     def is_below_deuce(self):
         return self.player_2_points < 4 and self.player_1_points < 4
 
+    def is_higher_than_deuce(self):
+        return not self.is_below_deuce()
+
     def get_leader_name(self):
         if self.player_1_points > self.player_2_points:
             return self.player_1_name
         return self.player_2_name
 
     def score(self):
-        result = self.score_tied()
-        if not self.is_tied():
-            leader = self.get_leader_name()
-            if self.is_below_deuce():
-                P1res = self.score_dict[self.player_1_points]
-                P2res = self.score_dict[self.player_2_points]
-                result = P1res + "-" + P2res
+        if self.is_tied():
+            return self.score_tied()
+        return self.score_if_not_tied()
 
-            if (self.player_1_points > self.player_2_points and self.player_2_points >= 3):
-                result = "Advantage " + self.player_1_name
+    def score_if_not_tied(self):
+        if self.is_below_deuce():
+            result = self.score_not_tied_below_deuce()
+        if self.is_higher_than_deuce():
+            result = self.score_not_tied_higher_than_deuce()
+        return result
 
-            if (self.player_2_points > self.player_1_points and self.player_1_points >= 3):
-                result = "Advantage " + self.player_2_name
+    def score_not_tied_higher_than_deuce(self):
+        leader = self.get_leader_name()
+        result = "Advantage " + leader
+        if abs(self.player_1_points - self.player_2_points) >= 2:
+            result = "Win for " + leader
+        return result
 
-            if (self.player_1_points>=4 and self.player_2_points>=0 and (self.player_1_points - self.player_2_points)>=2):
-                result = "Win for " + self.player_1_name
-            if (self.player_2_points>=4 and self.player_1_points>=0 and (self.player_2_points - self.player_1_points)>=2):
-                result = "Win for " + self.player_2_name
+    def score_not_tied_below_deuce(self):
+        P1res = self.score_dict[self.player_1_points]
+        P2res = self.score_dict[self.player_2_points]
+        result = P1res + "-" + P2res
         return result
 
     def score_tied(self):
         result = ""
-        if (self.is_tied() and self.player_1_points < 3):
+        if self.player_1_points < 3:
             result = self.score_dict[self.player_1_points] + "-All"
-        if (self.is_tied() and self.player_1_points > 2):
+        if self.player_1_points > 2:
             result = "Deuce"
         return result
 
     def increment_player_1_score(self):
-        self.player_1_points +=1
+        self.player_1_points += 1
 
     def increment_player_2_score(self):
-        self.player_2_points +=1
+        self.player_2_points += 1
         
 class TennisGame3:
     def __init__(self, player1Name, player2Name):
