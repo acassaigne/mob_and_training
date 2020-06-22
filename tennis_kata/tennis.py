@@ -81,24 +81,30 @@ class TennisGame2:
     def is_below_deuce(self):
         return self.player_2_points < 4 and self.player_1_points < 4
 
+    def get_leader_name(self):
+        if self.player_1_points > self.player_2_points:
+            return self.player_1_name
+        return self.player_2_name
+
     def score(self):
         result = self.score_tied()
+        if not self.is_tied():
+            leader = self.get_leader_name()
+            if self.is_below_deuce():
+                P1res = self.score_dict[self.player_1_points]
+                P2res = self.score_dict[self.player_2_points]
+                result = P1res + "-" + P2res
 
-        if (not self.is_tied() and self.is_below_deuce()):
-            P1res = self.score_dict[self.player_1_points]
-            P2res = self.score_dict[self.player_2_points]
-            result = P1res + "-" + P2res
+            if (self.player_1_points > self.player_2_points and self.player_2_points >= 3):
+                result = "Advantage " + self.player_1_name
 
-        if (self.player_1_points > self.player_2_points and self.player_2_points >= 3):
-            result = "Advantage " + self.player_1_name
-        
-        if (self.player_2_points > self.player_1_points and self.player_1_points >= 3):
-            result = "Advantage " + self.player_2_name
+            if (self.player_2_points > self.player_1_points and self.player_1_points >= 3):
+                result = "Advantage " + self.player_2_name
 
-        if (self.player_1_points>=4 and self.player_2_points>=0 and (self.player_1_points - self.player_2_points)>=2):
-            result = "Win for " + self.player_1_name
-        if (self.player_2_points>=4 and self.player_1_points>=0 and (self.player_2_points - self.player_1_points)>=2):
-            result = "Win for " + self.player_2_name
+            if (self.player_1_points>=4 and self.player_2_points>=0 and (self.player_1_points - self.player_2_points)>=2):
+                result = "Win for " + self.player_1_name
+            if (self.player_2_points>=4 and self.player_1_points>=0 and (self.player_2_points - self.player_1_points)>=2):
+                result = "Win for " + self.player_2_name
         return result
 
     def score_tied(self):
