@@ -129,25 +129,24 @@ class TennisGame2:
         self.player_2_points += 1
         
 class TennisGame3:
-    def __init__(self, player1Name, player2Name):
-        self.p1N = player1Name
-        self.p2N = player2Name
-        self.p1 = 0
-        self.p2 = 0
+    def __init__(self, player_1_name, player_2_name):
+        self.player_1_name = player_1_name
+        self.player_2_name = player_2_name
+        self.player_1_score = 0
+        self.player_2_score = 0
         
     def won_point(self, n):
-        if n == self.p1N:
-            self.p1 += 1
+        if n == self.player_1_name:
+            self.player_1_score += 1
         else:
-            self.p2 += 1
+            self.player_2_score += 1
     
     def score(self):
-        if (self.p1 < 4 and self.p2 < 4) and (self.p1 + self.p2 < 6):
-            p = ["Love", "Fifteen", "Thirty", "Forty"]
-            s = p[self.p1]
-            return s + "-All" if (self.p1 == self.p2) else s + "-" + p[self.p2]
-        else:
-            if (self.p1 == self.p2):
-                return "Deuce"
-            s = self.p1N if self.p1 > self.p2 else self.p2N
-            return "Advantage " + s if ((self.p1-self.p2)*(self.p1-self.p2) == 1) else "Win for " + s
+        if (self.player_1_score < 4 and self.player_2_score < 4) and (self.player_1_score + self.player_2_score < 6):
+            score_dictionary = ["Love", "Fifteen", "Thirty", "Forty"]
+            player_1_score_name = score_dictionary[self.player_1_score]
+            return player_1_score_name + "-All" if (self.player_1_score == self.player_2_score) else player_1_score_name + "-" + score_dictionary[self.player_2_score]
+        if self.player_1_score == self.player_2_score:
+            return "Deuce"
+        player_1_score_name = self.player_1_name if self.player_1_score > self.player_2_score else self.player_2_name
+        return "Advantage " + player_1_score_name if (abs(self.player_1_score - self.player_2_score) == 1) else "Win for " + player_1_score_name
