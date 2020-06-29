@@ -132,9 +132,10 @@ class TennisGame2:
 class TennisGame3:
     def __init__(self, player_1_name, player_2_name):
         self.player_1_name = player_1_name
-        self.player_2_name = player_2_name
         self.player_1_score = 0
+        self.player_2_name = player_2_name
         self.player_2_score = 0
+
 
     def won_point(self, n):
         if n == self.player_1_name:
@@ -148,16 +149,27 @@ class TennisGame3:
     def score(self):
         if self.is_deuce():
             return "Deuce"
-        if self.player_1_score < 4 and self.player_2_score < 4:
-            score_dictionary = ["Love", "Fifteen", "Thirty", "Forty"]
-            score_name = score_dictionary[self.player_1_score]
-            if self.player_1_score == self.player_2_score:
-                return score_name + "-All"
-            return score_name + "-" + score_dictionary[self.player_2_score]
+        if self.score_is_below_deuce():
+            return self.score_name_below_deuce()
+        return self.score_name_above_deuce()
+
+    def score_name_above_deuce(self):
         advantage_player_name = self.get_leading_player_name()
         if abs(self.player_1_score - self.player_2_score) == 1:
             return "Advantage " + advantage_player_name
         return "Win for " + advantage_player_name
+
+    def score_name_below_deuce(self):
+        score_name = self.get_score_name(self.player_1_score)
+        if self.player_1_score == self.player_2_score:
+            return score_name + "-All"
+        return score_name + "-" + self.get_score_name(self.player_2_score)
+
+    def score_is_below_deuce(self):
+        return self.player_1_score < 4 and self.player_2_score < 4
+
+    def get_score_name(self, player_score):
+        return ["Love", "Fifteen", "Thirty", "Forty"][player_score]
 
     def get_leading_player_name(self):
         if self.player_1_score > self.player_2_score:
