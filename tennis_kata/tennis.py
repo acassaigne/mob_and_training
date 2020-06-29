@@ -7,7 +7,7 @@ class TennisGame1:
         self.player_2_name = player2Name
         self.player_1_points = 0
         self.player_2_points = 0
-        
+
     def won_point(self, playerName):
         if playerName == self.player_1_name:
             self.player_1_points += 1
@@ -15,7 +15,7 @@ class TennisGame1:
             self.player_2_points += 1
 
     def is_tied(self):
-        return self.player_1_points==self.player_2_points
+        return self.player_1_points == self.player_2_points
 
     def one_player_upper_forty(self):
         return self.player_1_points >= 4 or self.player_2_points >= 4
@@ -32,11 +32,11 @@ class TennisGame1:
 
     def get_player_score_name(self, player_points):
         return {
-                    0 : "Love",
-                    1 : "Fifteen",
-                    2 : "Thirty",
-                    3 : "Forty",
-                }[player_points]
+            0: "Love",
+            1: "Fifteen",
+            2: "Thirty",
+            3: "Forty",
+        }[player_points]
 
     def advantage_or_win(self):
         player_name = self.get_leading_player_name()
@@ -68,7 +68,7 @@ class TennisGame2:
         self.player_1_points = 0
         self.player_2_points = 0
         self.score_dict = {0: "Love", 1: "Fifteen", 2: "Thirty", 3: "Forty"}
-        
+
     def won_point(self, playerName):
         if playerName == self.player_1_name:
             self.increment_player_1_score()
@@ -127,14 +127,15 @@ class TennisGame2:
 
     def increment_player_2_score(self):
         self.player_2_points += 1
-        
+
+
 class TennisGame3:
     def __init__(self, player_1_name, player_2_name):
         self.player_1_name = player_1_name
         self.player_2_name = player_2_name
         self.player_1_score = 0
         self.player_2_score = 0
-        
+
     def won_point(self, n):
         if n == self.player_1_name:
             self.player_1_score += 1
@@ -149,7 +150,16 @@ class TennisGame3:
             return "Deuce"
         if self.player_1_score < 4 and self.player_2_score < 4:
             score_dictionary = ["Love", "Fifteen", "Thirty", "Forty"]
-            player_1_score_name = score_dictionary[self.player_1_score]
-            return player_1_score_name + "-All" if (self.player_1_score == self.player_2_score) else player_1_score_name + "-" + score_dictionary[self.player_2_score]
-        player_1_score_name = self.player_1_name if self.player_1_score > self.player_2_score else self.player_2_name
-        return "Advantage " + player_1_score_name if (abs(self.player_1_score - self.player_2_score) == 1) else "Win for " + player_1_score_name
+            score_name = score_dictionary[self.player_1_score]
+            if self.player_1_score == self.player_2_score:
+                return score_name + "-All"
+            return score_name + "-" + score_dictionary[self.player_2_score]
+        advantage_player_name = self.get_leading_player_name()
+        if abs(self.player_1_score - self.player_2_score) == 1:
+            return "Advantage " + advantage_player_name
+        return "Win for " + advantage_player_name
+
+    def get_leading_player_name(self):
+        if self.player_1_score > self.player_2_score:
+            return self.player_1_name
+        return self.player_2_name
