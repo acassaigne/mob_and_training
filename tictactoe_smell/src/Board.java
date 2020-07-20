@@ -30,7 +30,7 @@ public class Board
         return null;
     }
 
-    public void AddTileAt(char symbol, int x, int y)
+    public void UpdateTileAt(char symbol, int x, int y)
     {
         
         TileAt(x,y).Symbol = symbol;
