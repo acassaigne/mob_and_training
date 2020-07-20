@@ -39,17 +39,27 @@ public class Game {
             _board.TileAt(x, 2).Symbol != FREE_TILE;
     }
 
+    private boolean rowHasNonEmptyTile(int x) {
+        return  _board.TileAt(x, 0).Symbol != FREE_TILE;
+    }
+
     private boolean isTheSameSymbolForTheRow(int x) {
         return _board.TileAt(x, 0).Symbol == _board.TileAt(x, 1).Symbol &&
                 _board.TileAt(x, 2).Symbol == _board.TileAt(x, 1).Symbol;
     }
 
-    public char Winner() {
-        if (isFullRow(0)) {
-            if (isTheSameSymbolForTheRow(0)) {
+    private char winnerSymbolForTheRow(int x) {
+        if (isTheSameSymbolForTheRow(0)) {
+            if (rowHasNonEmptyTile(0)) {
                 return _board.TileAt(0, 0).Symbol;
             }
         }
+        return FREE_TILE;
+    }
+
+    public char Winner() {
+        char result;
+        result = winnerSymbolForTheRow(0);
 
         if (isFullRow(1)) {
             if (isTheSameSymbolForTheRow(1)) {
@@ -63,7 +73,7 @@ public class Game {
             }
         }
 
-        return FREE_TILE;
+        return result;
     }
 }
 
