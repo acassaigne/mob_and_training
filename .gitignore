@@ -7,3 +7,5 @@
 # Editor-based HTTP Client requests
 /httpRequests/
 .idea/
+tictactoe_smell/tictactoe_smell.iml
+tictactoe_smell/out
