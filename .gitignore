@@ -9,3 +9,4 @@
 .idea/
 tictactoe_smell/tictactoe_smell.iml
 tictactoe_smell/out
+__pycache__/
