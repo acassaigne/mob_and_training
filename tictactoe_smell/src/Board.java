@@ -31,6 +31,7 @@ public class Board
     }
 
     public void UpdateTileAt(char symbol, int x, int y)
+            //introduire NewSymbol
     {
         TileAt(x,y).SetSymbol(symbol);
     }
