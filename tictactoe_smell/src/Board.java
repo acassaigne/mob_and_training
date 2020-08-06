@@ -7,16 +7,19 @@ public class Board
 
     public Board()
     {
-        for (int i = 0; i < 3; i++)
+        for (int rowNumber = 0; rowNumber < 3; rowNumber++)
         {
-            for (int j = 0; j < 3; j++)
-            {
-                Tile tile = new Tile();
-                tile.X = i;
-                tile.Y = j;
-                tile.Symbol = ' ';
-                _plays.add(tile);
-            }
+            InitRow(rowNumber);
+        }
+    }
+
+    private void InitRow(int rowNumber) {
+        for (int columnNumber = 0; columnNumber < 3; columnNumber++)
+        {
+            Tile tile = new Tile();
+            tile.X = rowNumber;
+            tile.Y = columnNumber;
+            _plays.add(tile);
         }
     }
 
