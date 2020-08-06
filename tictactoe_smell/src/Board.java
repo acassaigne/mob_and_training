@@ -3,7 +3,7 @@ import java.util.List;
 
 public class Board
 {
-    private List<Tile> _plays = new ArrayList<>();
+    private List<Tile> tiles = new ArrayList<>();
 
     public Board()
     {
@@ -16,18 +16,15 @@ public class Board
     private void InitRow(int rowNumber) {
         for (int columnNumber = 0; columnNumber < 3; columnNumber++)
         {
-            Tile tile = new Tile();
-            tile.X = rowNumber;
-            tile.Y = columnNumber;
-            _plays.add(tile);
+            tiles.add(new Tile(rowNumber, columnNumber));
         }
     }
 
     public Tile TileAt(int x, int y)
     {
-        for (Tile t : _plays) {
-            if (t.X == x && t.Y == y){
-                return t;
+        for (Tile ATile : tiles) {
+            if (ATile.X == x && ATile.Y == y){
+                return ATile;
             }
         }
         return null;
@@ -35,7 +32,6 @@ public class Board
 
     public void UpdateTileAt(char symbol, int x, int y)
     {
-        
-        TileAt(x,y).Symbol = symbol;
+        TileAt(x,y).SetSymbol(symbol);
     }
 }
