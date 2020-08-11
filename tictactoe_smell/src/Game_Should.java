@@ -48,19 +48,28 @@ public class Game_Should {
 
         game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 1);
         game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 2);
-//        char winner_2 = game.WinnerNewSymbol();
+        NewSymbol winner_2 = game.Winner_2();
+        assertEquals(NewSymbol.PLAYER_X, winner_2);
 
-        game.Play('X', 0, 0);
-        game.Play('O', 1, 0);
-        game.Play('X', 0, 1);
+//        game.Play('X', 0, 0);
+//        game.Play('O', 1, 0);
+//        game.Play('X', 0, 1);
+//
+//        game.Play('O', 1, 1);
+//        game.Play('X', 0, 2);
 
-        game.Play('O', 1, 1);
-        game.Play('X', 0, 2);
+        //char winner = game.Winner();
 
-        char winner = game.Winner();
-
-        assertEquals('X', winner);
+       // assertEquals('X', winner);
     }
+
+
+//    @Test
+//    public void bugTracking() throws Exception {
+//        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+//        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
+//        assertEquals(game._board, winner);
+//    }
 
     @Test
     public void DeclarePlayerOAsAWinnerIfThreeInTopRow() throws Exception

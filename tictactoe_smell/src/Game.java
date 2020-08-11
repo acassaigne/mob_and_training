@@ -26,7 +26,7 @@ public class Game {
     }
 
     private void raiseIfFirstPlayerIsO_2(NewSymbol symbol) throws Exception {
-        if (_lastSymbol == FREE_TILE) {
+        if (_lastNewSymbol == NewSymbol.EMPTY) {
             if (symbol == NewSymbol.PLAYER_O) {
                 throw new Exception("Invalid first player");
             }
@@ -98,6 +98,25 @@ public class Game {
         if (isFullRow(2)) {
             if (isTheSameSymbolForTheRow(2)) {
                 return _board.TileAt(2, 0).Symbol;
+            }
+        }
+
+        return result;
+    }
+
+    public NewSymbol Winner_2() {
+        NewSymbol result;
+        result = _board.convertToNewSymbol(winnerSymbolForTheRow(0));
+
+        if (isFullRow(1)) {
+            if (isTheSameSymbolForTheRow(1)) {
+                return _board.convertToNewSymbol(_board.TileAt(1, 0).Symbol);
+            }
+        }
+
+        if (isFullRow(2)) {
+            if (isTheSameSymbolForTheRow(2)) {
+                return _board.convertToNewSymbol(_board.TileAt(2, 0).Symbol);
             }
         }
 
