@@ -2,6 +2,7 @@ public class Game {
     public static final char FREE_TILE = ' ';
     public static final char O_PLAYER_SYMBOL = 'O';
     private char _lastSymbol = FREE_TILE;
+    private NewSymbol _lastNewSymbol = NewSymbol.EMPTY;
     private Board _board = new Board();
 
     public void Play(char symbol, int x, int y) throws Exception {
@@ -10,17 +11,20 @@ public class Game {
         RaiseIfTriesToPlayOnTakenTile(x, y);
 
         _lastSymbol = symbol;
+        NewSymbol newSymbol = _board.convertToNewSymbol(symbol);
+        _lastNewSymbol = newSymbol;
         _board.UpdateTileAt(symbol, x, y);
     }
 
     private void RaiseIfTriesToPlayOnTakenTile(int x, int y) throws Exception {
-        if (_board.TileAt(x, y).Symbol != FREE_TILE) {
+        if (_board.TileAt(x, y).newSymbol != NewSymbol.EMPTY) {
             throw new Exception("Invalid position");
         }
     }
 
     private void raiseIfSamePlayerPlaysTwice(char symbol) throws Exception {
-        if (symbol == _lastSymbol) {
+        NewSymbol newSymbol = _board.convertToNewSymbol(symbol);
+        if (newSymbol == _lastNewSymbol) {
             throw new Exception("Invalid next player");
         }
     }

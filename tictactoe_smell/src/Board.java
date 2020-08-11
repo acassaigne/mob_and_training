@@ -33,7 +33,7 @@ public class Board {
         TileAt(x, y).SetNewSymbol(newSymbol);
     }
 
-    private NewSymbol convertToNewSymbol(char symbol) {
+    public NewSymbol convertToNewSymbol(char symbol) {
         NewSymbol newSymbol = NewSymbol.EMPTY;
         if (symbol == 'O') {
             newSymbol = NewSymbol.PLAYER_O;
