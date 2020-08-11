@@ -16,7 +16,7 @@ public class Tile
         Symbol = NewSymbol;
     }
 
-    public void SetNewSymbol(newSymbol) {
+    public void SetNewSymbol(NewSymbol newSymbol) {
         this.newSymbol = newSymbol;
     }
 

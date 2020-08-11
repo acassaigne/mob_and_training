@@ -1,29 +1,24 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Board
-{
+public class Board {
     private List<Tile> tiles = new ArrayList<>();
 
-    public Board()
-    {
-        for (int rowNumber = 0; rowNumber < 3; rowNumber++)
-        {
+    public Board() {
+        for (int rowNumber = 0; rowNumber < 3; rowNumber++) {
             InitRow(rowNumber);
         }
     }
 
     private void InitRow(int rowNumber) {
-        for (int columnNumber = 0; columnNumber < 3; columnNumber++)
-        {
+        for (int columnNumber = 0; columnNumber < 3; columnNumber++) {
             tiles.add(new Tile(rowNumber, columnNumber));
         }
     }
 
-    public Tile TileAt(int x, int y)
-    {
+    public Tile TileAt(int x, int y) {
         for (Tile ATile : tiles) {
-            if (ATile.X == x && ATile.Y == y){
+            if (ATile.X == x && ATile.Y == y) {
                 return ATile;
             }
         }
@@ -31,8 +26,23 @@ public class Board
     }
 
     public void UpdateTileAt(char symbol, int x, int y)
-            //introduire NewSymbol
+    //introduire NewSymbol
     {
-        TileAt(x,y).SetSymbol(symbol);
+        TileAt(x, y).SetSymbol(symbol);
+        NewSymbol newSymbol = convertToNewSymbol(symbol);
+        TileAt(x, y).SetNewSymbol(newSymbol);
     }
+
+    private NewSymbol convertToNewSymbol(char symbol) {
+        NewSymbol newSymbol = NewSymbol.EMPTY;
+        if (symbol == 'O') {
+            newSymbol = NewSymbol.PLAYER_O;
+        }
+        if (symbol == 'X') {
+            newSymbol = NewSymbol.PLAYER_X;
+        }
+        return newSymbol;
+    }
+
+
 }
