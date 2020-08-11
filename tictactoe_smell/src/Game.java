@@ -16,6 +16,30 @@ public class Game {
         _board.UpdateTileAt(symbol, x, y);
     }
 
+    public void PlayNewSymbol(NewSymbol symbol, int x, int y) throws Exception {
+        raiseIfFirstPlayerIsO_2(symbol);
+        raiseIfSamePlayerPlaysTwice_2(symbol);
+        RaiseIfTriesToPlayOnTakenTile(x, y);
+
+        _lastNewSymbol = symbol;
+        _board.UpdateTileAt_2(symbol, x, y);
+    }
+
+    private void raiseIfFirstPlayerIsO_2(NewSymbol symbol) throws Exception {
+        if (_lastSymbol == FREE_TILE) {
+            if (symbol == NewSymbol.PLAYER_O) {
+                throw new Exception("Invalid first player");
+            }
+        }
+    }
+
+
+    private void raiseIfSamePlayerPlaysTwice_2(NewSymbol symbol) throws Exception {
+        if (symbol == _lastNewSymbol) {
+            throw new Exception("Invalid next player");
+        }
+    }
+
     private void RaiseIfTriesToPlayOnTakenTile(int x, int y) throws Exception {
         if (_board.TileAt(x, y).newSymbol != NewSymbol.EMPTY) {
             throw new Exception("Invalid position");

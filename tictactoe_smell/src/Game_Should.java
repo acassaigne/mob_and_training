@@ -13,40 +13,47 @@ public class Game_Should {
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerOToPlayFirst() throws Exception {
-        game.Play('O', 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_O, 0, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerXToPlayTwiceInARow() throws Exception
     {
-        game.Play('X', 0, 0);
-
-        game.Play('X', 1, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 1, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerToPlayInLastPlayedPosition() throws Exception
     {
-        game.Play('X', 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_O, 0, 0);
 
-        game.Play('O', 0, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerToPlayInAnyPlayedPosition() throws Exception
     {
-        game.Play('X', 0, 0);
-        game.Play('O', 1, 0);
-
-        game.Play('X', 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
     }
 
     @Test
     public void DeclarePlayerXAsAWinnerIfThreeInTopRow() throws Exception
     {
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 1);
+
+        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 1);
+        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 2);
+//        char winner_2 = game.WinnerNewSymbol();
+
         game.Play('X', 0, 0);
         game.Play('O', 1, 0);
         game.Play('X', 0, 1);
+
         game.Play('O', 1, 1);
         game.Play('X', 0, 2);
 
