@@ -26,17 +26,9 @@ public class Board {
     }
 
     public void UpdateTileAt(char symbol, int x, int y)
-    //introduire NewSymbol
     {
-        TileAt(x, y).SetSymbol(symbol);
         NewSymbol newSymbol = convertToNewSymbol(symbol);
         TileAt(x, y).SetNewSymbol(newSymbol);
-    }
-
-    public void UpdateTileAt_2(NewSymbol symbol, int x, int y)
-    //introduire NewSymbol
-    {
-        TileAt(x, y).SetNewSymbol(symbol);
     }
 
 
@@ -51,5 +43,14 @@ public class Board {
         return newSymbol;
     }
 
+    public char convertNewSymbolToChar(NewSymbol newSymbol) {
+        if (newSymbol == NewSymbol.PLAYER_O) {
+            return 'O';
+        }
+        if (newSymbol == NewSymbol.PLAYER_X) {
+            return 'X';
+        }
+        return ' ';
+    }
 
 }

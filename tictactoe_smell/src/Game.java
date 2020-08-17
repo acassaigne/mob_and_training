@@ -16,29 +16,6 @@ public class Game {
         _board.UpdateTileAt(symbol, x, y);
     }
 
-    public void PlayNewSymbol(NewSymbol symbol, int x, int y) throws Exception {
-        raiseIfFirstPlayerIsO_2(symbol);
-        raiseIfSamePlayerPlaysTwice_2(symbol);
-        RaiseIfTriesToPlayOnTakenTile(x, y);
-
-        _lastNewSymbol = symbol;
-        _board.UpdateTileAt_2(symbol, x, y);
-    }
-
-    private void raiseIfFirstPlayerIsO_2(NewSymbol symbol) throws Exception {
-        if (_lastNewSymbol == NewSymbol.EMPTY) {
-            if (symbol == NewSymbol.PLAYER_O) {
-                throw new Exception("Invalid first player");
-            }
-        }
-    }
-
-
-    private void raiseIfSamePlayerPlaysTwice_2(NewSymbol symbol) throws Exception {
-        if (symbol == _lastNewSymbol) {
-            throw new Exception("Invalid next player");
-        }
-    }
 
     private void RaiseIfTriesToPlayOnTakenTile(int x, int y) throws Exception {
         if (_board.TileAt(x, y).newSymbol != NewSymbol.EMPTY) {
@@ -61,66 +38,55 @@ public class Game {
         }
     }
 
-    private boolean isFullRow(int x) {
-    return  _board.TileAt(x, 0).Symbol != FREE_TILE &&
-            _board.TileAt(x, 1).Symbol != FREE_TILE &&
-            _board.TileAt(x, 2).Symbol != FREE_TILE;
+
+    private boolean isFullRow_2(int x) {
+        return  _board.TileAt(x, 0).newSymbol != NewSymbol.EMPTY &&
+                _board.TileAt(x, 1).newSymbol != NewSymbol.EMPTY &&
+                _board.TileAt(x, 2).newSymbol != NewSymbol.EMPTY;
     }
 
     private boolean rowHasNonEmptyTile(int x) {
-        return  _board.TileAt(x, 0).Symbol != FREE_TILE;
+        return  _board.TileAt(x, 0).newSymbol != NewSymbol.EMPTY;
     }
+
 
     private boolean isTheSameSymbolForTheRow(int x) {
-        return _board.TileAt(x, 0).Symbol == _board.TileAt(x, 1).Symbol &&
-                _board.TileAt(x, 2).Symbol == _board.TileAt(x, 1).Symbol;
+        return _board.TileAt(x, 0).newSymbol == _board.TileAt(x, 1).newSymbol &&
+                _board.TileAt(x, 2).newSymbol == _board.TileAt(x, 1).newSymbol;
     }
 
-    private char winnerSymbolForTheRow(int x) {
+
+
+    private NewSymbol winnerSymbolForTheRow(int x) {
         if (isTheSameSymbolForTheRow(0)) {
             if (rowHasNonEmptyTile(0)) {
-                return _board.TileAt(0, 0).Symbol;
+                return _board.TileAt(0, 0).newSymbol;
             }
         }
-        return FREE_TILE;
+        return NewSymbol.EMPTY;
     }
 
     public char Winner() {
-        char result;
+        return Winner_2();
+    }
+
+
+    public char Winner_2() {
+        NewSymbol result;
         result = winnerSymbolForTheRow(0);
 
-        if (isFullRow(1)) {
+        if (isFullRow_2(1)) {
             if (isTheSameSymbolForTheRow(1)) {
-                return _board.TileAt(1, 0).Symbol;
+                return _board.convertNewSymbolToChar(_board.TileAt(1, 0).newSymbol);
             }
         }
 
-        if (isFullRow(2)) {
+        if (isFullRow_2(2)) {
             if (isTheSameSymbolForTheRow(2)) {
-                return _board.TileAt(2, 0).Symbol;
+                return _board.convertNewSymbolToChar(_board.TileAt(2, 0).newSymbol);
             }
         }
 
-        return result;
-    }
-
-    public NewSymbol Winner_2() {
-        NewSymbol result;
-        result = _board.convertToNewSymbol(winnerSymbolForTheRow(0));
-
-        if (isFullRow(1)) {
-            if (isTheSameSymbolForTheRow(1)) {
-                return _board.convertToNewSymbol(_board.TileAt(1, 0).Symbol);
-            }
-        }
-
-        if (isFullRow(2)) {
-            if (isTheSameSymbolForTheRow(2)) {
-                return _board.convertToNewSymbol(_board.TileAt(2, 0).Symbol);
-            }
-        }
-
-        return result;
+        return _board.convertNewSymbolToChar(result);
     }
 }
-
