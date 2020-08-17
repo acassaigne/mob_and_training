@@ -51,8 +51,10 @@ public class Game_Should {
         game.Play('X', 0, 2);
 
         char winner = game.Winner();
+        Symbol winner_2 = game.Winner_2();
 
         assertEquals('X', winner);
+        assertEquals(Symbol.PLAYER_X, winner_2);
     }
 
     @Test
