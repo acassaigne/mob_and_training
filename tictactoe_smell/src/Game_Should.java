@@ -13,63 +13,47 @@ public class Game_Should {
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerOToPlayFirst() throws Exception {
-        game.PlayNewSymbol(NewSymbol.PLAYER_O, 0, 0);
+        game.Play('O', 0, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerXToPlayTwiceInARow() throws Exception
     {
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 1, 0);
+        game.Play('X', 0, 0);
+
+        game.Play('X', 1, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerToPlayInLastPlayedPosition() throws Exception
     {
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_O, 0, 0);
+        game.Play('X', 0, 0);
 
+        game.Play('O', 0, 0);
     }
 
     @Test(expected=Exception.class)
     public void NotAllowPlayerToPlayInAnyPlayedPosition() throws Exception
     {
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
+        game.Play('X', 0, 0);
+        game.Play('O', 1, 0);
+
+        game.Play('X', 0, 0);
     }
 
     @Test
     public void DeclarePlayerXAsAWinnerIfThreeInTopRow() throws Exception
     {
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 1);
+        game.Play('X', 0, 0);
+        game.Play('O', 1, 0);
+        game.Play('X', 0, 1);
+        game.Play('O', 1, 1);
+        game.Play('X', 0, 2);
 
-        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 1);
-        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 2);
-        NewSymbol winner_2 = game.Winner_2();
-        assertEquals(NewSymbol.PLAYER_X, winner_2);
+        char winner = game.Winner();
 
-//        game.Play('X', 0, 0);
-//        game.Play('O', 1, 0);
-//        game.Play('X', 0, 1);
-//
-//        game.Play('O', 1, 1);
-//        game.Play('X', 0, 2);
-
-        //char winner = game.Winner();
-
-       // assertEquals('X', winner);
+        assertEquals('X', winner);
     }
-
-
-//    @Test
-//    public void bugTracking() throws Exception {
-//        game.PlayNewSymbol(NewSymbol.PLAYER_X, 0, 0);
-//        game.PlayNewSymbol(NewSymbol.PLAYER_O, 1, 0);
-//        assertEquals(game._board, winner);
-//    }
 
     @Test
     public void DeclarePlayerOAsAWinnerIfThreeInTopRow() throws Exception
