@@ -27,27 +27,27 @@ public class Board {
 
     public void UpdateTileAt(char symbol, int x, int y)
     {
-        NewSymbol newSymbol = convertToNewSymbol(symbol);
+        Symbol newSymbol = convertToNewSymbol(symbol);
         TileAt(x, y).SetNewSymbol(newSymbol);
     }
 
 
-    public NewSymbol convertToNewSymbol(char symbol) {
-        NewSymbol newSymbol = NewSymbol.EMPTY;
+    public Symbol convertToNewSymbol(char symbol) {
+        Symbol newSymbol = Symbol.EMPTY;
         if (symbol == 'O') {
-            newSymbol = NewSymbol.PLAYER_O;
+            newSymbol = Symbol.PLAYER_O;
         }
         if (symbol == 'X') {
-            newSymbol = NewSymbol.PLAYER_X;
+            newSymbol = Symbol.PLAYER_X;
         }
         return newSymbol;
     }
 
-    public char convertNewSymbolToChar(NewSymbol newSymbol) {
-        if (newSymbol == NewSymbol.PLAYER_O) {
+    public char convertNewSymbolToChar(Symbol symbol) {
+        if (symbol == Symbol.PLAYER_O) {
             return 'O';
         }
-        if (newSymbol == NewSymbol.PLAYER_X) {
+        if (symbol == Symbol.PLAYER_X) {
             return 'X';
         }
         return ' ';

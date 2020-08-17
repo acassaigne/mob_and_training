@@ -1,10 +1,9 @@
 
 public class Tile
 {
-    public static final char EMPTY_TILE = ' ';
     public int X;
     public int Y;
-    public NewSymbol newSymbol = NewSymbol.EMPTY;
+    public Symbol symbol = Symbol.EMPTY;
 
     Tile(int rowNumber, int columnNumber) {
         X = rowNumber;
@@ -12,8 +11,8 @@ public class Tile
     }
 
 
-    public void SetNewSymbol(NewSymbol newSymbol) {
-        this.newSymbol = newSymbol;
+    public void SetNewSymbol(Symbol symbol) {
+        this.symbol = symbol;
     }
 
 }
